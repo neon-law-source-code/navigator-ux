@@ -4,7 +4,9 @@ A React component library on the Neon Law teal, from the Neon Law Foundation. No
 **no runtime dependencies** — every component is built on the platform primitive that already carries
 its semantics, and every color resolves through a CSS custom property you can override in one file.
 
-Dual-licensed under [MIT](./LICENSE-MIT) or [Apache-2.0](./LICENSE-APACHE), at your option.
+Free software under the [GNU Affero General Public License, version 3](./LICENSE) — and because that
+is a network copyleft rather than a permissive license, read [License](#license) before you build a
+product on it.
 
 ## Install
 
@@ -24,7 +26,8 @@ this records and how to move between versions.
 
 > **Do not install from the repository's git URL.** `dist` is not committed and there is no `prepare`
 > script, so `pnpm add github:neon-law-foundation/navigator-ux` resolves, reports success, and leaves
-> you a package containing the licenses and the README and no code at all. The failure surfaces later,
+> you a package containing the license, the notices, and the README, and no code at all. The failure
+> surfaces later,
 > as `Cannot find module …/dist/index.js` at your first import.
 
 ## Use
@@ -333,15 +336,52 @@ Issues and pull requests are welcome. Two things worth knowing before you open o
 
 - **Run `pnpm check`.** It is exactly what CI runs, and the gates are cheap to trip — a named color
   in a component or a `font-weight: 600` will fail the build.
-- **Contributions are dual-licensed** under MIT and Apache-2.0, matching the project, unless you
-  state otherwise. There is no CLA.
+- **Contributions are AGPL-3.0-only**, matching the project, unless you state otherwise. There is no
+  CLA.
 
 The conventions that are not obvious from the code — and the reasons behind them — are in
 [CLAUDE.md](./CLAUDE.md). It is written for coding agents and is just as useful to people.
 
 ## License
 
-MIT or Apache-2.0, at your option. See [LICENSE.md](./LICENSE.md).
+Copyright (C) 2026 Neon Law Foundation.
 
-The license covers the code. It does not grant rights in the Neon Law or Neon Law Foundation names or
-logos.
+```
+SPDX-License-Identifier: AGPL-3.0-only
+```
+
+Navigator UX is free software: you may redistribute it and modify it under the terms of the **GNU
+Affero General Public License, version 3**, as published by the Free Software Foundation. There is no
+"or later" clause and no second option — [`LICENSE`](./LICENSE) is the verbatim text and the only
+license file in this repository. It is distributed WITHOUT ANY WARRANTY, without even the implied
+warranty of merchantability or fitness for a particular purpose.
+
+**What that means for an application that imports this library.** The AGPL is a copyleft, so a work
+that includes these components is a derivative of them: distributing it, and under section 13 merely
+*letting users interact with it over a network*, obliges you to offer those users the complete
+corresponding source of your application under the AGPL as well. A private portal is still covered
+the moment a user reaches it over a network. How you installed it changes nothing about this — a
+dependency boundary is not a license boundary, and the components compile into your bundle whether
+they arrived as a release tarball, a registry range, or a checkout.
+
+If you need these components without that obligation, the copyright holder is the only party who can
+grant it. Ask the Foundation about a separate license rather than reading a public download as
+permission.
+
+### Third-party material
+
+The grant above covers the work the Foundation owns. It does not reach the third-party material
+shipped alongside it, which carries its own copyright and its own terms — the bundled typeface under
+the SIL Open Font License 1.1, and two MIT-licensed sources. Those are listed, with the notices their
+licenses require, in [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md), which is published with this
+file and with the package. Where those terms and the AGPL differ, the third-party terms govern that
+material.
+
+The font is worth stating separately: the OFL requires the font software to stay under the OFL and
+forbids relicensing it, so **the two woff2 files are not AGPL** and the AGPL does not purport to
+cover them. Nothing here licenses anything the Foundation does not own.
+
+### Trademarks
+
+The license covers the code. It does not grant rights in the Neon Law or Neon Law Foundation names,
+logos, or other trademarks. Fork the library freely; do not imply the Foundation endorses your fork.

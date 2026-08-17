@@ -2,7 +2,7 @@
   "name": "@neon-law-foundation/navigator-ux",
   "version": "0.1.0",
   "description": "Navigator UX \u2014 a dependency-free React component library on the Neon Law teal.",
-  "license": "MIT OR Apache-2.0",
+  "license": "AGPL-3.0-only",
   "private": false,
   "type": "module",
   "packageManager": "pnpm@11.17.0",
@@ -21,9 +21,7 @@
   ],
   "files": [
     "dist",
-    "LICENSE.md",
-    "LICENSE-MIT",
-    "LICENSE-APACHE",
+    "LICENSE",
     "THIRD-PARTY-NOTICES.md",
     "README.md"
   ],

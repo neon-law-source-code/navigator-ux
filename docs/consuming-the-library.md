@@ -3,6 +3,27 @@
 What an application has to agree with to use this library. If you only want to render a component,
 the [README](../README.md) is enough — this is the integration detail behind it.
 
+## The license comes with the dependency
+
+The library is **AGPL-3.0-only**, and that is the first thing a consuming application has to agree
+with rather than a footnote to the rest of this document. Importing a component makes your application
+a work based on it, so the AGPL's terms reach your application: distributing it, and under section 13
+merely allowing users to interact with it **over a network**, obliges you to offer those users the
+complete corresponding source of the application under the AGPL too. A login wall does not change
+that — a user behind one is still a user interacting over a network.
+
+How you install it changes nothing here. A tarball URL, a registry range, and a git checkout are three
+delivery mechanisms for the same code, and none of them is a license boundary — the components end up
+compiled into your bundle either way. Nor does pinning help: a pinned URL fixes *which* AGPL-covered
+build you ship, not whether it is covered.
+
+So decide this before you add the dependency, not after the first release. If the application cannot
+be AGPL, the copyright holder is the only party who can license the components on other terms — ask
+the Neon Law Foundation rather than reading a public download as permission. See
+[LICENSE](../LICENSE) for the verbatim text and the README's
+[License](../README.md#license) section for the copyright notice, the third-party scoping, and the
+trademark position.
+
 ## The dependency is always a released tarball
 
 ```json
@@ -41,8 +62,8 @@ Pin the same URL in every place that installs, and change them together.
 pnpm add github:neon-law-foundation/navigator-ux
 ```
 
-`dist` is gitignored and the manifest's `files` field ships `dist` and the licenses, so a git install
-gives you a package containing `LICENSE*`, `README.md`, `THIRD-PARTY-NOTICES.md`, and `package.json` —
+`dist` is gitignored and the manifest's `files` field ships `dist` and the notices, so a git install
+gives you a package containing `LICENSE`, `README.md`, `THIRD-PARTY-NOTICES.md`, and `package.json` —
 no `dist` and no `src`. There is no `prepare` script to build it on the way in. The install goes green
 and your build fails afterwards, pointing into `node_modules`:
 

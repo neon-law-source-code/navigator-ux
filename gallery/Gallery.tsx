@@ -220,7 +220,7 @@ export function Gallery() {
                 note: 'Admission pending.',
               },
             ]}
-            legal={<p>Navigator UX is open source under MIT OR Apache-2.0. This page is a specimen, not legal advice.</p>}
+            legal={<p>Navigator UX is free software under AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
           />
         }
       >

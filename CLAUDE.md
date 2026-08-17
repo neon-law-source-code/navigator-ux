@@ -1,8 +1,19 @@
 # neon-law-foundation/navigator-ux
 
-Public, open source, dual-licensed **MIT OR Apache-2.0** — see [LICENSE.md](./LICENSE.md). Anyone may
-use, fork, and ship this. Write for that audience: a comment that assumes the reader works here is a
-comment that will confuse most of the people who read it.
+Public, free software, **AGPL-3.0-only** — see [LICENSE](./LICENSE), which is the one license file in
+the repository and the verbatim FSF text. Anyone may read, fork, and ship this, on the condition the
+AGPL attaches: a work that includes these components is a derivative of them, and section 13 makes
+merely serving it to users over a network trigger the obligation to offer those users the whole
+application's source under the same terms. Write for that audience: a comment that assumes the reader
+works here is a comment that will confuse most of the people who read it.
+
+The license changed from dual MIT-or-Apache-2.0 to AGPL-3.0-only at the Foundation's direction. Two
+things follow for anyone working in here. Copyleft means the *consuming applications* inherit the
+obligation, so before assuming a Neon Law portal can just `pnpm add` this, check that the Foundation
+has settled how those apps are licensed — a download is not a license boundary. And the
+permissive files are gone rather than kept alongside: `LICENSE-MIT` and `LICENSE-APACHE` were deleted,
+so there is no second option to fall back on and no dual grant anywhere. Anything still offering a
+choice of license is stale and should be fixed.
 
 The trademark is not licensed with the code. The Neon Law and Neon Law Foundation names and logos stay
 ours; the components do not.
@@ -178,9 +189,11 @@ This was GORP Serif until the last change before the first public release. Those
 <https://trashtype.com/legal> — readable out of the
 binaries with `fontTools`, and stated nowhere in the repository, which is how it survived this long.
 Two problems, both live the moment the repository went public: `files: ["dist"]` plus the `@font-face`
-rules meant **the build shipped them and every consumer redistributed them too**, and `LICENSE.md`
-granted everyone MIT-or-Apache rights over "this software" while `LICENSE-MIT` reads `Copyright (c)
-2026 Neon Law Foundation`, purporting to license files the Foundation does not own. Commercial
+rules meant **the build shipped them and every consumer redistributed them too**, and the license file
+of the day granted everyone MIT-or-Apache rights over "this software" under a
+`Copyright (c) 2026 Neon Law Foundation` line, purporting to license files the Foundation does not
+own. The same trap exists under the AGPL and is worse, because the AGPL is the more sweeping
+grant — scope it, do not widen it. Commercial
 webfont licences are typically domain- or pageview-limited and forbid redistribution outright; a
 public repository plus a public package is redistribution twice over.
 
@@ -226,11 +239,20 @@ gets. Drop GORP from the stack before you judge how a release looks:
 document.documentElement.style.setProperty('--nav-font-family', '"Source Serif 4", Georgia, serif')
 ```
 
-`LICENSE.md` carries a **Third-party material** section scoping the grant to what the Foundation owns
-and pointing at `THIRD-PARTY-NOTICES.md` for everything else. Keep the two in step: a notice added to
-one and not the other is how a licence file starts describing a package that no longer exists. The
-section names the categories — the OFL typeface, the two MIT sources — rather than enumerating files,
-so adding a third MIT dependency means editing the notices file and nothing else.
+**`LICENSE` is the license and nothing else, so the scoping prose moved.** It is the FSF's verbatim
+AGPL-3.0 text with nothing added and nothing removed — that is what makes it detectable as AGPL by
+GitHub, npm, and every license scanner a consumer's legal review runs, and a prepended Foundation
+header is exactly what breaks that. The copyright notice, the **Third-party material** scoping, and
+the trademark note therefore live in the README's `## License` section, which ships in `files` beside
+it. Keep that section and `THIRD-PARTY-NOTICES.md` in step: a notice added to one and not the other is
+how a license story starts describing a package that no longer exists. Both name the categories — the
+OFL typeface, the two MIT sources — rather than enumerating files, so adding a third MIT dependency
+means editing the notices file and nothing else.
+
+The font is the one piece the AGPL must not swallow. The OFL requires the font software to stay
+entirely under the OFL and forbids releasing it under another license, so the two woff2 files are not
+AGPL, and both the README and the notices file say so. Declaring the whole tree AGPL would be a
+licence violation dressed up as a simplification.
 
 **Specimen data is invented, and that now includes the tests.** The gallery already had this rule.
 The test suite did not, and carried a real client name, a real matter path, and a real case caption
@@ -251,13 +273,15 @@ comment needs to name a specific matter or client to make sense, that is a sign 
 in the application repository, not here.
 
 **American spelling, including in comments.** `color`, not `colour`. The one deliberate exception is
-`LICENSE.md`, which is an operative legal instrument rather than prose about the code and keeps the
-firm's spelling and phrasing.
+`LICENSE`, and it is no longer a matter of house style: the file is the FSF's own document, and its
+spelling, its line breaks, and its every word are not ours to touch. The AGPL permits copying it
+verbatim and nothing else. A typo fix in it is a licence violation, not a typo fix.
 
-It is edited only at the Foundation's direction, and it has been edited once: the **Third-party
-material** section was added before the first public release. Treat that as the pattern rather than as
-permission — tightening a sentence in it because it reads oddly is not a refactor anyone here gets to
-make on their own.
+`LICENSE` is replaced only at the Foundation's direction, and it has been replaced once — the
+dual MIT-or-Apache-2.0 pair became AGPL-3.0-only, and `LICENSE-MIT`, `LICENSE-APACHE`, and the old
+`LICENSE.md` wrapper went with it. Treat that as the pattern rather than as permission: choosing a
+license is the Foundation's call, and the prose *about* the license — the README's `## License`
+section — is the part anyone here may edit for clarity.
 
 **The gallery imports `src`, not `dist`.** `gallery/` is the specimen page, served by
 `pnpm gallery` on :5174. Importing source is what stops it drifting from the library — a specimen page
@@ -362,9 +386,9 @@ tag. The upload step is idempotent — it clobbers an existing asset rather than
 a release job is safe.
 
 **Why not the git URL, which is the obvious thing to reach for.** `dist` is gitignored and `files`
-ships only `dist` and the license files, so `pnpm add github:neon-law-foundation/navigator-ux` resolves
-in about a second, reports success, and installs a package with no code in it — licenses, README,
-manifest. The consumer's build then fails with `Cannot find module …/dist/index.js`, pointing into
+ships only `dist` and the notices, so `pnpm add github:neon-law-foundation/navigator-ux` resolves
+in about a second, reports success, and installs a package with no code in it — `LICENSE`, the
+third-party notices, README, manifest. The consumer's build then fails with `Cannot find module …/dist/index.js`, pointing into
 `node_modules` rather than at anything they did. A `prepare` script is not the fix: pnpm refuses to run
 build scripts for a git-hosted dependency unless the consumer allowlists it in `pnpm-workspace.yaml`
 under a key containing the resolved commit SHA, which changes on every bump. Do not re-litigate this
