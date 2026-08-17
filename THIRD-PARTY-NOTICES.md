@@ -1,14 +1,22 @@
 # Third-party notices
 
-Navigator UX is dual-licensed MIT OR Apache-2.0 (see [LICENSE.md](./LICENSE.md)). That grant covers
-the work the Neon Law Foundation owns. It does not cover the third-party material listed here, which
-carries its own terms and its own copyright holders.
+Navigator UX is licensed AGPL-3.0-only (see [LICENSE](./LICENSE)). That grant covers the work the Neon
+Law Foundation owns. It does not cover the third-party material listed here, which carries its own
+terms and its own copyright holders.
 
 Two of the notices below are MIT and one is the SIL Open Font License. All three permit reuse, and all
 three **require the copyright and permission notice to travel with the work**. That is what this file
 is for — a code comment naming the source is courtesy, not compliance. The font notice travels twice:
 the build also copies `OFL.txt` into `dist` beside the woff2 files, because consumers receive `dist`
 and never see this file.
+
+The two MIT sources present no tension with the AGPL: MIT is permissive, so MIT-derived work can be
+distributed as part of an AGPL whole, and the notices below are what that costs. **The typeface is
+different.** The OFL requires the font software to be distributed entirely under the OFL and forbids
+releasing it under any other license, so the woff2 files under
+`src/assets/fonts/source-serif-4/` are **not** AGPL and the project's grant does not reach them. That
+is a scoping fact rather than a conflict — the OFL governs the font, the AGPL governs the code, and
+neither has anything to say about the other. Do not "simplify" this by declaring the whole tree AGPL.
 
 ---
 
