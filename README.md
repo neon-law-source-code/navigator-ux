@@ -8,11 +8,24 @@ Dual-licensed under [MIT](./LICENSE-MIT) or [Apache-2.0](./LICENSE-APACHE), at y
 
 ## Install
 
+Each release is a tarball attached to its
+[GitHub Release](https://github.com/neon-law-foundation/navigator-ux/releases). Install from the
+download URL — no registry account, no token, and no `.npmrc`:
+
 ```bash
-pnpm add @neon-law-foundation/navigator-ux
+pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.1.0/navigator-ux-v0.1.0.tgz
 ```
 
 React 19 is a peer dependency. There are no others.
+
+The URL pins one exact version, so upgrading is an edit to the URL rather than a range that widens on
+its own. See [docs/consuming-the-library.md](./docs/consuming-the-library.md) for the dependency form
+this records and how to move between versions.
+
+> **Do not install from the repository's git URL.** `dist` is not committed and there is no `prepare`
+> script, so `pnpm add github:neon-law-foundation/navigator-ux` resolves, reports success, and leaves
+> you a package containing the licenses and the README and no code at all. The failure surfaces later,
+> as `Cannot find module …/dist/index.js` at your first import.
 
 ## Use
 
@@ -291,18 +304,28 @@ should not be the one place that models bad habits.
 
 ## Releasing
 
-CI publishes on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump
-the version in `package.json`, merge, then tag:
+CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump the
+version in `package.json`, merge, then tag:
 
 ```bash
 git tag -s v0.1.0 -m "navigator-ux 0.1.0"
 git push origin v0.1.0
 ```
 
-Publishing needs an `NPM_TOKEN` repository secret with publish rights on the
-`@neon-law-foundation` scope. The workflow requests `id-token: write` so npm can attach build
-provenance linking the tarball back to the commit that produced it — which requires the repository to
-be public.
+The tag and `package.json` have to agree. CI asserts it before anything else runs and fails the
+release if they differ, because nothing else would catch the mismatch: the tarball is named from the
+manifest regardless of the tag it was built from, so tagging `v0.2.0` without bumping would attach a
+`0.1.0` tarball to a release called `v0.2.0`.
+
+The release job then builds, runs `pnpm pack`, and attaches the tarball to the GitHub Release for the
+tag. That tarball is the distribution channel; the filename is pinned rather than derived, because
+consumers paste the URL into a manifest by hand.
+
+Publishing to npmjs.com as well is wired but inert: the step skips unless an `NPM_TOKEN` repository
+secret with publish rights on the `@neon-law-foundation` scope exists. Add the secret and tagged
+releases start publishing to the registry in addition to attaching the tarball. The workflow requests
+`id-token: write` so npm can attach build provenance linking the tarball back to the commit that
+produced it — which requires the repository to be public.
 
 ## Contributing
 
