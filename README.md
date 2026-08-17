@@ -1,0 +1,324 @@
+# @neon-law-foundation/navigator-ux
+
+A React component library on the Neon Law teal, from the Neon Law Foundation. No Tailwind, no Radix,
+**no runtime dependencies** — every component is built on the platform primitive that already carries
+its semantics, and every color resolves through a CSS custom property you can override in one file.
+
+Dual-licensed under [MIT](./LICENSE-MIT) or [Apache-2.0](./LICENSE-APACHE), at your option.
+
+## Install
+
+```bash
+pnpm add @neon-law-foundation/navigator-ux
+```
+
+React 19 is a peer dependency. There are no others.
+
+## Use
+
+Import the stylesheet once, at your app entry:
+
+```tsx
+import '@neon-law-foundation/navigator-ux/styles.css'
+
+import { PublicShell, SiteHeader, SiteFooter, PageHeader, Card } from '@neon-law-foundation/navigator-ux'
+
+export function App() {
+  return (
+    <PublicShell
+      header={<SiteHeader brand="Your Org" links={[{ label: 'Team', href: '/team' }]} />}
+      footer={<SiteFooter legal={<p>© 2026 Your Org</p>} />}
+    >
+      <PageHeader title="Matters" />
+      <Card header="Recommended" highlighted>…</Card>
+    </PublicShell>
+  )
+}
+```
+
+That stylesheet carries the fonts, the tokens, and every component rule. Nothing else is required and
+nothing is fetched at runtime.
+
+`ThemeProvider` is **optional** and sets no styling — see *Color scheme* below. An app served behind
+the Navigator gateway also wraps in `SessionProvider`; a static bundle omits it.
+
+## The three token layers
+
+Three stylesheets carry the whole system, and the split is the point: swapping the middle layer
+restyles everything and touches no component.
+
+| Layer | What it is | Who owns it |
+| --- | --- | --- |
+| 1 | The `--nav-*` contract at `:root`, and the Neon Law teal behind it. | The library — `src/styles/tokens.css`. |
+| 2 | A brand override at `:root:root`. **None ships.** | You. |
+| 3 | Every component rule, reading `var(--nav-*)` and never a literal color. | The library — `src/styles/theme.css`. |
+
+The library ships one identity. If you want your own, layer 2 is a stylesheet you write and import
+after ours — there is no build step, no config, and no fork:
+
+```css
+/* your-brand.css, imported after the library stylesheet */
+:root:root {
+  --nav-color-primary: #6d28d9;
+  --nav-color-primary-hover: #5b21b6;
+  --nav-color-primary-active: #4c1d95;
+  --nav-color-on-primary: #ffffff;
+  --nav-color-on-brand: #ffffff;
+  --nav-color-link: #6d28d9;
+  --nav-color-link-hover: #4c1d95;
+  --nav-color-surface-subtle: #ede9fe;
+  --nav-color-focus: #6d28d9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:root {
+    /* A ramp that reads on white will not read on a near-black ground.
+       Primary climbs to a lighter stop; its ink drops to a darker one. */
+    --nav-color-primary: #c4b5fd;
+    --nav-color-on-primary: #2e1065;
+    /* …and the rest */
+  }
+}
+```
+
+Three rules make this work, and `gallery/brand-example-tokens.css` is a complete, commented template:
+
+1. **`:root:root`, not `:root`.** Specificity is what makes a brand layer win, not source order. A
+   layer that depends on arriving last silently loses the day something is injected after it. It is a
+   doubled selector rather than `!important` so you keep the option of overriding again.
+2. **Move the aliases, not the ground.** Surfaces, borders, text, radii, and the status colors stay
+   single-sourced, so every brand inherits the same contrast work and geometry. Needing your own
+   `--nav-color-border` is a design decision worth arguing for, not a default.
+3. **Redeclare in dark too.** Skipping the dark block is how a brand ends up invisible in exactly one
+   scheme.
+
+`pnpm check:tokens` fails on any literal color outside layer 1 — including a *named* one, which is
+why `FeedAccent` is `'brand' | 'link' | 'danger'` and not `'blue' | 'red'`.
+
+## Color and contrast
+
+Every pairing the palette defines carries a measured WCAG ratio, and `pnpm check:contrast` recomputes
+all 88 of them from `tokens.css` on every CI run. A ratio nobody can verify by eye is a ratio that
+drifts: the first run of that gate found two status colors that had never cleared AA in any release.
+
+The neutrals are tinted, not grey. They carry a trace of the same teal, so a card, its border, and
+the button on it look designed together rather than assembled. If you swap layer 2 for a brand of a
+different hue, the ground stays teal-tinted — override `--nav-color-*` surfaces too if that reads
+wrong to you, but measure it.
+
+## Color scheme
+
+The scheme follows the operating system. There is no toggle, no stored choice, and no `data-theme`
+attribute — `tokens.css` does all of it inside `@media (prefers-color-scheme: dark)`.
+
+That buys three things: the media query resolves before first paint, so there is no flash and no need
+for a pre-paint inline script; there is no stored state to disagree with the OS after the reader
+changes it; and an app under a strict CSP needs no exception.
+
+`ThemeProvider` therefore owns no styling. It exists so a component can *branch* on the scheme where
+CSS cannot express the difference — picking a light or dark raster asset, say. `useTheme()` works
+without it, reading the media query directly. Anything expressible in CSS should be a token.
+
+## What's in it
+
+The public surface:
+
+| Area | Components |
+| --- | --- |
+| Surfaces | `Card`, `PricingCard`, `PricingGrid`, `TestimonialCard`, `TestimonialGrid`, `TestimonialSection` |
+| Feedback | `Toast`, `Flash`, `Alert`, `LegalDisclaimer`, `ImpersonationBanner` |
+| Data | `DataTable`, `Pagination`, `RowActions`, `ConfirmDelete` |
+| Forms | `FormCard`, `TextField`, `SelectField`, `TextareaField`, `CheckboxField`, `RadioGroup`, `PeopleList` |
+| Chrome | `PublicShell`, `SiteHeader`, `SiteFooter`, `NavigatorShell`, `NavigatorNavbar`, `NavigatorFooter`, `PageHeader` |
+| Navigation | `Breadcrumb`, `ExternalLink`, `NavButton`, `NavLinkButton`, `NavBadge` |
+| Prose | `Prose`, `Runs` |
+| Icons | `Icon`, `ICON_NAMES` |
+
+The shadcn-derived set:
+
+| Area | Components |
+| --- | --- |
+| Disclosure | `Accordion`, `Collapsible` |
+| Tabs | `LinkTabs`, `Tabs` |
+| Display | `Separator`, `Avatar`, `Skeleton`, `Progress`, `AspectRatio` |
+| Controls | `Switch`, `ToggleGroup`, `Combobox` |
+| Overlays | `Dialog`, `Sheet`, `Popover`, `DropdownMenu`, `Tooltip` |
+| Notifications | `Toaster`, `useToasts` |
+
+Each is shadcn/ui's component — its semantics, its ARIA, its keyboard contract — rebuilt on the
+platform primitive that already carries them and styled in the same `--nav-*` vocabulary. That is not
+minimalism for its own sake; each primitive brings something a JS reimplementation cannot:
+
+| Component | Built on | Instead of |
+| --- | --- | --- |
+| `Accordion` | `<details>`/`<summary>` | Radix reimplementing state, ARIA, and keys in JS — and losing in-page find, so Ctrl+F cannot open a collapsed section |
+| `Dialog`, `Sheet`, `ConfirmDelete` | `<dialog>` | A hand-rolled modal that gets the focus trap, the top layer, the inertness, and Esc wrong in four separate ways |
+| `Switch` | checkbox + `role="switch"` | A `<button>` that does not post, does not autofill, and needs JS |
+| `Combobox` | `<input list>` + `<datalist>` | Popover + Command + a virtualized list, ~300 lines and three packages, that stops working when JS fails |
+| `AspectRatio` | CSS `aspect-ratio` | The padding-top percentage trick in a Radix wrapper |
+| `LinkTabs` | anchors + `?tab=` | Client state only — Radix Tabs cannot be bookmarked, refreshed, or opened in a new tab |
+
+`Popover`, `DropdownMenu`, and `Tooltip` are the exception: no platform primitive covers them, so they
+share one `useDismissible` hook rather than three hand-rolled copies. Esc closes, an outside click
+closes, focus returns to the trigger, and the trigger reports its own state. Reach for Radix only when
+you can name what the platform is missing.
+
+The matter surfaces, on the same tokens:
+
+| Area | Components |
+| --- | --- |
+| Chrome | `CaseNav`, `Shell`, `CaseHead`, `Layout`, `Stack`, `ReviewNav` |
+| Primitives | `Panel`, `Badge`, `Button`, `LinkButton`, `ButtonRow`, `Callout` |
+| Review | `Decision`, `DecisionGrid`, `DraftCard`, `AuthorityList`, `AuthorityDialog` |
+| Record | `SourceThread`, `ClaimTable`, `FactGrid`, `DownloadGrid`, `ActionList`, `Record`, `StatusStrip` |
+| Platform | `ThemeProvider`/`useTheme`, `SessionProvider`/`useSession` |
+
+## The three contracts
+
+Every component obeys all three. Each is enforced, not just documented — a boundary that lives only
+in a document erodes on the first deadline.
+
+1. **The leaf rule.** A themed component imports no application module: no router, no session, no
+   application state, no data access. It takes data and callbacks as props.
+2. **Injected links.** A navigable component takes an `href` and renders a plain anchor. Nothing
+   imports a router. A client that wants client-side navigation supplies it at the call site — which
+   is what lets these render a server-only page that ships no hydration bundle.
+3. **Brand tokens.** Components emit semantic class names, and every color resolves through a
+   `--nav-*` custom property. Enforced by `pnpm check:tokens`.
+
+## Typography
+
+One family, self-hosted, two weights at 400 and 700. There is no medium and no semibold, so
+weight-based hierarchy is binary and everything else is size and color. `pnpm check:type` fails on any
+other weight — the rule was documented for a year while forty-one rules quietly asked for a
+synthesized 600 or 800, which is why it is now a gate.
+
+**We recommend GORP Serif, and we do not ship it.** GORP is the face this library was designed on and
+the one Neon Law uses; it is a commercial typeface from [TrashType](https://trashtype.com/), and
+buying a licence is the way to get it. It is not the Foundation's to redistribute, and an open-source
+npm package would hand its binaries to everyone who runs `pnpm add` — so it is not in this repository,
+not in `dist`, and not in the git history.
+
+What ships instead is **Source Serif 4**, under the SIL Open Font License, vendored as two
+latin-subset woff2 files totalling 44 KB. It is a genuine typeface rather than a placeholder, and if
+you never think about this section again the library looks finished.
+
+If you do license GORP, wiring it up is one stylesheet and no fork. `--nav-font-family` already names
+it first, so declaring the `@font-face` is the whole of it:
+
+```css
+/* your-fonts.css, imported after the library stylesheet */
+@font-face {
+  font-family: 'GORP Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/GORPSerif-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GORP Serif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/GORPSerif-Bold.woff2') format('woff2');
+}
+```
+
+Serve the files from your own origin, as your licence almost certainly requires and as the bundle gate
+below assumes. Any other face works the same way — override `--nav-font-family` in your brand layer.
+
+One thing to know before you do. The matter surfaces set `font-variant-numeric: tabular-nums` so that
+columns of currency line up, and that property is inert in a face with no `tnum` feature — it fails
+silently, leaving the column ragged with nothing to report it. Source Serif 4 carries `tnum` and
+`pnum` in both shipped weights. **GORP does not carry `tnum` at all**, in any weight, so a docket or a
+table of figures will not align under it. That is a property of the typeface rather than of this
+library, and it is the one thing you give up by using the recommended face.
+
+The woff2 files are vendored and emitted beside the stylesheet; nothing is fetched from a CDN, and a
+CDN would not be an option — a remote font in a library that loads on every page of an authenticated
+portal is a third party watching every one of them. `pnpm check:bundle` fails the build on any
+off-origin reference in `dist`.
+
+## Authentication
+
+Components never verify a JWT. They read an already-verified session and render. The Pingora gateway
+in front of each app validates the Navigator `navigator_session` token and exposes the verified claims
+at `/__session`; `SessionProvider` reads that endpoint, counts the 8-hour expiry down, and warns
+before it lapses. See [docs/gateway.md](./docs/gateway.md).
+
+A component that validated its own token would be trusting a value the reader controls.
+
+## Develop
+
+The repository *is* the package — `src/` at the root, no workspace, no `packages/` directory. Clone it
+and every command runs from where you are.
+
+```bash
+pnpm install
+pnpm gallery            # every component on one page at :5174, from src
+pnpm check              # what CI runs
+```
+
+`pnpm check` is lint, four source gates, the build, typecheck, the bundle gate, and tests with
+coverage:
+
+| Gate | Fails on |
+| --- | --- |
+| `pnpm lint` | oxlint errors. Warnings do not fail; the expected count is three. |
+| `pnpm check:tokens` | Any literal color outside the token layer — including a named one. |
+| `pnpm check:type` | A font weight that is not 400 or 700, or a radius that is neither a token nor geometry. |
+| `pnpm check:contrast` | Any palette pairing under its WCAG floor, recomputed from `tokens.css`. |
+| `pnpm check:bundle` | Any off-origin reference in `dist`. Runs after the build, where a remote URL would appear. |
+| `pnpm test:coverage` | Coverage under 90% on statements, lines, functions, or branches. |
+
+### The gallery
+
+`pnpm gallery` serves <http://localhost:5174>. Every block on it is the real component, imported from
+`src` rather than `dist`, so a component edit shows up without a build and the page cannot drift from
+the library the way a hand-written specimen page does.
+
+It also carries the one control an app does not: a **brand-layer switch**. That is not a theme toggle
+— the color scheme still follows the OS and has no control anywhere. It attaches and detaches
+`gallery/brand-example-tokens.css`, which is the only way to see the claim the three-layer split
+makes: the same components, re-toned, with no component touched. The brand swatches repaint; the
+shared tokens beside them do not move.
+
+The gallery is a dev server, not a build target, and has its own `vite.gallery.config.ts` because
+`vite.config.ts` is a library build — one config trying to be both would emit the gallery into `dist`
+and ship it to every consumer. It is typechecked, linted, and covered by the token gate: the gallery
+should not be the one place that models bad habits.
+
+## Releasing
+
+CI publishes on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump
+the version in `package.json`, merge, then tag:
+
+```bash
+git tag -s v0.1.0 -m "navigator-ux 0.1.0"
+git push origin v0.1.0
+```
+
+Publishing needs an `NPM_TOKEN` repository secret with publish rights on the
+`@neon-law-foundation` scope. The workflow requests `id-token: write` so npm can attach build
+provenance linking the tarball back to the commit that produced it — which requires the repository to
+be public.
+
+## Contributing
+
+Issues and pull requests are welcome. Two things worth knowing before you open one:
+
+- **Run `pnpm check`.** It is exactly what CI runs, and the gates are cheap to trip — a named color
+  in a component or a `font-weight: 600` will fail the build.
+- **Contributions are dual-licensed** under MIT and Apache-2.0, matching the project, unless you
+  state otherwise. There is no CLA.
+
+The conventions that are not obvious from the code — and the reasons behind them — are in
+[CLAUDE.md](./CLAUDE.md). It is written for coding agents and is just as useful to people.
+
+## License
+
+MIT or Apache-2.0, at your option. See [LICENSE.md](./LICENSE.md).
+
+The license covers the code. It does not grant rights in the Neon Law or Neon Law Foundation names or
+logos.

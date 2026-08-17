@@ -1,0 +1,30 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.log
+.DS_Store
+
+# Holds a registry token.
+.npmrc
+
+# No binaries, ever. Git keeps them forever and this repository is public; the
+# two vendored woff2 files under src/assets are the one deliberate exception.
+*.pdf
+*.docx
+
+# Agent worktrees. These hold whole checkouts of other branches, so anything
+# that globs from the repository root will find a second copy of the source
+# unless it is told not to — see `test.include` in vite.config.ts.
+.claude/worktrees/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+coverage/
+
+# The gallery is a dev server, not a build target. `build:gallery` output is
+# for a local static preview only and is never published.
+gallery-dist/

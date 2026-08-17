@@ -1,0 +1,236 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+# A superseded run on the same branch has nothing left to tell us.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default every job to read-only; the one job that needs more
+# (enable-automerge) requests write at the job level, so lint and verify never
+# run with it.
+permissions:
+  contents: read
+
+jobs:
+  # Fast and dependency-light, so a style problem reports in seconds rather
+  # than behind a full build.
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+      # Source-level and dependency-free, so it belongs with lint rather than
+      # behind a build: no literal color outside the token layer.
+      - run: pnpm check:tokens
+
+      # Its sibling, on the same terms: the two weights the typeface actually
+      # has, and no corner radius written as a literal. Both drifted while
+      # `matter.css` was monospace, where a synthesized 800 is indistinguishable
+      # from a real one.
+      - run: pnpm check:type
+
+      # The third of the source-level gates: every contrast ratio the palette
+      # claims, recomputed from tokens.css. The comments stating those ratios
+      # were written by hand and could not be checked by eye — the first run of
+      # this gate found two status colors that had never cleared AA.
+      - run: pnpm check:contrast
+
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Build before typecheck. Nothing in this repository consumes the built
+      # dist, so the order is not load-bearing here — it is kept because it is
+      # load-bearing in a consuming app, which resolves the package through its
+      # dist and fails with "cannot find module" if typecheck runs first. Same
+      # command meaning the same thing in both places is worth one wasted
+      # ordering constraint.
+      - run: pnpm build
+      - run: pnpm typecheck
+
+      # Nothing in the built bundle may reach off-origin — no CDN, no remote
+      # font, no icon package fetched at runtime. Runs against dist, so it has
+      # to follow the build.
+      - run: pnpm check:bundle
+
+      # Fails the build below 90% statements, lines, functions, or branches.
+      # Thresholds live in vite.config.ts.
+      - run: pnpm test:coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 14
+
+  # Turn on GitHub auto-merge on open / ready-for-review AND on every push
+  # (`synchronize`). Auto-merge squash-merges the PR the moment `verify` is
+  # green and every review thread is resolved — no manual "Merge when ready".
+  # The step is idempotent (it exits early when auto-merge is already on), so
+  # re-running on every push is a harmless no-op that also re-arms auto-merge
+  # if a push cleared it. To hold a ready PR, convert it to draft (the
+  # `draft == false` guard skips drafts), not by disabling auto-merge.
+  #
+  # Arming only *requests* the merge; GitHub still holds the PR until the
+  # required `verify` check passes. That required check is also what makes
+  # arming possible at all: with nothing required, the mutation is refused with
+  # "Pull request is in unstable status" because auto-merge has nothing to wait
+  # on. The fork guard skips PRs from forks, whose GITHUB_TOKEN is read-only.
+  #
+  # This uses GITHUB_TOKEN. A GitHub App token would give a stable bot
+  # identity, but that path is inert until AUTOMERGE_APP_ID and
+  # AUTOMERGE_APP_PRIVATE_KEY exist as Actions secrets, and this repository has
+  # none.
+  enable-automerge:
+    name: enable PR auto-merge
+    # Only this job needs write; lint and verify stay contents:read (above).
+    # enablePullRequestAutoMerge requires contents:write — pull-requests:write
+    # alone returns "Resource not accessible by integration".
+    permissions:
+      contents: write
+      pull-requests: write
+    if: >
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'ready_for_review' || github.event.action == 'synchronize') &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: request auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          # Derive the API host from the run itself rather than letting `gh`
+          # default to github.com. That default is correct today and was not
+          # when this repository lived on GitHub Enterprise Cloud with data
+          # residency, where an Actions token sent to api.github.com came back
+          # "Bad credentials" (HTTP 401) rather than a permissions error. Two
+          # lines to keep the block portable is cheaper than rediscovering that.
+          GH_HOST="${GITHUB_SERVER_URL#https://}"
+          export GH_HOST
+          auto_merge_enabled="$(
+              gh pr view "${PR_URL}" \
+                  --json autoMergeRequest \
+                  --jq '.autoMergeRequest != null'
+          )"
+          if [ "${auto_merge_enabled}" = "true" ]; then
+              echo "auto-merge already enabled; nothing to do."
+              exit 0
+          fi
+          # Enable auto-merge via the GraphQL mutation rather than
+          # `gh pr merge --auto`: a current `gh pr merge --auto` (no method)
+          # hard-errors non-interactively ("--merge, --rebase, or --squash
+          # required"). `enablePullRequestAutoMerge` needs an explicit
+          # `mergeMethod` — omitting it defaults to MERGE, which the production
+          # ruleset disallows ("Merge method merge commits are not allowed").
+          # SQUASH is the only allowed method, so it is accepted.
+          pr_id="$(gh pr view "${PR_URL}" --json id --jq '.id')"
+          # A PR that edits any `.github/workflows/*` file cannot be
+          # auto-merged by an Actions token: it deliberately lacks the
+          # `workflows` permission, so GitHub refuses the mutation with a
+          # "refusing to allow a GitHub App to create or update workflow ...
+          # without `workflows` permission" error. That is expected and
+          # unfixable from CI (such PRs are armed or merged by hand), so treat
+          # only that refusal as a soft pass; any other failure is real.
+          if ! result="$(gh api graphql -f pr="${pr_id}" -f query='
+              mutation($pr: ID!) {
+                enablePullRequestAutoMerge(input: { pullRequestId: $pr, mergeMethod: SQUASH }) {
+                  pullRequest { number }
+                }
+              }' 2>&1)"; then
+              if printf '%s' "${result}" | grep -q 'refusing to allow a GitHub App to create or update workflow'; then
+                  echo "PR edits workflow files; the Actions token cannot enable auto-merge (it lacks the workflows permission). Arm or merge this PR manually."
+                  printf '%s\n' "${result}"
+                  exit 0
+              fi
+              printf '%s\n' "${result}" >&2
+              exit 1
+          fi
+          printf '%s\n' "${result}"
+
+  publish:
+    needs: [lint, verify]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Provenance is signed with a short-lived OIDC token minted for this run,
+      # which is what lets npm show the "Built and signed on GitHub Actions"
+      # badge and link the tarball back to this commit. It needs id-token:write
+      # and nothing else; the publish itself authenticates with NPM_TOKEN.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          registry-url: https://registry.npmjs.org/
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # `--access public` is stated rather than left to publishConfig because
+      # the first publish of a *scoped* package defaults to restricted, and a
+      # restricted package on the public registry fails every consumer's
+      # install with a 404 that reads like a typo. It is idempotent after that.
+      - run: pnpm publish --access public --provenance --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # The single required status check. It runs nothing itself: the jobs above do
+  # the work and this one reports their combined result under one context name
+  # that never has to move.
+  #
+  # A required status check is matched by string, so renaming a working job
+  # renames its check run while the ruleset goes on waiting for the old
+  # spelling. Nothing turns red; pull requests simply sit forever on a check
+  # that will never arrive. The gate therefore terminates in a job spelled
+  # exactly `ci`, leaving the jobs behind it free to be renamed.
+  #
+  # It tests each dependency's result explicitly rather than relying on a bare
+  # `needs:`, because a skipped required check is not a red one: GitHub reports
+  # no result at all, so the gate would quietly stop blocking exactly when the
+  # jobs it guards had failed.
+  ci:
+    name: ci
+    needs: [lint, verify]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: report the gate result
+        env:
+          LINT_RESULT: ${{ needs.lint.result }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+        run: |
+          set -euo pipefail
+          echo "lint: ${LINT_RESULT}"
+          echo "verify: ${VERIFY_RESULT}"
+          if [ "${LINT_RESULT}" != "success" ] || [ "${VERIFY_RESULT}" != "success" ]; then
+              echo "::error::the merge gate is red"
+              exit 1
+          fi

@@ -1,0 +1,1399 @@
+/*
+ * Matter-surface styles — the review, authority, and feed surfaces that have no
+ * counterpart in the shared design system.
+ *
+ * These rules were lifted from the hand-authored matter pages in the legacy
+ * static site (the per-matter case-status and workroom stylesheets). They have
+ * since been re-pointed at the `--nav-*` contract: every color that used to be
+ * a literal or a legacy `--ink`/`--line` token now resolves through the shared
+ * layer, so these surfaces re-tone with the brand and invert in dark alongside
+ * everything else.
+ *
+ * That re-pointing is a visual change, and deliberately so. The old palette was
+ * a separate design system that happened to live in the same package — a slate
+ * navy nav bar and a blue-gray ground that no Neon Law page has ever worn. A
+ * portal that mixes the two reads as two applications.
+ *
+ * The type is now re-pointed the same way, and for the same reason. These rules
+ * used to set `--nav-font-mono` in seventeen places: the nav, every badge and
+ * kicker, table headers, the docket line, feed dates. That was the legacy site's
+ * voice, not the library's, and it made a matter surface read as a different
+ * application from the page that linked to it. They all take
+ * `--nav-font-family` now.
+ *
+ * Weights went with it. The library vendors 400 and 700 and nothing else — see
+ * `fonts.css` — so the `800`s and `600`s these rules asked for were resolving to
+ * a synthesized face that matches nothing else on the page. Every weight here is
+ * now one of the two that exist. A rule that wants "bolder than bold" does not
+ * have that option and should change size or color instead.
+ *
+ * Loaded by `theme.css`, after the token layer.
+ */
+
+/* ------------------------------------------------------------- figures -- */
+
+/* Figures that sit in columns keep a fixed width.
+ *
+ * A column of currency stops lining up the moment the face is not monospace and
+ * its figures vary in width — `1` narrower than `0` and the decimal points no
+ * longer stacking. `tabular-nums` asks the face for its fixed-width figures,
+ * which is the property the old `--nav-font-mono` was really being used for in a
+ * table: the alignment, not the typewriter.
+ *
+ * This block is the tabular half of a pair. `theme.css` sets
+ * `proportional-nums` on `html`, so prose reads correctly, and these selectors
+ * take it back where digits are compared against each other. Both halves are
+ * declared because the two faces this library runs on default *opposite* ways —
+ * GORP's figures are proportional out of the box, Source Serif 4's are tabular —
+ * and neither default is something to build on when a consumer chooses the face.
+ *
+ * It is a real dependency on the font rather than a hint: `tabular-nums` is
+ * inert in a face carrying no `tnum` feature, and it fails silently — the
+ * columns simply stop aligning and nothing reports it. Both vendored weights of
+ * Source Serif 4 carry `tnum` and `pnum`. Check for `tnum` before vendoring
+ * anything else.
+ *
+ * That is not hypothetical. GORP carries no `tnum` in any of its six weights, so
+ * for as long as it was the shipped face these selectors did nothing at all and
+ * the docket never aligned — the comment above them asserted otherwise for a
+ * year. Source Serif 4 is the first face here the block has actually worked
+ * under, which is an accident of the licence swap rather than a fix anyone set
+ * out to make. It also means a consumer who licenses GORP gets the ragged
+ * column back; that is the typeface's property, not something to work around
+ * here.
+ *
+ * Scoped to where digits are read against each other: the docket, table bodies,
+ * dates on a record or a feed, the status strip's values, and the transcribed
+ * record, whose dollar figures are the substance of the dispute. Prose is left
+ * alone, because proportional figures are correct in a sentence. */
+.docket,
+.work-table,
+.data-table,
+.claim-table,
+.record time,
+.status-value,
+.term-chip,
+.feed-year,
+.feed-date,
+.source-message pre {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- base -- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ----------------------------------------------------------- case nav -- */
+
+.case-nav {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+  box-shadow: var(--nav-shadow);
+}
+
+.case-nav__top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 45px;
+  padding: 6px 18px;
+  border-bottom: 1px solid var(--nav-color-border);
+}
+
+.case-nav__brand {
+  font: 700 12px var(--nav-font-family);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.case-nav__caption {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--nav-color-text-muted);
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.case-nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 5px 14px;
+}
+
+/* The links are `NavLinkButton`s, so `.nav-btn` already carries the corner
+   radius, the typeface, the weight, and the transparent border. What is left
+   here is the bar's own scale — a nav item is smaller and tighter than a button
+   in a page body — and the resting color, which a bare `.nav-btn` does not set.
+
+   Two classes deep on purpose: `.nav-btn--primary` is one, so the compact
+   padding below wins over the variant's roomier padding and the emphasized item
+   stays the same height as its neighbors. */
+.case-nav__links .nav-btn {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: var(--nav-color-link);
+  font-size: 10px;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.case-nav__links .nav-btn:hover,
+.case-nav__links .nav-btn:focus-visible,
+.case-nav__links .nav-btn[aria-current="page"] {
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text);
+  outline: none;
+}
+
+/* The emphasized item keeps the primary variant's fill through hover and while
+   it is the current page; the shared rule above would otherwise repaint it as an
+   ordinary raised item and lose the call to action. */
+.case-nav__links .nav-btn--primary,
+.case-nav__links .nav-btn--primary:hover,
+.case-nav__links .nav-btn--primary:focus-visible,
+.case-nav__links .nav-btn--primary[aria-current="page"] {
+  background: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+}
+
+/* --------------------------------------------------- shell + case head -- */
+
+.shell {
+  width: min(1240px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 18px 0 70px;
+}
+
+.case-head {
+  padding: 20px 22px;
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+}
+
+.case-kicker {
+  color: var(--nav-color-link);
+  font: 700 10px var(--nav-font-family);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case-head h1 {
+  margin: 6px 0 3px;
+  font-size: clamp(27px, 4vw, 39px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.docket {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font: 700 12px var(--nav-font-family);
+}
+
+.case-head__summary {
+  max-width: 980px;
+  margin: 14px 0 0;
+  color: var(--nav-color-text);
+  font-size: 16px;
+}
+
+/* --------------------------------------------------------- review nav -- */
+
+.review-nav {
+  position: sticky;
+  top: 80px;
+  z-index: 70;
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  margin-top: 10px;
+  padding: 7px;
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+  box-shadow: var(--nav-shadow);
+}
+
+.review-nav a {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text);
+  font: 700 9px var(--nav-font-family);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.review-nav a:hover,
+.review-nav a:focus-visible {
+  border-color: var(--nav-color-link);
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-link);
+  outline: none;
+}
+
+section[id] {
+  scroll-margin-top: 145px;
+}
+
+/* -------------------------------------------------------- layout bits -- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.stack {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+/* -------------------------------------------------------------- panel -- */
+
+.panel {
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+}
+
+.panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.panel__head h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.panel__head p {
+  margin: 3px 0 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12px;
+}
+
+.panel__body {
+  padding: 15px;
+}
+
+/* -------------------------------------------------------------- badge -- */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 21px;
+  padding: 2px 7px;
+  border: 1px solid var(--nav-color-border);
+  border-radius: 999px;
+  background: var(--nav-color-surface);
+  font: 700 9px var(--nav-font-family);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge.active,
+.badge.ready {
+  border-color: var(--nav-color-success-border);
+  background: var(--nav-color-success-subtle);
+  color: var(--nav-color-on-success-subtle);
+}
+
+.badge.next,
+.badge.review {
+  border-color: var(--nav-color-warning-border);
+  background: var(--nav-color-warning-subtle);
+  color: var(--nav-color-on-warning-subtle);
+}
+
+.badge.blocked {
+  border-color: var(--nav-color-danger-border);
+  background: var(--nav-color-danger-subtle);
+  color: var(--nav-color-on-danger-subtle);
+}
+
+.badge.source {
+  border-color: var(--nav-color-border);
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-link);
+}
+
+/* ------------------------------------------------------------- button -- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 6px 11px;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text);
+  font: 700 10px var(--nav-font-family);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  border-color: var(--nav-color-link);
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-link);
+  outline: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  border-color: var(--nav-color-link);
+  background: var(--nav-color-link);
+  color: var(--nav-color-on-primary);
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-on-primary);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* -------------------------------------------------------------- table -- */
+
+.work-table,
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.work-table th,
+.data-table th {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text-muted);
+  font: 700 9px var(--nav-font-family);
+  letter-spacing: 0.05em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.work-table td,
+.data-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--nav-color-border);
+  vertical-align: top;
+}
+
+.work-table tr:last-child td,
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.work-table a {
+  font-weight: 700;
+}
+
+.work-table p {
+  margin: 3px 0 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12.5px;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.owner {
+  color: var(--nav-color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Term-color row treatments, used by the deal and term-sheet surfaces. */
+.work-table tr.term-agreed > td,
+.data-table tr.term-agreed > td {
+  background: var(--nav-color-success-subtle);
+}
+.work-table tr.term-continuation > td,
+.data-table tr.term-continuation > td {
+  background: var(--nav-color-surface-subtle);
+}
+.work-table tr.term-upside > td,
+.data-table tr.term-upside > td {
+  background: var(--nav-color-surface-subtle);
+}
+.work-table tr.term-equity > td,
+.data-table tr.term-equity > td {
+  background: var(--nav-color-surface-subtle);
+}
+.work-table tr.term-scenario > td,
+.data-table tr.term-scenario > td {
+  background: var(--nav-color-warning-subtle);
+}
+.work-table tr.term-agreed > td:first-child,
+.data-table tr.term-agreed > td:first-child {
+  border-left: 4px solid var(--nav-color-on-success-subtle);
+}
+.work-table tr.term-continuation > td:first-child,
+.data-table tr.term-continuation > td:first-child {
+  border-left: 4px solid var(--nav-color-link);
+}
+.work-table tr.term-upside > td:first-child,
+.data-table tr.term-upside > td:first-child {
+  border-left: 4px solid var(--nav-color-primary);
+}
+.work-table tr.term-equity > td:first-child,
+.data-table tr.term-equity > td:first-child {
+  border-left: 4px solid var(--nav-color-primary);
+}
+.work-table tr.term-scenario > td:first-child,
+.data-table tr.term-scenario > td:first-child {
+  border-left: 4px solid var(--nav-color-on-warning-subtle);
+}
+
+/* --------------------------------------------------------- claim table -- */
+
+.claim-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--nav-color-border);
+}
+
+.claim-table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  background: var(--nav-color-surface);
+}
+
+.claim-table th,
+.claim-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--nav-color-border);
+  font-size: 11.5px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.claim-table th {
+  position: sticky;
+  top: 0;
+  background: var(--nav-color-surface-raised);
+  font: 700 9px var(--nav-font-family);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.claim-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.claim-table td:first-child {
+  color: var(--nav-color-text);
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------- action list -- */
+
+.action-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: actions;
+}
+
+.action-list li {
+  position: relative;
+  padding: 10px 8px 10px 40px;
+  border-bottom: 1px solid var(--nav-color-border);
+  counter-increment: actions;
+}
+
+.action-list li:last-child {
+  border-bottom: 0;
+}
+
+.action-list li::before {
+  content: counter(actions);
+  position: absolute;
+  top: 9px;
+  left: 4px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface);
+  color: var(--nav-color-on-primary);
+  font: 700 10px var(--nav-font-family);
+}
+
+.action-list strong {
+  display: block;
+}
+
+.action-list span {
+  color: var(--nav-color-text-muted);
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------- record -- */
+
+.record {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--nav-color-border);
+}
+
+.record:first-child {
+  padding-top: 0;
+}
+
+.record:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.record time {
+  display: block;
+  color: var(--nav-color-text-muted);
+  font: 700 10px var(--nav-font-family);
+  text-transform: uppercase;
+}
+
+.record h3 {
+  margin: 3px 0;
+  font-size: 14px;
+}
+
+.record p {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12.5px;
+}
+
+/* ----------------------------------------------------------- decision -- */
+
+.decision-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.decision {
+  padding: 13px;
+  border: 1px solid var(--nav-color-border);
+  border-left: 5px solid var(--nav-color-link);
+  background: var(--nav-color-surface);
+}
+
+.decision h2 {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+.decision p {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12.5px;
+}
+
+.decision.ready {
+  border-left-color: var(--nav-color-on-success-subtle);
+}
+
+.decision.wait {
+  border-left-color: var(--nav-color-on-warning-subtle);
+}
+
+.decision.risk {
+  border-left-color: var(--nav-color-on-danger-subtle);
+}
+
+/* --------------------------------------------------------- draft card -- */
+
+.draft-card {
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+}
+
+.draft-card + .draft-card {
+  margin-top: 10px;
+}
+
+.draft-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.draft-meta h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.draft-meta p {
+  margin: 2px 0 0;
+  color: var(--nav-color-text-muted);
+  font-size: 11.5px;
+}
+
+.draft-text {
+  margin: 0;
+  padding: 14px;
+  font: 14px/1.55 var(--nav-font-family);
+  white-space: pre-wrap;
+}
+
+.copy-btn {
+  min-width: 82px;
+}
+
+/* ------------------------------------------------------------ download -- */
+
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.download-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 13px;
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.download-card h3 {
+  margin: 6px 0 3px;
+  font-size: 15px;
+}
+
+.download-card p {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12px;
+}
+
+.download-card .button-row {
+  margin-top: auto;
+  padding-top: 11px;
+}
+
+/* ----------------------------------------------------------- fact grid -- */
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fact-card {
+  padding: 11px;
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.fact-card h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+.fact-card p {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 11.5px;
+}
+
+/* ------------------------------------------------------------- callout -- */
+
+.callout {
+  padding: 13px;
+  border: 1px solid var(--nav-color-border);
+  border-left: 5px solid var(--nav-color-link);
+  background: var(--nav-color-surface-raised);
+}
+
+.callout p {
+  margin: 4px 0 0;
+}
+
+.callout > :first-child {
+  margin-top: 0;
+}
+
+.callout--warning {
+  border-color: var(--nav-color-on-warning-subtle);
+  border-left-color: var(--nav-color-on-warning-subtle);
+  background: var(--nav-color-warning-subtle);
+}
+
+.callout--danger {
+  border-color: var(--nav-color-on-danger-subtle);
+  border-left-color: var(--nav-color-on-danger-subtle);
+  background: var(--nav-color-danger-subtle);
+}
+
+.callout--success {
+  border-color: var(--nav-color-success-border);
+  border-left-color: var(--nav-color-on-success-subtle);
+  background: var(--nav-color-success-subtle);
+}
+
+.callout--success strong {
+  color: var(--nav-color-on-success-subtle);
+}
+
+/* ------------------------------------------------------ source thread -- */
+
+.source-thread {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.source-message {
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.source-message__meta {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 3px 9px;
+  padding: 10px;
+  border-bottom: 1px solid var(--nav-color-border);
+  font-size: 11px;
+}
+
+.source-message__meta dt {
+  color: var(--nav-color-text-muted);
+  font-weight: 700;
+}
+
+.source-message__meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.source-message pre {
+  margin: 0;
+  padding: 12px;
+  font: 12.5px/1.55 var(--nav-font-family);
+  white-space: pre-wrap;
+}
+
+.source-message__attachments {
+  padding: 0 12px 11px;
+  color: var(--nav-color-text-muted);
+  font-size: 11px;
+}
+
+/* ---------------------------------------------------------- authority -- */
+
+.authority {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--nav-color-border);
+}
+
+.authority:last-child {
+  border-bottom: 0;
+}
+
+.authority h3 {
+  margin: 0 0 3px;
+  font-size: 14px;
+}
+
+.authority p {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12.5px;
+}
+
+.authority a {
+  font-weight: 700;
+}
+
+.authority__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.authority__badges {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.authority__open {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nav-color-link);
+  font: 700 14px/1.35 var(--nav-font-family);
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.authority__open:hover,
+.authority__open:focus-visible {
+  color: var(--nav-color-text);
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: 3px;
+}
+
+.authority__open[data-verified="true"]::after {
+  content: "  ✓";
+  color: var(--nav-color-on-success-subtle);
+}
+
+.authority-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  padding: 24px;
+  background: var(--nav-color-scrim);
+  overscroll-behavior: contain;
+}
+
+.authority-dialog[hidden] {
+  display: none;
+}
+
+.authority-dialog__panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(1240px, 96vw);
+  height: min(900px, 94vh);
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+  box-shadow: var(--nav-shadow);
+}
+
+.authority-dialog__bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+}
+
+.authority-dialog__bar strong {
+  display: block;
+  font-size: 14px;
+}
+
+.authority-dialog__bar span {
+  color: var(--nav-color-text-muted);
+  font: 700 10px var(--nav-font-family);
+}
+
+.authority-dialog__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  min-height: 0;
+}
+
+.authority-dialog__viewer {
+  min-width: 0;
+  background: var(--nav-color-surface-raised);
+}
+
+.authority-dialog__viewer iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--nav-color-surface);
+}
+
+.authority-dialog__detail {
+  min-width: 0;
+  overflow: auto;
+  padding: 15px;
+}
+
+.authority-dialog__detail p {
+  margin: 0 0 9px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.authority-dialog__detail blockquote {
+  margin: 11px 0;
+  padding: 11px;
+  border-left: 4px solid var(--nav-color-link);
+  background: var(--nav-color-surface-subtle);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.authority-dialog__caution {
+  padding: 10px;
+  border: 1px solid var(--nav-color-on-warning-subtle);
+  border-left: 4px solid var(--nav-color-on-warning-subtle);
+  background: var(--nav-color-warning-subtle);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.authority-dialog__links,
+.authority-dialog__jumps,
+.authority-dialog__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 11px;
+}
+
+.authority-dialog__nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: 11px;
+  border-top: 1px solid var(--nav-color-border);
+}
+
+/* -------------------------------------------------------- status strip -- */
+
+.status-strip {
+  display: grid;
+  grid-template-columns: 1.25fr 1.15fr 1.15fr 0.8fr;
+  margin-top: 12px;
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+}
+
+.status-cell {
+  min-width: 0;
+  padding: 12px 14px;
+  border-right: 1px solid var(--nav-color-border);
+}
+
+.status-cell:last-child {
+  border-right: 0;
+}
+
+.status-label {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--nav-color-text-muted);
+  font: 700 9px var(--nav-font-family);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.status-value {
+  font-weight: 700;
+}
+
+.status-cell.term-agreed {
+  background: var(--nav-color-success-subtle);
+  box-shadow: inset 0 4px 0 var(--nav-color-on-success-subtle);
+}
+.status-cell.term-continuation {
+  background: var(--nav-color-surface-subtle);
+  box-shadow: inset 0 4px 0 var(--nav-color-link);
+}
+.status-cell.term-upside {
+  background: var(--nav-color-surface-subtle);
+  box-shadow: inset 0 4px 0 var(--nav-color-primary);
+}
+.status-cell.term-equity {
+  background: var(--nav-color-surface-subtle);
+  box-shadow: inset 0 4px 0 var(--nav-color-primary);
+}
+
+/* ---------------------------------------------------------- term chip -- */
+
+.term-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  margin: 0 0 5px;
+  padding: 2px 7px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font: 700 9px var(--nav-font-family);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.term-chip.agreed {
+  background: var(--nav-color-success-subtle);
+  color: var(--nav-color-on-success-subtle);
+}
+.term-chip.continuation {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-link);
+}
+.term-chip.upside {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-primary);
+}
+.term-chip.equity {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-primary);
+}
+.term-chip.scenario {
+  background: var(--nav-color-warning-subtle);
+  color: var(--nav-color-on-warning-subtle);
+}
+
+/* ------------------------------------------------------ session notice -- */
+
+.session-notice {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 6000;
+  max-width: 340px;
+  padding: 12px 14px;
+  border: 1px solid var(--nav-color-on-warning-subtle);
+  border-left: 5px solid var(--nav-color-on-warning-subtle);
+  background: var(--nav-color-warning-subtle);
+  color: var(--nav-color-text);
+  box-shadow: var(--nav-shadow);
+}
+
+.session-notice p {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.session-notice strong {
+  display: block;
+  margin-bottom: 3px;
+  font: 700 10px var(--nav-font-family);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------- responsive -- */
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .review-nav {
+    top: 79px;
+  }
+  .decision-grid,
+  .theme-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .status-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .review-nav {
+    top: 89px;
+  }
+  .decision-grid,
+  .download-grid,
+  .theme-grid,
+  .fact-grid,
+  .status-strip {
+    grid-template-columns: 1fr;
+  }
+  .draft-meta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .copy-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+  .draft-text {
+    font-size: 13px;
+  }
+  .review-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+  }
+  .authority__head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .authority__badges {
+    justify-content: flex-start;
+  }
+  .authority-dialog {
+    padding: 0;
+  }
+  .authority-dialog__panel {
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    border-radius: 0;
+  }
+  .authority-dialog__body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(44vh, 1fr) auto;
+  }
+  .authority-dialog__viewer {
+    min-height: 44vh;
+  }
+  .authority-dialog__detail {
+    max-height: 50vh;
+  }
+  .authority-dialog__nav {
+    grid-template-columns: 1fr;
+  }
+  .authority-dialog__bar .btn,
+  .authority-dialog__nav .btn,
+  .authority-dialog__jumps .btn,
+  .authority-dialog__links .btn {
+    min-height: 44px;
+  }
+  .status-cell {
+    border-right: 0;
+    border-bottom: 1px solid var(--nav-color-border);
+  }
+}
+
+/* --------------------------------------------------------------- feed -- */
+/* New for the timeline surfaces — not lifted from a static page. A single
+   column of event cards on a vertical rail, with year markers where the
+   year changes. Avatars pair each accent's tint with its strong color so
+   contrast holds in both themes. */
+
+.feed {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 30px;
+  max-width: 720px;
+}
+
+.feed::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--nav-color-border);
+}
+
+.feed-year {
+  position: relative;
+  margin: 22px 0 12px;
+  font-family: var(--nav-font-family);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--nav-color-text-muted);
+}
+
+.feed-year::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--nav-color-border);
+  transform: translateY(-50%);
+}
+
+.feed-post {
+  position: relative;
+  background: var(--nav-color-surface);
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-lg);
+  padding: 14px 16px;
+  margin: 0 0 14px;
+}
+
+.feed-post::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 26px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nav-color-primary);
+}
+
+.feed-post__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feed-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--nav-font-family);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid var(--nav-color-border);
+}
+
+/* Accents are named for the token family they draw from, not for a color.
+   The old names (blue, violet, teal…) stopped describing anything once every
+   color resolved through the shared layer: three of the six landed on the same
+   pair, and none of them tracked the brand. These six are visually distinct in
+   both schemes and stay distinct when a brand layer re-tones the palette. */
+.feed-avatar[data-accent='brand'] {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-primary-active);
+}
+.feed-avatar[data-accent='link'] {
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-link);
+}
+.feed-avatar[data-accent='danger'] {
+  background: var(--nav-color-danger-subtle);
+  color: var(--nav-color-on-danger-subtle);
+}
+.feed-avatar[data-accent='success'] {
+  background: var(--nav-color-success-subtle);
+  color: var(--nav-color-on-success-subtle);
+}
+.feed-avatar[data-accent='warning'] {
+  background: var(--nav-color-warning-subtle);
+  color: var(--nav-color-on-warning-subtle);
+}
+.feed-avatar[data-accent='neutral'] {
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text-muted);
+}
+
+.feed-actor {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.feed-role {
+  color: var(--nav-color-text-muted);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.feed-date {
+  margin-left: auto;
+  align-self: flex-start;
+  color: var(--nav-color-text-muted);
+  font-family: var(--nav-font-family);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.feed-title {
+  margin: 10px 0 6px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.feed-kind {
+  margin-left: 8px;
+  vertical-align: 2px;
+}
+
+.feed-body {
+  color: var(--nav-color-text);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.feed-body p {
+  margin: 0;
+}
+
+.feed-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--nav-color-border);
+}
+
+.feed-source-link {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.feed-source-link:hover {
+  text-decoration: underline;
+}

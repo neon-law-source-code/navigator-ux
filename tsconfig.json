@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+    // `vite/client` is what declares the asset-suffix modules — the gallery
+    // imports the brand layer as `...css?url` so it can attach and detach a
+    // <link> at runtime, and without these types that import is TS2307.
+    "types": ["vitest/globals", "vite/client"]
+  },
+  // The gallery is typechecked with everything else — it is the first consumer
+  // of every component, so a broken prop shows up here before it reaches a
+  // portal. It is excluded from the library build by `vite.config.ts`, which
+  // has its own entry, and from coverage by `include: ['src/**']`.
+  //
+  // The two Vite configs are not listed. They are Node programs — they import
+  // `node:path` and read `import.meta.dirname` — and typechecking them here
+  // would mean adding `node` to `types`, which puts `process`, `Buffer`, and
+  // the rest of the Node globals in scope for every component and every
+  // gallery page. Browser code that reaches for a Node global should fail, so
+  // the narrower `types` list is worth leaving two config files unchecked.
+  "include": ["src", "gallery"]
+}

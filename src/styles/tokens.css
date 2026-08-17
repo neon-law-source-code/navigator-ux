@@ -1,0 +1,310 @@
+/* Navigator's reusable design tokens — layer one of three.
+ *
+ *   tokens.css   this file. The `--nav-*` contract at `:root`, and the Neon Law
+ *                teal behind it.
+ *   a brand layer  an app's override, at `:root:root`. None ships; the template
+ *                is `gallery/brand-example-tokens.css`.
+ *   theme.css    every component rule, reading `var(--nav-*)` and never a
+ *                literal color.
+ *
+ * Keep the split. It is what lets one component library wear more than one
+ * identity: swapping the middle layer restyles everything and touches no
+ * component. Collapsing the three into one file is the single refactor that
+ * would quietly destroy the reason the system exists.
+ *
+ * The library ships one identity — the Neon Law teal. It used to be a
+ * transcription of a client's stylesheet, kept byte-for-byte because changing a
+ * value moved live client pages. That constraint is gone: this is the
+ * Foundation's own library now, and the palette is designed here rather than
+ * lifted. What replaces the constraint is arithmetic — every pairing below
+ * carries its measured contrast ratio, and `pnpm check:contrast` recomputes them
+ * from this file and fails the build if one drops under its floor. A comment can
+ * go stale; the gate cannot.
+ *
+ * The teal is the whole surface, not an accent on grey. The neutrals carry a
+ * trace of the same hue, so a page reads as one family rather than as a blue
+ * button dropped on a slate card. That is the single decision this file makes.
+ *
+ * Scheme follows the operating system and nothing else. There is no toggle, no
+ * stored choice, and no `data-theme` attribute, so there is also no pre-paint
+ * script and no flash to design around: the media query is resolved by the
+ * browser before first paint.
+ */
+
+:root {
+  /* Both schemes are supported, so form controls, scrollbars, and the canvas
+     follow the OS rather than staying stubbornly light. */
+  color-scheme: light dark;
+
+  /* GORP Serif is the recommended face and is deliberately not shipped — it is
+     a commercial licence from TrashType, LLC, and this package is public. It is
+     named first anyway: a consumer who buys it and declares its `@font-face`
+     gets it here, with no component touched and no fork. Everyone else falls
+     through to Source Serif 4, which does ship. See `fonts.css`. */
+  --nav-font-family: 'GORP Serif', 'Source Serif 4', Georgia, serif;
+  /* Reserved for quoted identifiers and code — the one place the serif steps
+     aside. */
+  --nav-font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* -------------------------------------------------------- the teal ramp --
+   *
+   * Neon Law's color, and the library's default primary. Hex is written out
+   * rather than left as `oklch()` so the tokens resolve the same everywhere
+   * `color-mix` is not available.
+   *
+   * The five original stops — 400, 500, 600, 700, 950 — keep their exact
+   * values. The rest fill the scale in, so a brand layer, a chart, or an app
+   * that needs a tint has somewhere to reach that is still the identity. The
+   * jump from 400 to 500 is real and deliberate: 400 and below are the neon
+   * end, meant for dark grounds and for fills; 500 and above are the ink end,
+   * meant for text on light. There is no stop in between because a color that
+   * reads on neither ground is not worth a name.
+   *
+   * Contrast, measured against `--nav-color-bg` in each scheme:
+   *   500 on white    4.89:1   600 on white   6.18:1   700 on white   7.88:1
+   *   400 on #071619 10.44:1   950 on 400     8.42:1
+   * Every pairing clears WCAG AA for normal text. The 500 stop is the tightest
+   * at 4.89:1 — it clears the 4.5:1 floor with little headroom, so a surface
+   * that needs more should step down to 600 rather than lighten 500. */
+  --nav-teal-50: #f2fcfd;
+  --nav-teal-100: #ddf6fa;
+  --nav-teal-200: #bfeef5;
+  --nav-teal-300: #8ce2ed;
+  --nav-teal-400: #4dd4e6;
+  --nav-teal-500: #007c91;
+  --nav-teal-600: #006b7d;
+  --nav-teal-700: #005a69;
+  --nav-teal-800: #004855;
+  --nav-teal-900: #003a44;
+  --nav-teal-950: #002c34;
+  --nav-teal-subtle: #eafafc;
+
+  --nav-color-primary: var(--nav-teal-500);
+  --nav-color-primary-hover: var(--nav-teal-600);
+  --nav-color-primary-active: var(--nav-teal-700);
+  --nav-color-on-primary: #ffffff;
+  --nav-color-secondary: #dce8eb;
+  --nav-color-secondary-hover: #c6d9de;
+  --nav-color-on-secondary: #0f2429;
+
+  /* The ink an element sets on a brand-filled surface. It inverts with the
+     scheme — the fill is dark in light mode and light in dark mode — so a
+     filled button cannot end up light-on-light in exactly one scheme. */
+  --nav-color-on-brand: #ffffff;
+
+  --nav-color-link: var(--nav-teal-500);
+  --nav-color-link-hover: var(--nav-teal-700);
+
+  /* ---------------------------------------------------------- the ground --
+   *
+   * Tinted, not neutral. Each of these is the same teal hue at very low
+   * saturation, which is what makes a card, its border, and the button on it
+   * look like they were designed together. A pure-grey ground with a teal
+   * button is the look this deliberately is not.
+   *
+   * Measured: text 16.10:1 on bg, 15.26:1 on raised, 15.01:1 on subtle; muted
+   * 5.91:1 on bg, 5.60:1 on raised, 5.51:1 on subtle. */
+  --nav-color-bg: #ffffff;
+  --nav-color-surface: #ffffff;
+  --nav-color-surface-raised: #f4fafb;
+  --nav-color-surface-subtle: var(--nav-teal-subtle);
+  --nav-color-border: #cfe1e5;
+  --nav-color-text: #0f2429;
+  --nav-color-text-muted: #51686e;
+
+  /* Status as *ink*. Both of these are a stop darker than the Bootstrap values
+     they came from, and the reason is that the originals did not clear AA on
+     anything but pure white. `#dc3545` measured 4.53:1 on `--nav-color-bg` but
+     4.29:1 on `--nav-color-surface-raised` — and a form error is the one
+     message a reader must be able to read, on the raised surface a form sits
+     on. `#198754` had the same problem at 4.30:1. Neither was visible as a bug;
+     both were caught by `check:contrast` the first time it ran.
+     Measured on raised: success 5.57:1, danger 5.07:1. */
+  --nav-color-success: #157347;
+  --nav-color-danger: #d0202f;
+  --nav-color-warning: #ffc107;
+
+  /* ----------------------------------------------------------- the focus --
+   *
+   * One contract, so a keyboard user sees the same ring on every control and a
+   * brand can move it in one place. It defaults to primary and is a separate
+   * token on purpose: a brand whose primary is too close to its own background
+   * can shift the ring without shifting the button.
+   *
+   * Measured 4.89:1 on bg and 4.64:1 on raised, against a 3:1 non-text floor.
+   *
+   * The width and offset are tokens for the same reason the color is: a ring
+   * drawn at a literal `2px` in thirty rules is a ring nobody can thicken. */
+  --nav-color-focus: var(--nav-color-primary);
+  --nav-focus-ring: 0.125rem;
+  --nav-focus-offset: 0.125rem;
+
+  /* Selected text. The identity shows up in a place most systems leave to the
+     browser, and it costs one rule. Ink is stated rather than inherited
+     because the default selection ink is not guaranteed to survive a tinted
+     band. Measured 11.35:1. */
+  --nav-color-selection: var(--nav-teal-200);
+  --nav-color-on-selection: var(--nav-teal-950);
+
+  /* Tonal bands — flash banners, the form notice, the impersonation banner,
+     and the solid destructive button.
+
+     These stay off the teal on purpose. A success message that wore the brand
+     color would be indistinguishable from a primary action, and the whole job
+     of a status band is to be read before it is identified. Hue is the fastest
+     channel a reader has; spending it on brand consistency here would be
+     spending it in the one place it is already doing work.
+
+     Measured ink-on-band: success 7.29 / 9.75, danger 7.60 / 8.77, warning
+     6.84 / 10.46, notice 8.15 / 10.35 (light / dark). */
+  --nav-color-success-subtle: #ecfdf5;
+  --nav-color-success-border: #6ee7b7;
+  --nav-color-on-success-subtle: #065f46;
+
+  --nav-color-danger-subtle: #fef2f2;
+  --nav-color-danger-border: #fca5a5;
+  --nav-color-on-danger-subtle: #991b1b;
+
+  --nav-color-warning-subtle: #fffbeb;
+  --nav-color-warning-border: #fcd34d;
+  --nav-color-on-warning-subtle: #92400e;
+
+  /* A persistent state rather than a message — the impersonation banner. A
+     stop stronger than the warning band so it stays visible for a whole
+     session without reading as an error. */
+  --nav-color-notice-subtle: #fef3c7;
+  --nav-color-notice-border: #d97706;
+  --nav-color-on-notice-subtle: #78350f;
+
+  /* The filled destructive button. Distinct from `--nav-color-danger`, which
+     is danger as *ink*; this is danger as a *fill* and needs its own
+     foreground. White on #dc2626 is 4.83:1. */
+  --nav-color-danger-solid: #dc2626;
+  --nav-color-danger-solid-hover: #b91c1c;
+  --nav-color-on-danger-solid: #ffffff;
+
+  /* The wash behind a modal. Darker than the page in both schemes, because its
+     job is to put the dialog in front rather than to tint. Carries the teal
+     into the near-black so the scrim does not read as a foreign grey. */
+  --nav-color-scrim: rgba(2, 14, 17, 0.78);
+
+  /* The edge an overlay draws against that scrim — a dialog, a sheet, a
+     popover, a menu.
+
+     It is a separate token from `--nav-color-border` because the two are
+     measured against different grounds. An ordinary border only has to be
+     visible against the page; an overlay's border has to be visible against
+     the wash, which is much darker than the page in light mode and nearly
+     black in dark. In light the dialog's own white fill does that work
+     (10.15:1 on the scrim) and the border is ordinary. In dark it cannot: the
+     surface is 1.21:1 against the scrim, so a dialog with a normal border has
+     effectively no edge, and the only thing telling a reader where it begins
+     is a shadow that a near-black backdrop swallows. Dark therefore rims
+     overlays in teal — 3.33:1, clearing the non-text floor, and on-brand
+     rather than an apologetic grey. Measured here at 7.52:1. */
+  --nav-color-overlay-edge: var(--nav-color-border);
+
+  --nav-radius: 0.5rem;
+  --nav-radius-sm: 0.375rem;
+  --nav-radius-lg: 1rem;
+
+  /* Tinted, for the reason the neutrals are: a neutral-black shadow under a
+     teal-tinted card reads as dirt rather than as depth. */
+  --nav-shadow: 0 0.125rem 0.75rem rgba(0, 44, 52, 0.10);
+  --nav-shadow-lg: 0 0.75rem 2rem rgba(0, 44, 52, 0.14);
+}
+
+/* The dark scheme, and deliberately only what differs.
+ *
+ * The radii, the fonts, the focus geometry, `--nav-color-success`, and
+ * `--nav-color-warning` are identical in both schemes and are therefore
+ * declared once, above. Restating them here would make them look like they
+ * might differ. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* The ramp lightens against the dark ground: the 500 stop is only 1.62:1
+       on #071619, so primary climbs to 400 and its ink drops to 950. Every
+       brand layer must follow the same inversion. */
+    --nav-color-primary: var(--nav-teal-400);
+    --nav-color-primary-hover: #86e4ee;
+    --nav-color-primary-active: #b1f0f5;
+    --nav-color-on-primary: var(--nav-teal-950);
+    --nav-color-on-brand: var(--nav-teal-950);
+    --nav-color-link: var(--nav-teal-400);
+    --nav-color-link-hover: #86e4ee;
+
+    /* Status ink lightens for the same reason primary does. Measured on
+       `--nav-color-surface-raised`, where a form error and a success note
+       actually sit: danger 5.99:1, success 8.70:1.
+
+       Success needed a dark twin and never had one — `#157347` is 3.34:1 on the
+       raised dark surface, well under the floor, so every green confirmation
+       message in dark mode has been failing AA. Warning genuinely needs no
+       twin: `#ffc107` is 10.5:1 on the dark ground. */
+    --nav-color-danger: #ea868f;
+    --nav-color-success: #4ade80;
+
+    /* The dark ground is the teal at its deepest, not a neutral near-black.
+       Measured: text 15.96:1 on bg, 13.10:1 on raised, 12.80:1 on subtle;
+       muted 7.57:1 on bg, 6.22:1 on raised, 6.08:1 on subtle. */
+    --nav-color-bg: #071619;
+    --nav-color-surface: #0d2126;
+    --nav-color-surface-raised: #13292f;
+    --nav-color-surface-subtle: #082c33;
+    --nav-color-border: #23444c;
+    --nav-color-text: #e3f1f4;
+    --nav-color-text-muted: #93aab0;
+    --nav-color-secondary: #1c3940;
+    --nav-color-secondary-hover: #274c55;
+    --nav-color-on-secondary: #e3f1f4;
+
+    /* The neon end of the ramp is the selection in dark, where the 200 stop
+       would glare. Measured 8.42:1. */
+    --nav-color-selection: var(--nav-teal-800);
+    --nav-color-on-selection: var(--nav-teal-100);
+
+    --nav-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.40);
+    --nav-shadow-lg: 0 0.75rem 2rem rgba(0, 0, 0, 0.52);
+
+    /* The tonal bands invert the same way primary does: a deep tint of the
+       hue for the band, a light stop of it for the ink. The band itself sits
+       only 1.1–1.3:1 off the page, which is the point — it is a tint, not a
+       card — and the border is what gives it an edge. */
+    --nav-color-success-subtle: #0c2b1f;
+    --nav-color-success-border: #1f5c43;
+    --nav-color-on-success-subtle: #7ee2b8;
+
+    --nav-color-danger-subtle: #2c1416;
+    --nav-color-danger-border: #6e2b30;
+    --nav-color-on-danger-subtle: #f5a3a9;
+
+    --nav-color-warning-subtle: #2b220c;
+    --nav-color-warning-border: #6b551a;
+    --nav-color-on-warning-subtle: #f2cf7a;
+
+    --nav-color-notice-subtle: #33280a;
+    --nav-color-notice-border: #8a6516;
+    --nav-color-on-notice-subtle: #f5d78e;
+
+    /* Solid danger follows the ramp direction the rest of the system uses:
+       the fill lightens and the ink drops to the deep stop. #450a0a on
+       #f87171 is 5.84:1, and the fill reads 6.84:1 against the page. */
+    --nav-color-danger-solid: #f87171;
+    --nav-color-danger-solid-hover: #fca5a5;
+    --nav-color-on-danger-solid: #450a0a;
+
+    /* Deeper in dark: the same 0.78 over a near-black page barely separates
+       the dialog from what it covers. */
+    --nav-color-scrim: rgba(1, 7, 9, 0.86);
+
+    /* The teal rim described above — the only thing giving a dark dialog an
+       edge against a near-black wash. Measured 3.33:1 on the scrim. */
+    --nav-color-overlay-edge: var(--nav-teal-600);
+  }
+}
+
+/* The one place the identity shows without a component asking for it. */
+::selection {
+  background-color: var(--nav-color-selection);
+  color: var(--nav-color-on-selection);
+}

@@ -1,0 +1,2239 @@
+/* Navigator's shared component layer — layer three of three.
+ *
+ *   tokens.css             the contract, at `:root`, and the default teal ramp.
+ *   a brand layer          an app's override, at `:root:root`. None ships.
+ *   theme.css              this file. Every component rule.
+ *
+ * Ported from neonlaw.com/public/css/theme.css. Every rule reads
+ * `var(--nav-*)` and never a literal color, which is what lets a brand layer
+ * restyle the whole library without touching a component.
+ *
+ * The firm's page-specific rules are deliberately not here — contract review,
+ * expunge queues, transparency documents, the blog, the team pages, and the
+ * `/design` gallery's own chrome all belong to the application that renders
+ * them. What is here is the part three brands share.
+ *
+ * Imported once, by `src/index.ts`. Consumers get it as
+ * `@neon-law-foundation/navigator-ux/styles.css`.
+ */
+
+/* `fonts.css` is deliberately absent from this chain. Vite's library mode
+ * inlines every asset a stylesheet references as a data: URI and ignores
+ * `assetsInlineLimit` while doing it, which would bury the already-compressed
+ * woff2 in the emitted stylesheet as base64 that gzip cannot shrink again. The
+ * build copies the font layer and its files into `dist` instead and prepends the
+ * `@import` there — see `scripts/emit-font-layer.mjs`.
+ *
+ * The cost of that absence is that anything importing `src` directly gets no
+ * typeface, which is why `gallery/main.tsx` imports the font layer itself. It
+ * did not for a long time, and the whole specimen page was quietly rendering in
+ * the fallback serif. */
+@import './tokens.css';
+@import './matter.css';
+
+/* Brand typography for the whole document. The page chrome a migrated page
+ * renders — the `.staff-nav` bar, flash banners, the `<h1>` — is a sibling of
+ * `<main class="nav-theme">`, not a descendant, so the family is declared on
+ * the root and inherited. Anything left undeclared here takes the browser's
+ * own default serif, which is not the firm's. */
+/* Figures are proportional here and tabular where digits sit in a column, and
+ * both halves are now declared rather than inherited from whatever the font
+ * happens to default to.
+ *
+ * That used to be one-sided. GORP's default figures are proportional, so prose
+ * needed nothing and only the `tabular-nums` block at the top of `matter.css`
+ * had to ask. Source Serif 4 defaults the other way — measured, its ten digits
+ * are all one width and `pnum` is what varies them — so a swap that changed
+ * nothing else would have put tabular figures into every sentence in the
+ * library, which is exactly what that `matter.css` block exists to avoid
+ * elsewhere. Nothing would have failed; the prose would just have read very
+ * slightly wrong forever.
+ *
+ * Declaring both ends makes the rule independent of the face, which matters
+ * because the face is not fixed: a consumer who licenses GORP gets it here
+ * instead, and the typography has to hold either way. */
+html {
+  background: var(--nav-color-bg);
+  color: var(--nav-color-text);
+  font-family: var(--nav-font-family);
+  font-variant-numeric: proportional-nums;
+}
+
+body {
+  background: var(--nav-color-bg);
+  color: var(--nav-color-text);
+  font-family: var(--nav-font-family);
+  line-height: 1.5;
+}
+
+/* Form controls take the UA font, not the inherited one, so a `<button>` or
+ * `<select>` renders in the platform sans unless told otherwise. Inheriting
+ * `font` wholesale keeps size and family together; the component rules below
+ * re-declare only the weight they need. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* Base element styling for the Dioxus app shell. */
+.nav-theme {
+  background: var(--nav-color-bg);
+  color: var(--nav-color-text);
+  font-family: var(--nav-font-family);
+  line-height: 1.5;
+}
+
+.nav-theme a {
+  color: var(--nav-color-link);
+  text-decoration: none;
+}
+
+.nav-theme a:hover {
+  color: var(--nav-color-link-hover);
+  text-decoration: underline;
+}
+
+/* An anchor styled as a button is a button, not a link. `.nav-theme a` above
+   is more specific than the `.nav-btn--*` variants, so without these an
+   `<a class="nav-btn nav-btn--primary">` renders cyan-on-cyan — the link color
+   over the filled background, which fails contrast outright. The variants set
+   their own foreground; these re-assert it at matching specificity. */
+.nav-theme a.nav-btn--primary,
+.nav-theme a.nav-btn--primary:hover {
+  color: var(--nav-color-on-primary);
+}
+
+.nav-theme a.nav-btn--secondary,
+.nav-theme a.nav-btn--secondary:hover {
+  color: var(--nav-color-text);
+}
+
+.nav-theme a.nav-btn--danger,
+.nav-theme a.nav-btn--danger:hover {
+  color: var(--nav-color-on-danger-solid);
+}
+
+/* Authenticated Navigator chrome. The route adapter supplies the visible
+ * destinations plus host-specific footer content; these classes only provide
+ * the global application frame and stay independent of roles and routes. */
+.navigator-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  /* See the note on `.public-shell`: without this the implicit column is
+     max-content-sized and one wide table stretches the whole page. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.navigator-chrome__header {
+  background: var(--nav-color-surface);
+  border-bottom: 1px solid var(--nav-color-border);
+}
+
+.navigator-navbar {
+  width: min(100%, 72rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navigator-navbar__brand {
+  color: var(--nav-color-text) !important;
+  font-size: 1.125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.navigator-navbar__destinations {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navigator-navbar__link,
+.navigator-navbar__sign-out {
+  display: inline-block;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--nav-radius-sm);
+  font-weight: 700;
+}
+
+.navigator-navbar__link--active {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-text) !important;
+}
+
+.navigator-navbar__sign-out {
+  margin-left: auto;
+  border: 1px solid var(--nav-color-border);
+}
+
+.navigator-shell__main {
+  width: min(100%, 72rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.navigator-footer {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
+  align-items: center;
+  width: min(100%, 72rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 1rem;
+  color: var(--nav-color-text-muted);
+  border-top: 1px solid var(--nav-color-border);
+  font-size: 0.875rem;
+}
+
+.navigator-footer__legal,
+.navigator-footer__release {
+  margin: 0;
+}
+
+.navigator-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.navigator-chrome-showcase {
+  overflow: hidden;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  box-shadow: var(--nav-shadow);
+}
+
+.navigator-chrome-showcase .navigator-shell {
+  min-height: 0;
+}
+
+.navigator-chrome-showcase .navigator-shell__main {
+  padding-block: 1rem;
+}
+
+.navigator-chrome-showcase__content h3 {
+  margin-top: 0;
+}
+
+@media (max-width: 48rem) {
+  .navigator-navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .navigator-navbar__destinations {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .navigator-navbar__sign-out {
+    margin-left: auto;
+  }
+
+  .navigator-footer {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .navigator-footer__links {
+    justify-content: flex-start;
+  }
+}
+
+/* Card — the design system's shared surface. */
+.nav-card {
+  background: var(--nav-color-surface);
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  box-shadow: var(--nav-shadow);
+  overflow: hidden;
+}
+
+.nav-card__header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+  font-weight: 700;
+}
+
+.nav-card__body {
+  padding: 1rem;
+}
+
+.nav-card__body--center {
+  text-align: center;
+}
+
+.nav-card__footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+/* The brand anchor treatment — a "this one" card. The header band, when
+   present, is painted with the brand color over `--nav-color-on-primary`,
+   the ink the token layer inverts with the scheme so the pairing clears AA
+   in both (5.79:1 light, 7.69:1 dark). */
+.nav-card--highlighted {
+  border-color: var(--nav-color-primary);
+}
+
+.nav-card--highlighted .nav-card__header {
+  background: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+}
+
+/* Toast — the same four tones the `Toast` carries. */
+.nav-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--nav-radius-sm);
+  border-left: 4px solid var(--nav-toast-accent, var(--nav-color-primary));
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text);
+}
+
+.nav-toast--primary { --nav-toast-accent: var(--nav-color-primary); }
+.nav-toast--success { --nav-toast-accent: var(--nav-color-success); }
+.nav-toast--danger  { --nav-toast-accent: var(--nav-color-danger); }
+.nav-toast--warning { --nav-toast-accent: var(--nav-color-warning); }
+
+.nav-toast__body {
+  flex: 1 1 auto;
+}
+
+/* Inline-SVG icon — sized at 1em, inheriting text color like the old font. */
+.nav-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+/* Data table — the URL-contract reference surface. `.nav-table-wrap` scrolls
+   horizontally on narrow viewports so the page body never does. */
+.nav-table-wrap {
+  overflow-x: auto;
+}
+
+.nav-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nav-table th,
+.nav-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--nav-color-border);
+  vertical-align: middle;
+}
+
+.nav-table thead th {
+  border-bottom: 2px solid var(--nav-color-border);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Zebra striping for scan-ability. */
+.nav-table tbody tr:nth-child(even) {
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-table th a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-table th a:hover {
+  color: var(--nav-color-link);
+  text-decoration: underline;
+}
+
+.nav-sort-arrow {
+  color: var(--nav-color-primary);
+}
+
+/* Prev / next pagination strip. */
+.nav-pagination__list {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.nav-pagination__link {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  color: var(--nav-color-link);
+  text-decoration: none;
+}
+
+a.nav-pagination__link:hover {
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-pagination__item--disabled .nav-pagination__link {
+  color: var(--nav-color-text-muted);
+  background: transparent;
+}
+
+/* Muted secondary text — the theme's counterpart to Bootstrap's
+   `.text-body-secondary`. */
+.nav-text-muted {
+  color: var(--nav-color-text-muted);
+}
+
+/* Button — the solid brand-cyan call to action. AA-safe dark ink on the
+   bright cyan fill (white on cyan-500 is only 2.43:1). */
+.nav-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--nav-radius-sm);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-btn--primary {
+  background: var(--nav-color-primary);
+  border-color: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+}
+
+.nav-btn--primary:hover {
+  background: var(--nav-color-primary-hover);
+  border-color: var(--nav-color-primary-hover);
+  color: var(--nav-color-on-primary);
+  text-decoration: none;
+}
+
+.nav-btn--secondary {
+  background: var(--nav-color-secondary);
+  border-color: var(--nav-color-secondary);
+  color: var(--nav-color-on-secondary);
+}
+
+.nav-btn--secondary:hover {
+  background: var(--nav-color-secondary-hover);
+  border-color: var(--nav-color-secondary-hover);
+  color: var(--nav-color-on-secondary);
+  text-decoration: none;
+}
+
+/* Alert — the disclaimer's warning surface. */
+.nav-alert {
+  border: 1px solid var(--nav-color-border);
+  border-left: 4px solid var(--nav-color-warning);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface-raised);
+  padding: 1rem 1.25rem;
+}
+
+.nav-alert__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.nav-alert__body {
+  margin: 0;
+}
+
+/* Reading links must be recognizable without color alone (WCAG 1.4.1). The
+ * global anchor reset keeps navigation compact, but prose is where a visitor
+ * needs an always-visible cue that a word leaves the page.
+ *
+ * Stated as a rule about inline links rather than an allow-list of page
+ * containers. The allow-list this replaces named four containers, and the
+ * browser accessibility gate found three more prose surfaces it had never been
+ * extended to — the legal pages (`article.policy`), the transparency documents
+ * (`article.transparency-doc`), and the 403 (`section.error-page`) — each
+ * carrying a support address a color-blind reader could not tell from the
+ * sentence around it. An allow-list has to be remembered into on every new
+ * page; this does not.
+ *
+ * The discriminator is the class attribute: an inline prose link is a bare
+ * `<a href>`, written by hand or emitted by the Markdown renderer, while every
+ * link that is really a control — a button, a card, a call to action, a nav
+ * destination — carries the class that styles it and brings its own
+ * affordance.
+ *
+ * Not scoped to a `main` descendant: pages set `.nav-theme` in both positions,
+ * on an ancestor of `main` (the public shell) and on `main` itself (the
+ * back-office pages), so `.nav-theme main` silently misses half the surface.
+ * The chrome opts back out below instead. */
+.nav-theme :is(p, li) > a:not([class]) {
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.14em;
+}
+
+/* The chrome keeps its compact treatment: a header, footer, or navigation list
+   is a set of destinations, not a sentence with a word that leaves the page. */
+.nav-theme :is(header, footer, nav) :is(p, li) > a:not([class]) {
+  text-decoration: none;
+}
+
+/* Public page shell — the skeleton every migrated public page wraps its
+   content in: header, a centered main content column, and the footer strip. */
+.public-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  /* The column axis needs the same `minmax(0, …)` guard the rows already have.
+     An implicit `auto` column is max-content-sized, so one wide descendant —
+     the offices grid at 375px was the one that showed it — stretches the column
+     past the viewport, and every `width: min(100%, 72rem)` below then resolves
+     against the stretched width. The page scrolls sideways and nothing looks
+     wrong enough to find. Capping the track makes children fit, or scroll
+     inside their own `overflow-x` wrapper, which is what `.nav-table-wrap` is
+     for. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.public-shell__main {
+  width: min(100%, 72rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 404 / 403 / 500. The shell already centers and pads the column; this adds the
+   vertical breathing room an error page wants so the message is not jammed
+   under the header, and centers the short copy that would otherwise sit as a
+   ragged left-aligned line across 72rem. */
+.error-page {
+  padding-block: 3rem;
+  text-align: center;
+}
+
+.error-page h1 {
+  margin-bottom: 0.5rem;
+}
+
+.error-page p {
+  margin-bottom: 1.5rem;
+}
+
+/* The `/design` preview frames the shell so its full-bleed chrome reads as a
+   contained sample rather than taking over the gallery page. */
+.public-shell-showcase {
+  overflow: hidden;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  box-shadow: var(--nav-shadow);
+}
+
+.public-shell-showcase .public-shell {
+  min-height: 0;
+}
+
+.public-shell-showcase .public-shell__main {
+  padding-block: 1.5rem;
+}
+
+/* Site header — the public marketing chrome: the brand mark and the primary
+   nav. Below 48rem the rows collapse behind a burger; see the media query at
+   the end of this block. The disclosure is a hidden checkbox rather than a
+   script, because these pages ship no hydration bundle. */
+.site-header {
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface);
+}
+
+.site-header__nav {
+  width: min(100%, 72rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--nav-color-text) !important;
+  font-size: 1.125rem;
+  white-space: nowrap;
+}
+
+.site-header__logo {
+  display: block;
+}
+
+.site-header__links,
+.site-header__utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-header__links {
+  margin-left: auto;
+}
+
+.site-header__link {
+  display: inline-block;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--nav-radius-sm);
+  font-weight: 700;
+}
+
+.site-header__link--active {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-text) !important;
+}
+
+/* The disclosure's state. Off-screen rather than `display: none`, so it stays
+   focusable and reachable by keyboard: a menu you cannot tab to is not a menu.
+   Above the breakpoint nothing reads `:checked`, so its value is inert. */
+.site-header__toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The burger itself: three bars, sized to a comfortable touch target. Hidden
+   above the breakpoint, where the link rows render on their own. */
+.site-header__burger {
+  display: none;
+  margin-left: auto;
+  padding: 0.5rem;
+  border-radius: var(--nav-radius-sm);
+  cursor: pointer;
+}
+
+.site-header__burger-bar {
+  display: block;
+  width: 1.375rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--nav-color-text);
+}
+
+.site-header__burger-bar + .site-header__burger-bar {
+  margin-top: 0.25rem;
+}
+
+/* The focus ring belongs on the burger, because the input that owns the focus
+   is off-screen. */
+.site-header__toggle:focus-visible + .site-header__burger {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+@media (max-width: 48rem) {
+  .site-header__burger {
+    display: block;
+  }
+
+  /* Collapsed by default. Each row claims the full width when it opens, so the
+     links stack under the brand rather than crowding beside it. */
+  .site-header__links,
+  .site-header__utility {
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.125rem;
+    margin-left: 0;
+  }
+
+  .site-header__toggle:checked ~ .site-header__links,
+  .site-header__toggle:checked ~ .site-header__utility {
+    display: flex;
+  }
+
+  /* An open menu is a list of rows, so each link fills its own. */
+  .site-header__link {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+  }
+
+  /* The utility group (Sign in, or Portal/Staff/Sign out) reads as a second
+     group rather than more destinations. */
+  .site-header__toggle:checked ~ .site-header__utility {
+    margin-top: 0.375rem;
+    padding-top: 0.375rem;
+    border-top: 1px solid var(--nav-color-border);
+  }
+}
+
+/* Site footer — the contact band (CTA, voice line, offices) above the
+   brand-driven legal strip (regulated entity, bar admissions, per-attorney bar
+   licenses, disclaimer, joint copyright) every public page carries.
+
+   The rule is full-bleed and the content is width-capped, mirroring the header
+   exactly: `.site-header` owns the border, `.site-header__nav` owns the 72rem
+   column. That is what lines the footer up with the navbar above it instead of
+   letting it run to the viewport edge. */
+.site-footer {
+  border-top: 1px solid var(--nav-color-border);
+  margin-top: 2rem;
+}
+
+.site-footer__inner {
+  width: min(100%, 72rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+/* The footer reuses the header's self-contained brand mark. Its SVG stays
+   transparent, so the brand color is the mark alone rather than a tile. The
+   wordmark sits beside it: the mark alone opened the footer on an unlabelled
+   glyph. */
+.site-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 1.25rem;
+}
+
+.site-footer__logo {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+}
+
+.site-footer__wordmark {
+  font-size: 1.125rem;
+  white-space: nowrap;
+}
+
+/* The pages the header no longer carries — Team, Blog, Contact. A flat row at
+   the top of the footer, because a reader who scrolled to the bottom looking
+   for one of them should meet it before the contact detail. */
+.site-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1rem;
+  padding-bottom: 1.5rem;
+}
+
+.site-footer__nav-link {
+  font-weight: 700;
+}
+
+/* A middot between the links, drawn by the row rather than written into the
+   markup: a separator is punctuation between items, not an item, so a screen
+   reader should not read it as one. `::before` on every link but the first
+   keeps it out of the accessibility tree and out of the copy buffer's way.
+
+   `inline-block` is load-bearing, not styling. The dot lives inside the anchor
+   that follows it, and `text-decoration` propagates from an inline box into its
+   inline children — so hovering "Blog" underlined the dot before it as though
+   the separator were part of the link. Decoration does not propagate into an
+   atomic inline box, so this stops at the dot and the underline starts at the
+   word. */
+.site-footer__nav-link + .site-footer__nav-link::before {
+  content: "·";
+  display: inline-block;
+  margin-inline-end: 1rem;
+  color: var(--nav-color-text-muted);
+  font-weight: 400;
+  text-decoration: none;
+}
+
+/* The contact band. On a wide viewport the reach column (CTA + phone) sits
+   beside the offices; both stack on a narrow one. */
+.site-footer__contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.25rem;
+}
+
+.site-footer__reach {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.site-footer__phone {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* The Foundation footer's §6104(d) public-disclosure link, in the reach column
+   where the firm footer puts its voice line. */
+.site-footer__transparency {
+  font-weight: 700;
+}
+
+/* A grid rather than a wrapping flex row: each office needs a column of its
+   own with a known edge, because the state watermark behind it is anchored to
+   that edge. Content-width flex items put one office's outline over the next
+   office's text. */
+.site-footer__offices {
+  /* Its own full-width line under the CTA. A grid track has no intrinsic
+     width, so as a content-sized flex item this would collapse against the
+     reach block; claiming the whole line keeps the offices in one even row
+     with room for the watermark behind each. */
+  flex: 1 1 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--nav-color-text-muted);
+}
+
+/* Each office is its own positioning context and its own clip, so the state
+   watermark sits behind that office and can never spill into the next column.
+   `min-height` reserves the room the outline needs so a short entry does not
+   crop it. */
+.site-footer__office {
+  position: relative;
+  overflow: hidden;
+  min-height: 4.75rem;
+}
+
+/* The state outline, drawn behind its own address. Decoration, so it is set at
+   a low opacity in the brand color, sits under the text in the stacking order,
+   and takes no pointer events. The opacity is what keeps the body copy over it
+   at its usual contrast; raising it would put a tinted wash under small muted
+   text, which is the one thing this must not do. */
+.site-footer__office-map {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: 0;
+  z-index: 0;
+  width: 4.5rem;
+  height: 4.5rem;
+  transform: translateY(-50%);
+  color: var(--nav-color-primary);
+  opacity: 0.14;
+  pointer-events: none;
+}
+
+/* The text rides above the watermark. */
+.site-footer__office-label,
+.site-footer__office-address,
+.site-footer__office-note {
+  position: relative;
+  z-index: 1;
+}
+
+/* A reader who has asked the platform for more contrast gets none of this. */
+@media (prefers-contrast: more) {
+  .site-footer__office-map {
+    display: none;
+  }
+}
+
+/* The label above an address: the state on the firm footer, the Foundation's
+   own entity on its footer. Named for the role, not for either value. */
+.site-footer__office-label {
+  display: block;
+  font-weight: 700;
+  color: var(--nav-color-text);
+}
+
+/* `<address>` defaults to italic; these are postal addresses, not asides. */
+.site-footer__office-address {
+  font-style: normal;
+  max-width: 16rem;
+}
+
+/* A qualification on the office above it — today, an admission that has not
+   issued. Italic and set apart so it reads as a caveat on that address rather
+   than as a second line of it, but not shrunk: it is regulated copy, and the
+   surrounding footer text is already the page's smallest. */
+.site-footer__office-note {
+  display: block;
+  margin-top: 0.25rem;
+  max-width: 16rem;
+  font-style: italic;
+}
+
+/* The legal strip. Muted and small so it reads as terminal fine print, and
+   ruled off from the contact band above it. */
+.site-footer__legal {
+  border-top: 1px solid var(--nav-color-border);
+  padding-top: 1rem;
+  color: var(--nav-color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* With no contact band above it the legal strip is the footer's first child,
+   and the header-matching rule on `.site-footer` is already the only one it
+   needs — a second rule immediately below the first would read as a seam. */
+.site-footer__legal:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.site-footer__legal p {
+  margin: 0 0 0.5rem;
+}
+
+.site-footer__legal p:last-child {
+  margin-bottom: 0;
+}
+
+.site-footer__legal a {
+  color: inherit;
+}
+
+/* The firm's support for the Foundation. Sits in the legal strip because it is
+   a statement about the entity named on the line above it, but a shade louder
+   than the strip's default: it is something the firm is saying, not fine print
+   it is obliged to print. */
+.site-footer__foundation {
+  font-size: 0.9rem;
+}
+
+/* The Foundation's name reads as part of the sentence: no weight, no underline.
+   The legal strip already sets `color: inherit` on its links, so the only thing
+   marking this one is the pointer and the focus ring — which is the firm's call
+   on its own footer, and the hover underline below keeps it discoverable. */
+.site-footer__foundation a {
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+.site-footer__foundation a:hover,
+.site-footer__foundation a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* The per-attorney bar licenses: one line per attorney, each jurisdiction
+   linked to that bar's own public record. */
+.site-footer__licenses {
+  margin: 0 0 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+/* One attorney per line; a licensee whose licenses wrap must still read as one
+   entry, so the rows are spaced further apart than the wrapped lines within a
+   row. */
+.site-footer__licensee + .site-footer__licensee {
+  margin-top: 0.35rem;
+}
+
+.site-footer__licensee-name {
+  font-weight: 700;
+}
+
+
+/* Pricing cards — an equal-height responsive grid; every card wears the cyan
+   band and a solid CTA. */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 62rem) {
+  .pricing-grid {
+    grid-template-columns: repeat(var(--pricing-cols, 3), 1fr);
+  }
+}
+
+.pricing-card {
+  display: flex;
+  flex-direction: column;
+  border-color: var(--nav-color-primary);
+}
+
+.pricing-card__band {
+  background: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+  text-align: center;
+}
+
+.pricing-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 0.5rem;
+}
+
+.pricing-card__amount {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.pricing-card__features {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+}
+
+.pricing-card__features li {
+  margin-bottom: 0.25rem;
+}
+
+.pricing-card__check {
+  color: var(--nav-color-primary);
+  margin-right: 0.5rem;
+}
+
+.pricing-card__cta {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* Testimonials — a two-column grid of quote cards. */
+.testimonial-section__head {
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+
+.testimonial-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.testimonial-card__label {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--nav-color-primary);
+  margin: 0;
+}
+
+.testimonial-card__quote {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.testimonial-card__by {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.testimonial-card__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.testimonial-card__avatar--initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-primary-active);
+  font-weight: 700;
+}
+
+.testimonial-card__name {
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Breadcrumb — the muted "back to parent" link at the top of detail pages. */
+.nav-breadcrumb {
+  margin-bottom: 1rem;
+}
+
+.nav-breadcrumb__link {
+  color: var(--nav-color-text-muted);
+  text-decoration: none;
+}
+
+.nav-breadcrumb__link:hover {
+  color: var(--nav-color-link);
+  text-decoration: underline;
+}
+
+/* Content-freshness footer. */
+.nav-freshness {
+  color: var(--nav-color-text-muted);
+  margin-top: 1.5rem;
+}
+
+
+/* Form — a constrained create/edit card with labeled fields. */
+.nav-form-card {
+  max-width: 32rem;
+}
+
+.nav-form-card__title {
+  margin-top: 0;
+}
+
+/* Framing prose between a form card's title and its first field. */
+.nav-form-card__intro {
+  margin-bottom: 1.5rem;
+}
+
+.nav-field {
+  margin-bottom: 1rem;
+}
+
+.nav-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.nav-required {
+  color: var(--nav-color-danger);
+}
+
+.nav-input,
+.nav-select {
+  display: block;
+  width: 100%;
+  /* `width: 100%` plus horizontal padding overflows the container under the
+     default `content-box`. Bootstrap's `*,::after,::before{box-sizing:border-box}`
+     is currently supplying this for free, so the theme looks correct only
+     because a framework it is replacing is still loaded. Stated here so the
+     controls survive Bootstrap's removal (#877). */
+  box-sizing: border-box;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+}
+
+.nav-input:focus,
+.nav-select:focus {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: 1px;
+  border-color: var(--nav-color-primary);
+}
+
+/* Input with a leading add-on (e.g. a "$" prefix). */
+.nav-input-group {
+  display: flex;
+}
+
+.nav-input-group__addon {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  border: 1px solid var(--nav-color-border);
+  border-right: 0;
+  border-radius: var(--nav-radius-sm) 0 0 var(--nav-radius-sm);
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text-muted);
+}
+
+.nav-input-group .nav-input {
+  border-radius: 0 var(--nav-radius-sm) var(--nav-radius-sm) 0;
+}
+
+/* Checkbox row: the box precedes an inline label. */
+.nav-field--check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-field--check .nav-label {
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.nav-field__help {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--nav-color-text-muted);
+}
+
+/* Radio group — one fieldset over mutually exclusive choices. The border is the
+   browser default's job; ours is the same bare stack every other field uses. */
+.nav-field--radio {
+  border: 0;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.nav-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-radio .nav-label {
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+/* A choice already spoken for: greyed out because taking it needs the
+   deliberate reassign step, not a stray click. The input is also `disabled`, so
+   this is the visual half of a refusal the write door enforces on its own. */
+.nav-radio--locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.nav-radio--locked .nav-label {
+  color: var(--nav-color-text-muted);
+}
+
+/* The reassign toggle sits below the form it feeds, reading as the deliberate
+   exit from the greyed-out state rather than another field. */
+.participation-reassign {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--nav-color-border);
+}
+
+/* Per-field validation message — Rails' `field_with_errors`. The reason sits
+   with the control that caused it, not only in the banner at the top of the
+   form. Same size as the hint but in the danger tone, so the two read as one
+   description stack. */
+.nav-field__error {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--nav-color-danger);
+}
+
+/* The invalid state is carried on the control's border as well as the message,
+   because color alone is not a sufficient cue — the message text and the
+   `aria-invalid` state are what actually convey it. */
+/* `.nav-input` covers the textarea too — it renders with that class. */
+.nav-field--invalid .nav-input,
+.nav-field--invalid .nav-select {
+  border-color: var(--nav-color-danger);
+}
+
+/* People-list — bounded person-row groups inside a form. */
+.nav-fieldset {
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nav-fieldset__legend {
+  padding: 0 0.5rem;
+  font-weight: 700;
+  width: auto;
+}
+
+/* Server-highlighted code block — syntect emits an inline-styled <pre>. Also the
+   class `Prose`'s `code` run carries, which is how a portal renders a mount path
+   or an identifier inline.
+
+   The family is declared rather than left to the browser. A `<code>` element gets
+   a monospace face from the UA stylesheet, so this looked settled while nothing
+   set it — but the face was then whatever that UA happened to choose, and not the
+   stack `--nav-font-mono` defines. Consuming the token is also what keeps it
+   honest: after `matter.css` moved to the brand typeface, this is the only rule
+   that wants a monospace at all, and a token with no consumer is a token nobody
+   maintains.
+
+   `tabular-nums` does not belong here. Monospace figures are already fixed-width,
+   and this is where a reader goes character by character. */
+.nav-code {
+  overflow-x: auto;
+  font-family: var(--nav-font-mono);
+}
+
+.nav-code pre {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--nav-radius-sm);
+  border: 1px solid var(--nav-color-border);
+}
+
+/* Secondary button — the outlined variant (e.g. a Cancel action). */
+.nav-btn--secondary {
+  background: transparent;
+  border-color: var(--nav-color-border);
+  color: var(--nav-color-text);
+}
+
+.nav-btn--secondary:hover {
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text);
+}
+
+/* Small status pill — review decisions. */
+.nav-badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-primary-active);
+  font-size: 0.85em;
+  font-weight: 700;
+}
+
+/* Page container: a back-office page renders a single <main> carrying the
+ * theme class. Give it the same comfortable measure and padding the public
+ * shell's content column gets. */
+main.nav-theme {
+  display: block;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  color: var(--nav-color-text);
+}
+
+/* Impersonation banner. Sits above the nav on every page an impersonating
+ * admin sees, so "you are acting as someone else" is never off-screen. Amber
+ * rather than the danger red: this is a persistent state, not an error, and it
+ * must stay legible for the whole session without reading as a failure. */
+.impersonation-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  border-bottom: 1px solid var(--nav-color-notice-border);
+  background: var(--nav-color-notice-subtle);
+  color: var(--nav-color-on-notice-subtle);
+}
+
+.impersonation-banner__email {
+  color: var(--nav-color-on-notice-subtle);
+  font-weight: 700;
+}
+
+/* Pushes the stop control to the trailing edge, so the way out is always in
+ * the same place regardless of how long the name and email are. */
+.impersonation-banner__stop {
+  margin-left: auto;
+  margin-bottom: 0;
+}
+
+
+a.nav-link {
+  color: var(--nav-color-link);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.staff-nav .nav-link:hover,
+a.nav-link:hover {
+  color: var(--nav-color-link-hover);
+  text-decoration: underline;
+}
+
+/* Sortable column-header links inside a list table. */
+.nav-table thead a,
+.sort-name,
+.sort-email {
+  color: var(--nav-color-link);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.nav-table thead a:hover,
+.sort-name:hover,
+.sort-email:hover {
+  text-decoration: underline;
+}
+
+/* Per-row action clusters. Lay the Edit link and the Delete form out in a row.
+ * The destructive action is a form rather than a link, so the cluster has to
+ * lay out mixed children without the form introducing a line break. */
+.row-actions,
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row-action,
+.action-row form {
+  display: inline;
+  margin: 0;
+}
+
+/* The welcome-email confirmation disclosure. */
+.welcome-confirm summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.welcome-confirm[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+/* Flash banners: the ?notice= / ?error= toned messages above a page. */
+.nav-flash {
+  padding: 0.75rem 1rem;
+  border-radius: var(--nav-radius-sm);
+  border: 1px solid var(--nav-color-border);
+  margin: 0 0 1rem;
+}
+
+.nav-flash--success {
+  background: var(--nav-color-success-subtle);
+  border-color: var(--nav-color-success-border);
+  color: var(--nav-color-on-success-subtle);
+}
+
+.nav-flash--danger {
+  background: var(--nav-color-danger-subtle);
+  border-color: var(--nav-color-danger-border);
+  color: var(--nav-color-on-danger-subtle);
+}
+
+/* Inline form error + immutable-record notice.
+ *
+ * The error takes `--nav-color-danger` rather than the tonal ink: it sits on
+ * the ordinary form surface, not on a tinted band, and the token layer already
+ * lightens danger in dark for exactly this case. */
+.nav-form-error {
+  color: var(--nav-color-danger);
+  font-weight: 700;
+  margin: 0 0 1rem;
+}
+
+.nav-form-notice {
+  padding: 0.75rem 1rem;
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-warning-subtle);
+  border: 1px solid var(--nav-color-warning-border);
+  color: var(--nav-color-on-warning-subtle);
+  margin: 0 0 1rem;
+}
+
+/* Muted secondary text + empty-state rows. */
+.nav-muted,
+.muted,
+.nav-text-muted {
+  color: var(--nav-color-text-muted);
+}
+
+/* Empty-state row under a list that has nothing in it. */
+.nav-empty {
+  color: var(--nav-color-text-muted);
+  padding: 1rem 0;
+}
+
+/* Danger button variant used by the per-row Delete forms.
+ *
+ * Tokenized. The source rule painted `#dc2626` with white ink and no dark
+ * counterpart, so on a dark page it stayed a saturated light-mode red. The
+ * solid-danger tokens carry the same color in light and a scheme-appropriate
+ * one in dark. */
+.nav-btn--danger {
+  background: var(--nav-color-danger-solid);
+  color: var(--nav-color-on-danger-solid);
+  border-color: var(--nav-color-danger-solid);
+}
+
+.nav-btn--danger:hover {
+  background: var(--nav-color-danger-solid-hover);
+  border-color: var(--nav-color-danger-solid-hover);
+}
+
+/* Page header: an <h1> with an action button to its right (entities/projects
+ * lists). Wraps on narrow viewports. */
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.page-header p {
+  margin: 0;
+}
+
+/* Destructive-action confirmation. A constrained card with the prompt and a
+ * Confirm/Cancel action row; the destructive Confirm wears the danger button so
+ * it is unmistakable. */
+.confirm-delete {
+  max-width: 32rem;
+}
+
+.confirm-delete__title {
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.confirm-delete__message {
+  margin: 0 0 1rem;
+}
+
+.confirm-delete__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.confirm-delete__form {
+  display: inline;
+}
+
+
+
+/* ============================================================================
+ * Additions for the React port.
+ *
+ * Two kinds. Most are rules that live further down the firm's own theme.css,
+ * among page-specific blocks, but are plainly generic — the pagination strip
+ * and the tab row. The rest are new, and each is here because a React component
+ * in this package renders an element the Dioxus original did not: a real <ol>
+ * inside the breadcrumb, a native <dialog> for the delete confirmation, and the
+ * bounded people list.
+ * ========================================================================= */
+
+/* Pagination — the wrapper the strip sits in, and its position readout. */
+.nav-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.nav-pagination__status {
+  color: var(--nav-color-text-muted);
+  list-style: none;
+}
+
+/* Tab row. */
+.nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nav-tab {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--nav-radius-sm);
+  color: var(--nav-color-link);
+  text-decoration: none;
+}
+
+.nav-tab.is-active {
+  background: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+}
+
+/* Breadcrumb — an ordered list, so a screen reader can announce its length and
+   skip it. The markers and indent are the browser's, and unwanted. */
+.nav-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--nav-color-text-muted);
+}
+
+/* The separator is drawn by the list rather than written into the markup, so
+   it is never read aloud as a word. */
+.nav-breadcrumb__list li + li::before {
+  content: "/";
+  margin-right: 0.5rem;
+  color: var(--nav-color-text-muted);
+}
+
+/* Checkbox and radio inputs take the brand color for their checked state
+   rather than the platform's blue, which is the one control that otherwise
+   ignores the theme entirely. */
+.nav-check,
+.nav-radio input,
+.nav-field--check input[type="checkbox"] {
+  accent-color: var(--nav-color-primary);
+  flex: 0 0 auto;
+}
+
+/* People list — bounded person-row groups inside a form. */
+.nav-people-list .nav-field--check {
+  padding: 0.25rem 0;
+}
+
+/* Confirm-delete, as a native <dialog>.
+ *
+ * The element defaults to a black 1px border and `margin: auto` only when
+ * modal, so it needs the card treatment applied explicitly. `::backdrop` is a
+ * separate pseudo-element outside the dialog's own cascade — it cannot inherit,
+ * so the scrim token is named again here. */
+dialog.confirm-delete {
+  padding: 0;
+  border: 1px solid var(--nav-color-border);
+  color: var(--nav-color-text);
+}
+
+dialog.confirm-delete::backdrop {
+  background: var(--nav-color-scrim);
+}
+
+/* A dialog that is not open must not occupy space, including before a browser
+   without `<dialog>` support applies its own UA rule. */
+dialog.confirm-delete:not([open]) {
+  display: none;
+}
+
+/* ============================================================================
+ * The shadcn-derived set.
+ *
+ * A superset of the Dioxus surface: nothing below has a counterpart on
+ * neonlaw.com. These are shadcn/ui's components, taken for their semantics
+ * and their accessibility work and rebuilt on the platform primitive that
+ * already carries them, then styled here in the same `--nav-*` vocabulary as
+ * everything else. No Tailwind, no Radix, no runtime dependency.
+ *
+ * They obey the same three contracts. A brand layer re-tones them along with
+ * the rest, which is the test of whether they really joined the system or just
+ * landed next to it.
+ * ========================================================================= */
+
+/* Accordion / Collapsible — <details> and <summary>. */
+.nav-accordion {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.nav-accordion__item {
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+  overflow: hidden;
+}
+
+.nav-accordion__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--nav-color-surface-raised);
+  font-weight: 700;
+  cursor: pointer;
+  /* The UA marker is a filled triangle that ignores the type scale. Replaced
+     below with a chevron that rotates, drawn in the text color. */
+  list-style: none;
+}
+
+.nav-accordion__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.nav-accordion__trigger::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.4em;
+  height: 0.4em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 120ms ease;
+}
+
+.nav-accordion__item[open] > .nav-accordion__trigger::before {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-accordion__trigger::before {
+    transition: none;
+  }
+}
+
+.nav-accordion__trigger:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: -2px;
+}
+
+.nav-accordion__panel {
+  padding: 1rem;
+}
+
+/* Separator. */
+.nav-separator {
+  background: var(--nav-color-border);
+  flex: 0 0 auto;
+}
+
+.nav-separator--horizontal {
+  width: 100%;
+  height: 1px;
+  margin: 1rem 0;
+}
+
+.nav-separator--vertical {
+  width: 1px;
+  align-self: stretch;
+  min-height: 1em;
+  margin: 0 0.75rem;
+}
+
+/* Avatar. */
+.nav-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.nav-avatar--sm {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.7rem;
+}
+
+.nav-avatar--md {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 0.85rem;
+}
+
+.nav-avatar--lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 1.1rem;
+}
+
+.nav-avatar--initials {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-primary-active);
+}
+
+/* Skeleton. The pulse is the only animation in the library, and it is the one
+   place where motion carries meaning: it says "still coming", not "broken". */
+.nav-skeleton {
+  display: block;
+  width: 100%;
+  height: 1em;
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-secondary);
+  animation: nav-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.nav-skeleton--circle {
+  border-radius: 50%;
+}
+
+@keyframes nav-skeleton-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-skeleton {
+    animation: none;
+  }
+}
+
+/* Progress. */
+.nav-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-progress__track {
+  flex: 1 1 auto;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--nav-color-secondary);
+  overflow: hidden;
+}
+
+.nav-progress__fill {
+  height: 100%;
+  background: var(--nav-color-primary);
+  transition: width 200ms ease;
+}
+
+.nav-progress__track--indeterminate .nav-progress__fill {
+  width: 35%;
+  animation: nav-progress-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes nav-progress-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-progress__fill {
+    transition: none;
+  }
+
+  /* An indeterminate bar with no motion says nothing at all, so it becomes a
+     static half-filled track rather than an empty one. */
+  .nav-progress__track--indeterminate .nav-progress__fill {
+    animation: none;
+    width: 50%;
+  }
+}
+
+.nav-progress__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--nav-color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* AspectRatio. */
+.nav-aspect {
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--nav-radius);
+}
+
+.nav-aspect > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Switch. The control is a real checkbox, sized to the track and made
+   transparent, so the platform keeps the click target, the focus ring, and the
+   form value while the track and knob below do the drawing. */
+.nav-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+.nav-switch__input {
+  appearance: none;
+  flex: 0 0 auto;
+  position: relative;
+  width: 2.25rem;
+  height: 1.25rem;
+  margin: 0.125rem 0 0;
+  border: 1px solid var(--nav-color-border);
+  border-radius: 999px;
+  background: var(--nav-color-secondary);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.nav-switch__input::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0.125rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  background: var(--nav-color-surface);
+  transform: translateY(-50%);
+  transition: transform 120ms ease;
+}
+
+.nav-switch__input:checked {
+  background: var(--nav-color-primary);
+  border-color: var(--nav-color-primary);
+}
+
+.nav-switch__input:checked::after {
+  transform: translate(1rem, -50%);
+}
+
+.nav-switch__input:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+.nav-switch__input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-switch__input,
+  .nav-switch__input::after {
+    transition: none;
+  }
+}
+
+.nav-switch__label {
+  cursor: pointer;
+}
+
+.nav-switch__description {
+  display: block;
+  color: var(--nav-color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ToggleGroup — a segmented control. */
+.nav-toggle-group {
+  display: inline-flex;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  overflow: hidden;
+}
+
+.nav-toggle {
+  padding: 0.375rem 0.75rem;
+  border: 0;
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-toggle + .nav-toggle {
+  border-left: 1px solid var(--nav-color-border);
+}
+
+.nav-toggle:hover:not(:disabled) {
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-toggle--on {
+  background: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+}
+
+.nav-toggle--on:hover:not(:disabled) {
+  background: var(--nav-color-primary-hover);
+}
+
+.nav-toggle:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: -2px;
+}
+
+.nav-toggle:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Dialog and Sheet — both native <dialog>. */
+.nav-dialog {
+  width: min(100%, 32rem);
+  padding: 1.25rem;
+  /* The overlay edge, not the ordinary one: this border is measured against
+     the scrim rather than the page. See --nav-color-overlay-edge. */
+  border: 1px solid var(--nav-color-overlay-edge);
+  box-shadow: var(--nav-shadow-lg);
+  color: var(--nav-color-text);
+}
+
+.nav-dialog::backdrop,
+.nav-sheet::backdrop {
+  background: var(--nav-color-scrim);
+}
+
+.nav-dialog:not([open]),
+.nav-sheet:not([open]) {
+  display: none;
+}
+
+.nav-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.nav-dialog__title {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.nav-dialog__close {
+  flex: 0 0 auto;
+  padding: 0 0.375rem;
+  border: 0;
+  background: transparent;
+  color: var(--nav-color-text-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nav-dialog__close:hover {
+  color: var(--nav-color-text);
+}
+
+.nav-dialog__close:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+.nav-dialog__description {
+  margin: 0.25rem 0 0;
+  color: var(--nav-color-text-muted);
+}
+
+.nav-dialog__body {
+  margin-top: 1rem;
+}
+
+.nav-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+/* The sheet fills one edge. `max-height: 100%` rather than `height` so a short
+   sheet does not stretch, and the body scrolls rather than the page. */
+.nav-sheet {
+  width: min(100%, 24rem);
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 1.25rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+  box-shadow: var(--nav-shadow-lg);
+  overflow-y: auto;
+}
+
+.nav-sheet--right {
+  margin-left: auto;
+  border-left: 1px solid var(--nav-color-overlay-edge);
+}
+
+.nav-sheet--left {
+  margin-right: auto;
+  border-right: 1px solid var(--nav-color-overlay-edge);
+}
+
+/* Popover and DropdownMenu share their positioning. Anchored to a relatively
+   positioned wrapper rather than the viewport, so no measurement and no
+   reflow-on-scroll. */
+.nav-popover,
+.nav-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-popover__content,
+.nav-menu__content {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  z-index: 50;
+  min-width: 12rem;
+  /* Floats over the page like a dialog, so it takes the overlay edge for the
+     same reason — a dark panel on a dark page needs a boundary of its own. */
+  border: 1px solid var(--nav-color-overlay-edge);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface-raised);
+  box-shadow: var(--nav-shadow-lg);
+}
+
+.nav-popover__content {
+  padding: 0.75rem 1rem;
+  width: max-content;
+  max-width: min(20rem, 90vw);
+}
+
+.nav-menu__content {
+  padding: 0.25rem;
+}
+
+.nav-popover__content--start,
+.nav-menu__content--start {
+  left: 0;
+}
+
+.nav-popover__content--end,
+.nav-menu__content--end {
+  right: 0;
+}
+
+.nav-menu__item {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.625rem;
+  border: 0;
+  border-radius: var(--nav-radius-sm);
+  background: transparent;
+  color: var(--nav-color-text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-menu__item:hover:not(:disabled),
+.nav-menu__item:focus-visible {
+  background: var(--nav-color-surface-subtle);
+  outline: none;
+}
+
+.nav-menu__item--danger {
+  color: var(--nav-color-danger);
+}
+
+.nav-menu__item:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Tooltip. */
+.nav-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-tooltip__content {
+  position: absolute;
+  bottom: calc(100% + 0.375rem);
+  left: 50%;
+  z-index: 60;
+  width: max-content;
+  max-width: 16rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-on-secondary);
+  color: var(--nav-color-secondary);
+  font-size: 0.85rem;
+  transform: translateX(-50%);
+  /* A tooltip is a hint about the thing under the pointer; letting it take the
+     pointer would make it flicker as the cursor crosses onto it. */
+  pointer-events: none;
+}
+
+/* Toaster — the stack, pinned to a corner. */
+.nav-toaster {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 70;
+  display: grid;
+  gap: 0.5rem;
+  width: min(24rem, calc(100vw - 2rem));
+}
+
+/* An empty region must not intercept clicks on the page underneath — the
+   region itself is always mounted so insertions are announced. */
+.nav-toaster:empty {
+  display: none;
+}
+
+/* A stacked toast floats over the page, so it needs an outline the inline
+ * variant does not. Three sides only: the `border` shorthand would also write
+ * `border-left`, and at this specificity it would silently overwrite the 4px
+ * tone accent `.nav-toast` sets — leaving every toast in the stack the same
+ * gray regardless of tone. */
+.nav-toaster .nav-toast {
+  border-block: 1px solid var(--nav-color-border);
+  border-inline-end: 1px solid var(--nav-color-border);
+  box-shadow: var(--nav-shadow);
+}
+
+.nav-toast__dismiss {
+  flex: 0 0 auto;
+  padding: 0 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--nav-color-text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nav-toast__dismiss:hover {
+  color: var(--nav-color-text);
+}
+
+.nav-toast__dismiss:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+/* Tabs — the client-side panel. The link variant reuses `.nav-tabs` above. */
+.nav-tabs-root {
+  display: grid;
+  gap: 0;
+}
+
+.nav-tabs [role="tab"] {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-tabs [role="tab"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.nav-tabs [role="tab"]:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: -2px;
+}
+
+.nav-tabs__panel {
+  padding: 1rem 0;
+}
+
+.nav-tabs__panel:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}

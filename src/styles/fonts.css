@@ -1,0 +1,70 @@
+/* The typeface, self-hosted.
+ *
+ * Source Serif 4, under the SIL Open Font License 1.1. The OFL is the reason
+ * this file can exist in a public package at all: it permits bundling and
+ * redistribution outright, so the woff2 files ship in `dist` and every consumer
+ * redistributes them again without needing a licence of their own.
+ *
+ * This was GORP Serif until the first public release, and GORP is still the
+ * recommended face — it is simply not ours to ship. It is a commercial licence
+ * from TrashType, LLC, and a public npm package puts the binaries in front of
+ * everyone who installs the library, which no commercial webfont licence
+ * contemplates. A consumer who buys GORP declares its `@font-face` and gets it:
+ * it is named
+ * ahead of Source Serif in `--nav-font-family`, so a licensed copy wins with no
+ * component touched and no fork. See the typography section of the README.
+ *
+ * Two weights exist and only two: 400 and 700. Source Serif ships eight, and
+ * the restriction is deliberate rather than forced — weight-based hierarchy is
+ * binary here and every other distinction is size and color. A component that
+ * wants "a bit bolder than body" does not have that option and should change
+ * size instead. `check:type` fails the build on anything else, because the rule
+ * was documented for a year while forty-one rules quietly asked for a
+ * synthesized 600 or 800 and nobody could see it.
+ *
+ * These are the Google Fonts latin-subset builds, taken from
+ * `@fontsource/source-serif-4`. Latin covers the library's copy, the
+ * typographic quotes, and the currency and section marks the matter surfaces
+ * use. The two files are 44 KB together, against GORP's 88 KB.
+ *
+ * Both carry `tnum`, which is what `matter.css` leans on: a column of currency
+ * only stays aligned because the face has fixed-width figures to ask for. They
+ * carry `pnum` too, so prose keeps proportional figures, which is correct in a
+ * sentence. Swapping in a face without `tnum` would break the docket and the
+ * tables silently — check for it before you change this file.
+ *
+ * The files are vendored rather than fetched. A remote font is an off-origin
+ * reference, which `check:bundle` fails on, and it is a render-blocking round
+ * trip to a host we do not control — in a library that loads on every page of
+ * an authenticated portal, that is a third party watching every one of them.
+ *
+ * The URLs are relative so the consumer's bundler rewrites them when it
+ * processes `@neon-law-foundation/navigator-ux/styles.css`. An absolute
+ * `/assets/...` path would assume every portal serves the library from the
+ * document root.
+ *
+ * Copyright 2014 The Source Serif 4 Project Authors (adobe-fonts/source-serif
+ * on GitHub), with Reserved Font Name 'Source'. Full licence text, with the
+ * upstream URL, is in THIRD-PARTY-NOTICES.md and in `dist/OFL.txt`, which ships
+ * beside the files it covers.
+ *
+ * The URL is spelled out rather than linked because `check:bundle` scans this
+ * file's comments too — see the note in `check-no-external-references.mjs`. It
+ * is deliberate that a licence header cannot smuggle one in.
+ */
+
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/source-serif-4/SourceSerif4-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/source-serif-4/SourceSerif4-Bold.woff2') format('woff2');
+}

@@ -1,0 +1,94 @@
+{
+  "name": "@neon-law-foundation/navigator-ux",
+  "version": "0.1.0",
+  "description": "Navigator UX \u2014 a dependency-free React component library on the Neon Law teal.",
+  "license": "MIT OR Apache-2.0",
+  "private": false,
+  "type": "module",
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "design-system",
+    "design-tokens",
+    "ui",
+    "accessible",
+    "shadcn",
+    "css-variables"
+  ],
+  "files": [
+    "dist",
+    "LICENSE.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
+    "THIRD-PARTY-NOTICES.md",
+    "README.md"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/navigator-ux.css"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "gallery": "vite --config vite.gallery.config.ts",
+    "build:gallery": "vite build --config vite.gallery.config.ts",
+    "build": "tsc --noEmit && vite build && node scripts/emit-font-layer.mjs",
+    "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
+    "check:tokens": "node scripts/check-no-literal-colors.mjs",
+    "check:type": "node scripts/check-type-contract.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:bundle": "node scripts/check-no-external-references.mjs",
+    "check": "pnpm lint && pnpm check:tokens && pnpm check:type && pnpm check:contrast && pnpm build && pnpm typecheck && pnpm check:bundle && pnpm test:coverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.4",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
+    "jsdom": "^30.0.1",
+    "oxlint": "^1.78.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "~5.9.3",
+    "vite": "^8.2.1",
+    "vite-plugin-dts": "^5.0.3",
+    "vitest": "^4.1.10"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neon-law-foundation/navigator-ux.git"
+  },
+  "homepage": "https://github.com/neon-law-foundation/navigator-ux#readme",
+  "bugs": {
+    "url": "https://github.com/neon-law-foundation/navigator-ux/issues"
+  },
+  "author": "Neon Law Foundation"
+}

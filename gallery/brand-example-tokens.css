@@ -1,0 +1,76 @@
+/* An example brand layer — layer two of three, and the template for your own.
+ *
+ * This file is not published. It exists so the gallery can demonstrate the one
+ * claim the three-layer split makes: that a brand is a stylesheet, not a fork.
+ * Attaching it restyles every component on the page and touches no component.
+ *
+ * The library ships one identity — the Neon Law teal in `tokens.css`. If you
+ * want your own, copy this file into your app, change the ramp, and import it
+ * after `@neon-law-foundation/navigator-ux/styles.css`. That is the whole
+ * mechanism. There is no build step and no configuration.
+ *
+ * Three rules make a brand layer work:
+ *
+ *   1. The selector is `:root:root`, not `:root`. Specificity is what makes
+ *      this win, not source order — a layer that depends on arriving last
+ *      silently loses the day something else is injected after it. It is a
+ *      doubled selector rather than `!important` so an app keeps the option of
+ *      overriding again at a third level.
+ *
+ *   2. Move the semantic aliases, not the shared ground. Surfaces, borders,
+ *      text, radii, and the status colors stay single-sourced in `tokens.css`,
+ *      so every brand inherits the same contrast work and the same geometry. If
+ *      your brand needs its own `--nav-color-border`, that is a design decision
+ *      worth arguing for, not a default.
+ *
+ *   3. Redeclare in dark too. A ramp that reads on white will not read on
+ *      #0d1117: primary has to climb to a lighter stop and its ink has to drop
+ *      to a darker one. Skipping the dark block is how a brand ends up
+ *      invisible in exactly one scheme.
+ *
+ * The violet below is deliberately nothing to do with Neon Law. It is a sample,
+ * picked so the swap is unmistakable on screen, and contrast-checked the same
+ * way the real ramp is.
+ *
+ * Contrast, measured against `--nav-color-bg` in each scheme:
+ *   500 on white    7.09:1    600 on white   9.00:1    700 on white  10.98:1
+ *   400 on #0d1117 10.20:1    950 on 400      8.17:1
+ * Every pairing clears WCAG AA, and all but one clear AAA.
+ */
+
+:root:root {
+  --nav-violet-400: #c4b5fd;
+  --nav-violet-500: #6d28d9;
+  --nav-violet-600: #5b21b6;
+  --nav-violet-700: #4c1d95;
+  --nav-violet-950: #2e1065;
+  --nav-violet-subtle: #ede9fe;
+
+  --nav-color-primary: var(--nav-violet-500);
+  --nav-color-primary-hover: var(--nav-violet-600);
+  --nav-color-primary-active: var(--nav-violet-700);
+  --nav-color-on-primary: #ffffff;
+  --nav-color-on-brand: #ffffff;
+
+  --nav-color-link: var(--nav-violet-500);
+  --nav-color-link-hover: var(--nav-violet-700);
+
+  --nav-color-surface-subtle: var(--nav-violet-subtle);
+  --nav-color-focus: var(--nav-violet-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:root {
+    /* Rule 3, applied: the 500 stop is 1.71:1 on #0d1117, far under the floor,
+       so primary climbs to 400 and its ink drops to 950. */
+    --nav-color-primary: var(--nav-violet-400);
+    --nav-color-primary-hover: #ddd6fe;
+    --nav-color-primary-active: #ede9fe;
+    --nav-color-on-primary: var(--nav-violet-950);
+    --nav-color-on-brand: var(--nav-violet-950);
+    --nav-color-link: var(--nav-violet-400);
+    --nav-color-link-hover: #ddd6fe;
+    --nav-color-surface-subtle: #241245;
+    --nav-color-focus: var(--nav-violet-400);
+  }
+}
