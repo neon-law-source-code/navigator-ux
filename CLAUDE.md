@@ -363,10 +363,9 @@ fails on the `--provenance` flag rather than on anything to do with the token.
 *scoped* package defaults to restricted, and a restricted package on the public registry fails every
 consumer's install with a `404` that reads like a typo rather than a permissions problem.
 
-This package was previously private on a GitHub Enterprise registry. All of that — the scope
-mapping, the classic-PAT-with-SSO requirement, the per-package visibility dialog — is gone, and so is
-the documentation of it. If you are chasing a `403` from `npm.neon-law.ghe.com`, you are in the wrong
-repository's history.
+This package publishes from one place: <https://github.com/neon-law-foundation/navigator-ux>, to
+`registry.npmjs.org`, on a `v*` tag. There is no second registry and no scope mapping — a consumer
+needs no `.npmrc` and no token, and neither does CI.
 
 ## Before you commit
 

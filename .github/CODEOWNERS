@@ -1,9 +1,7 @@
 # CODEOWNERS — @nick reviews everything.
 #
-# The handle must resolve on the host this repository lives on. This enterprise
-# is GitHub Enterprise Cloud with data residency, whose accounts are
-# EMU-provisioned through Google SAML and share no namespace with github.com,
-# so a handle carried over from a github.com checkout resolves to nothing here.
+# The handle must resolve on the host this repository lives on, which is
+# github.com: <https://github.com/neon-law-foundation/navigator-ux>.
 #
 # GitHub does not reject an owner it cannot resolve: it drops the rule and
 # leaves those paths unowned, which is indistinguishable from having no
