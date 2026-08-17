@@ -3,24 +3,58 @@
 What an application has to agree with to use this library. If you only want to render a component,
 the [README](../README.md) is enough — this is the integration detail behind it.
 
-## The dependency is always a released range
+## The dependency is always a released tarball
 
 ```json
 "dependencies": {
-  "@neon-law-foundation/navigator-ux": "^0.1.0",
+  "@neon-law-foundation/navigator-ux": "https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.1.0/navigator-ux-v0.1.0.tgz",
   "react": "^19.2.0",
   "react-dom": "^19.2.0"
 }
 ```
 
-A caret range on a released version. Never `workspace:*`, and never `link:` in a commit.
+`pnpm add <url>` records exactly that: the URL verbatim, keyed by the package's own name, which it
+reads out of the tarball's manifest. Never `workspace:*`, and never `link:` in a commit.
+
+The repository is public, so the download needs no credential. **No token, no `.npmrc`, no registry
+configuration** — for CI or for a laptop.
 
 `0.1.0` is the first public release, and the first release of any kind from this repository. The
 library had a longer private life under other names and other registries; none of it is reachable
-here and none of it shares this version line, so no range should point below `0.1.0`.
+here and none of it shares this version line, so nothing should point below `0.1.0`.
 
-The package is public on npmjs.com. **No token, no `.npmrc`, no registry configuration** — for CI or
-for a laptop.
+### A URL is not a range
+
+This is the one real cost of the channel, and it is worth stating plainly rather than discovering it.
+A tarball URL pins one exact build. There is no caret, so `pnpm update` will never move this
+dependency and a patch release does not arrive on its own — upgrading means editing the URL in
+`package.json` and re-running `pnpm install`. That is a deliberate trade for a channel that needs no
+registry account, and it is also the property that makes a component change reach an app only when the
+app asks for it.
+
+Pin the same URL in every place that installs, and change them together.
+
+### Do not install from the git URL
+
+```bash
+# Wrong. Resolves, succeeds, and installs nothing usable.
+pnpm add github:neon-law-foundation/navigator-ux
+```
+
+`dist` is gitignored and the manifest's `files` field ships `dist` and the licenses, so a git install
+gives you a package containing `LICENSE*`, `README.md`, `THIRD-PARTY-NOTICES.md`, and `package.json` —
+no `dist` and no `src`. There is no `prepare` script to build it on the way in. The install goes green
+and your build fails afterwards, pointing into `node_modules`:
+
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module
+  .../node_modules/@neon-law-foundation/navigator-ux/dist/index.js
+```
+
+Adding `prepare` to the library would not fix this cleanly either: pnpm refuses to run build scripts
+for a git-hosted package unless the *consumer* allowlists it in `pnpm-workspace.yaml`, keyed by the
+full git URL including the resolved commit SHA — a key that changes on every version bump. The release
+tarball exists to avoid all of it.
 
 ## One stylesheet, imported explicitly
 

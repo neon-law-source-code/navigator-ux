@@ -171,12 +171,26 @@ jobs:
           fi
           printf '%s\n' "${result}"
 
-  publish:
+  # Cuts the release: builds, packs a tarball, and attaches it to the GitHub
+  # Release for the tag. The tarball is the distribution channel — consumers
+  # install from the release download URL, which needs no registry account and
+  # no `.npmrc`. See docs/consuming-the-library.md.
+  #
+  # The tarball is what `pnpm pack` produces, so it carries `dist` and nothing
+  # else `files` excludes. That distinction is the whole reason this job exists
+  # rather than pointing consumers at the git URL: `dist` is gitignored and
+  # there is no `prepare` script, so `pnpm add <git url>` resolves, installs a
+  # package containing only the licenses and the README, and fails at the
+  # consumer's first import with "Cannot find module .../dist/index.js". The
+  # install itself goes green, which is what makes it worth spending a job to
+  # avoid.
+  release:
     needs: [lint, verify]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # Creating the release and uploading the tarball to it both need write.
+      contents: write
       # Provenance is signed with a short-lived OIDC token minted for this run,
       # which is what lets npm show the "Built and signed on GitHub Actions"
       # badge and link the tarball back to this commit. It needs id-token:write
@@ -190,16 +204,91 @@ jobs:
           node-version: '22'
           cache: pnpm
           registry-url: https://registry.npmjs.org/
+
+      # The tag names the version, but the manifest is what actually ships, and
+      # nothing else checks that the two agree: the publish below passes
+      # `--no-git-checks`, and a tarball is named from whatever the manifest
+      # says regardless of the tag it was built from. Tagging v0.2.0 without
+      # bumping package.json would therefore publish 0.1.0 a second time and
+      # attach a 0.1.0 tarball to a release called v0.2.0. Bump the manifest,
+      # merge, then tag — in that order.
+      #
+      # This runs before `install`, which is the slowest step here: a mismatch
+      # is a re-tag either way, so it should report in seconds.
+      - name: assert the tag matches package.json
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          manifest="$(node -p 'require("./package.json").version')"
+          tag="${REF_NAME#v}"
+          echo "tag:          ${tag}"
+          echo "package.json: ${manifest}"
+          if [ "${tag}" != "${manifest}" ]; then
+              echo "::error::tag ${REF_NAME} does not match package.json ${manifest}. Bump the manifest, merge, and re-tag."
+              exit 1
+          fi
+
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
+      # Pinned to a literal filename rather than left to pnpm's default, which
+      # flattens the scope into `neon-law-foundation-navigator-ux-<version>.tgz`.
+      # Consumers paste this URL into a manifest by hand, so the name is part of
+      # the contract and should be predictable from the tag alone.
+      - name: pack the tarball
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: pnpm pack --out "navigator-ux-${REF_NAME}.tgz"
+
+      # Idempotent, so re-running a release job is a no-op rather than a
+      # failure: `gh release create` refuses a tag that already has a release,
+      # which is exactly the state a re-run is in.
+      - name: create the release and attach the tarball
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          # Derive the API host from the run rather than letting `gh` default to
+          # github.com, for the same reason the auto-merge job does.
+          GH_HOST="${GITHUB_SERVER_URL#https://}"
+          export GH_HOST
+          tarball="navigator-ux-${REF_NAME}.tgz"
+          if gh release view "${REF_NAME}" >/dev/null 2>&1; then
+              echo "release ${REF_NAME} exists; replacing the tarball."
+              gh release upload "${REF_NAME}" "${tarball}" --clobber
+          else
+              gh release create "${REF_NAME}" "${tarball}" \
+                  --title "${REF_NAME}" \
+                  --generate-notes
+          fi
+
+      # The registry publish is wired but inert: it skips unless NPM_TOKEN is
+      # configured, and this repository has no secrets at all today. Guarding it
+      # rather than deleting it keeps a tagged release green while the tarball
+      # is the channel, and means adding the secret is the only step needed to
+      # start publishing to npm as well.
+      #
+      # A job-level `if` cannot read `secrets`, which is why the guard is a step
+      # condition on `env` instead. Folding it into this job also reuses the
+      # build above rather than paying for a second one.
+      #
       # `--access public` is stated rather than left to publishConfig because
       # the first publish of a *scoped* package defaults to restricted, and a
       # restricted package on the public registry fails every consumer's
       # install with a 404 that reads like a typo. It is idempotent after that.
-      - run: pnpm publish --access public --provenance --no-git-checks
+      - name: publish to npm, if a token is configured
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+              echo "NPM_TOKEN is not configured; skipping the registry publish."
+              echo "The GitHub Release tarball attached above is the distribution channel."
+              exit 0
+          fi
+          pnpm publish --access public --provenance --no-git-checks
 
   # The single required status check. It runs nothing itself: the jobs above do
   # the work and this one reports their combined result under one context name
