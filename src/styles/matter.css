@@ -195,6 +195,7 @@ a {
 .case-head {
   padding: 20px 22px;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
   background: var(--nav-color-surface);
 }
 
@@ -237,6 +238,7 @@ a {
   margin-top: 10px;
   padding: 7px;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface);
   box-shadow: var(--nav-shadow);
 }
@@ -284,7 +286,9 @@ section[id] {
 /* -------------------------------------------------------------- panel -- */
 
 .panel {
+  overflow: hidden;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
   background: var(--nav-color-surface);
 }
 
@@ -506,6 +510,7 @@ section[id] {
 .claim-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
 }
 
 .claim-table {
@@ -633,6 +638,7 @@ section[id] {
   padding: 13px;
   border: 1px solid var(--nav-color-border);
   border-left: 5px solid var(--nav-color-link);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface);
 }
 
@@ -662,7 +668,9 @@ section[id] {
 /* --------------------------------------------------------- draft card -- */
 
 .draft-card {
+  overflow: hidden;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
   background: var(--nav-color-surface);
 }
 
@@ -716,6 +724,7 @@ section[id] {
   flex-direction: column;
   padding: 13px;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface-raised);
 }
 
@@ -746,6 +755,7 @@ section[id] {
 .fact-card {
   padding: 11px;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface-raised);
 }
 
@@ -766,6 +776,7 @@ section[id] {
   padding: 13px;
   border: 1px solid var(--nav-color-border);
   border-left: 5px solid var(--nav-color-link);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface-raised);
 }
 
@@ -808,7 +819,9 @@ section[id] {
 }
 
 .source-message {
+  overflow: hidden;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface-raised);
 }
 
@@ -990,6 +1003,7 @@ section[id] {
   margin: 11px 0;
   padding: 11px;
   border-left: 4px solid var(--nav-color-link);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-surface-subtle);
   font-size: 12px;
   line-height: 1.55;
@@ -999,6 +1013,7 @@ section[id] {
   padding: 10px;
   border: 1px solid var(--nav-color-on-warning-subtle);
   border-left: 4px solid var(--nav-color-on-warning-subtle);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-warning-subtle);
   font-size: 11.5px;
   line-height: 1.5;
@@ -1026,7 +1041,9 @@ section[id] {
   display: grid;
   grid-template-columns: 1.25fr 1.15fr 1.15fr 0.8fr;
   margin-top: 12px;
+  overflow: hidden;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
   background: var(--nav-color-surface);
 }
 
@@ -1118,6 +1135,7 @@ section[id] {
   padding: 12px 14px;
   border: 1px solid var(--nav-color-on-warning-subtle);
   border-left: 5px solid var(--nav-color-on-warning-subtle);
+  border-radius: var(--nav-radius-sm);
   background: var(--nav-color-warning-subtle);
   color: var(--nav-color-text);
   box-shadow: var(--nav-shadow);

@@ -1611,8 +1611,10 @@ a.nav-link:hover {
  * separate pseudo-element outside the dialog's own cascade — it cannot inherit,
  * so the scrim token is named again here. */
 dialog.confirm-delete {
+  overflow: hidden;
   padding: 0;
   border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
   color: var(--nav-color-text);
 }
 
@@ -1971,6 +1973,7 @@ dialog.confirm-delete:not([open]) {
   /* The overlay edge, not the ordinary one: this border is measured against
      the scrim rather than the page. See --nav-color-overlay-edge. */
   border: 1px solid var(--nav-color-overlay-edge);
+  border-radius: var(--nav-radius);
   box-shadow: var(--nav-shadow-lg);
   color: var(--nav-color-text);
 }
@@ -2044,7 +2047,6 @@ dialog.confirm-delete:not([open]) {
   margin: 0;
   padding: 1.25rem;
   border: 0;
-  border-radius: 0;
   background: var(--nav-color-surface);
   color: var(--nav-color-text);
   box-shadow: var(--nav-shadow-lg);
@@ -2054,11 +2056,13 @@ dialog.confirm-delete:not([open]) {
 .nav-sheet--right {
   margin-left: auto;
   border-left: 1px solid var(--nav-color-overlay-edge);
+  border-radius: var(--nav-radius) 0 0 var(--nav-radius);
 }
 
 .nav-sheet--left {
   margin-right: auto;
   border-right: 1px solid var(--nav-color-overlay-edge);
+  border-radius: 0 var(--nav-radius) var(--nav-radius) 0;
 }
 
 /* Popover and DropdownMenu share their positioning. Anchored to a relatively

@@ -122,6 +122,23 @@ they are now computed.
 Changing a token is still a visual regression rather than a refactor. Run the gallery and look at it
 in both schemes.
 
+**Every box is rounded, and a square corner now has to earn itself.** The `--nav-*` set was always
+rounded; the surfaces ported from the static pages — panels, cards, callouts, the status strip, the
+claim table, the source thread — were flat, so the two halves of the library did not read as one
+system. They all take a `--nav-radius-*` token now. Three kinds of square corner are still correct
+and are the only ones left: a band that meets its container's edge (`.panel__head`, `.draft-meta`,
+`.nav-card__header`), which stays square because the *container* clips it; full-bleed page chrome
+(`.case-nav`, `.site-header`, `.impersonation-banner`), which has no corners on the page to round;
+and a surface deliberately filling the viewport, which is what `.authority-dialog__panel` resets to
+under the mobile breakpoint.
+
+A container whose children run edge to edge gets `overflow: hidden` alongside its radius rather than
+matching radii on each child, which is what `.nav-card` already did and what the rest now copy.
+Rounding the parent and leaving the child square is the failure mode — it does not error, it just
+puts a square band's corner outside a rounded border, and you only see it on the specimen page.
+`.nav-sheet` is the one asymmetric case: it rounds the edge facing the page and stays square against
+the viewport, so the radius lives on `--left` and `--right` rather than on the base rule.
+
 **The three-layer token split is load-bearing.** `tokens.css` (the `--nav-*` contract at `:root`,
 plus the Neon Law teal), a brand layer (an app's override at `:root:root`), and `theme.css` (every
 component rule, reading `var(--nav-*)` and never a literal color). Collapsing them into one file is
