@@ -16,7 +16,7 @@ Each release is a tarball attached to its
 download URL — no registry account, no token, and no `.npmrc`:
 
 ```bash
-pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.1.0/navigator-ux-v0.1.0.tgz
+pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.3.0/navigator-ux-v0.3.0.tgz
 ```
 
 React 19 is the only peer dependency. Five runtime dependencies come with the package and your
@@ -315,8 +315,8 @@ CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothin
 version in `package.json`, merge, then tag:
 
 ```bash
-git tag -s v0.1.0 -m "navigator-ux 0.1.0"
-git push origin v0.1.0
+git tag -s v0.3.0 -m "navigator-ux 0.3.0"
+git push origin v0.3.0
 ```
 
 The tag and `package.json` have to agree. CI asserts it before anything else runs and fails the
@@ -328,11 +328,10 @@ The release job then builds, runs `pnpm pack`, and attaches the tarball to the G
 tag. That tarball is the distribution channel; the filename is pinned rather than derived, because
 consumers paste the URL into a manifest by hand.
 
-Publishing to npmjs.com as well is wired but inert: the step skips unless an `NPM_TOKEN` repository
-secret with publish rights on the `@neon-law-foundation` scope exists. Add the secret and tagged
-releases start publishing to the registry in addition to attaching the tarball. The workflow requests
-`id-token: write` so npm can attach build provenance linking the tarball back to the commit that
-produced it — which requires the repository to be public.
+**Nothing is published to npmjs.com.** The GitHub Release tarball is the only channel — there is no
+registry publish step in CI, no package under the `@neon-law-foundation` scope, and no token that
+would create one. If you are looking for `pnpm add @neon-law-foundation/navigator-ux`, it does not
+exist; use the release URL above.
 
 ## Contributing
 

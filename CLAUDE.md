@@ -457,18 +457,19 @@ own type does not know the field, so it goes silently untyped.
 
 ## Publishing
 
-**The channel is a tarball attached to the GitHub Release, not the registry.** Nothing is on npmjs.com
-under the `@neon-law-foundation` scope — the scope does not exist yet. Consumers install from the
-release download URL, which needs no token, no registry configuration, and no `.npmrc` because the
-repository is public.
+**The channel is a tarball attached to the GitHub Release. There is no registry publish, and that is
+the policy rather than a gap.** Nothing is on npmjs.com under the `@neon-law-foundation` scope, the
+scope does not exist, and no step in CI would create it. Consumers install from the release download
+URL, which needs no token, no registry configuration, and no `.npmrc` because the repository is
+public.
 
 CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump
 `package.json`, merge, then tag.
 
 **The `release` job asserts the tag matches `package.json` before it does anything else.** Nothing else
-would: the publish passes `--no-git-checks`, and `pnpm pack` names the tarball from the manifest
-regardless of the tag it was built from, so tagging `v0.2.0` without bumping would attach a `0.1.0`
-tarball to a release called `v0.2.0` and republish `0.1.0`. The guard runs ahead of `pnpm install`
+would: `pnpm pack` names the tarball from the manifest regardless of the tag it was built from, so
+tagging `v0.2.0` without bumping would attach a `0.1.0` tarball to a release called `v0.2.0`. The
+guard runs ahead of `pnpm install`
 because a mismatch is a re-tag either way and should report in seconds rather than behind the build.
 
 The tarball filename is **pinned to a literal** (`navigator-ux-<tag>.tgz`) rather than left to pnpm's
@@ -486,21 +487,15 @@ build scripts for a git-hosted dependency unless the consumer allowlists it in `
 under a key containing the resolved commit SHA, which changes on every bump. Do not re-litigate this
 without reading [docs/consuming-the-library.md](./docs/consuming-the-library.md) first.
 
-**The npm publish is wired but inert, deliberately.** The step is still in the `release` job and skips
-with a log line unless `NPM_TOKEN` is set; this repository currently has no secrets at all. It is
-guarded rather than deleted so that adding the secret is the only step needed to publish to the
-registry as well, and so a tagged release does not go red today. The guard is a step-level condition on
-`env` because a job-level `if` cannot read `secrets`, and it lives in the `release` job so it reuses
-that build instead of paying for a second one.
+**There was an npm publish step, and it is gone.** It sat in the `release` job guarded on `NPM_TOKEN`,
+skipping with a log line because this repository has no secrets — kept on the theory that adding the
+secret would be the only step needed to start publishing. That theory is what made it a trap: a
+release job that publishes to a registry the moment someone adds a secret is a release job whose
+behavior nobody has decided. The `id-token: write` permission and the `registry-url` on `setup-node`
+went with it; both existed only to let npm attach build provenance.
 
-If the token is ever added, two things about that path still hold. **`id-token: write`** lets npm
-attach build provenance linking the tarball to the commit that produced it; it signs with a short-lived
-OIDC token minted for the run and is not an auth path. Provenance also requires the **repository to be
-public** — npm refuses to attest to a commit nobody can fetch — so a private repository fails on
-`--provenance` rather than on the token. And **`--access public`** is passed explicitly rather than left
-to `publishConfig`, because the first publish of a *scoped* package defaults to restricted, and a
-restricted package on the public registry fails every consumer's install with a `404` that reads like a
-typo rather than a permissions problem.
+If a registry publish is ever wanted, add it deliberately along with the decision about who owns the
+scope — do not restore an inert step and wait to be surprised by it.
 
 This package releases from one place: <https://github.com/neon-law-foundation/navigator-ux>, on a `v*`
 tag. There is no second registry and no scope mapping.

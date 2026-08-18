@@ -28,7 +28,7 @@ trademark position.
 
 ```json
 "dependencies": {
-  "@neon-law-foundation/navigator-ux": "https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.1.0/navigator-ux-v0.1.0.tgz",
+  "@neon-law-foundation/navigator-ux": "https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.3.0/navigator-ux-v0.3.0.tgz",
   "react": "^19.2.0",
   "react-dom": "^19.2.0"
 }
@@ -40,9 +40,13 @@ reads out of the tarball's manifest. Never `workspace:*`, and never `link:` in a
 The repository is public, so the download needs no credential. **No token, no `.npmrc`, no registry
 configuration** — for CI or for a laptop.
 
-`0.1.0` is the first public release, and the first release of any kind from this repository. The
+`0.1.0` was the first public release, and the first release of any kind from this repository. The
 library had a longer private life under other names and other registries; none of it is reachable
 here and none of it shares this version line, so nothing should point below `0.1.0`.
+
+The current release is **`v0.3.0`**, and the URL above names it. Because the channel is a URL rather
+than a range, that string is the version — see [A URL is not a range](#a-url-is-not-a-range) below,
+and update it deliberately.
 
 ### A URL is not a range
 
