@@ -1,0 +1,715 @@
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
+import { describe, expect, it, vi } from 'vitest'
+
+import {
+  AreaChart,
+  BarChart,
+  ButtonGroup,
+  Calendar,
+  Carousel,
+  CarouselItem,
+  ChartLegend,
+  ContextMenu,
+  DatePicker,
+  Empty,
+  Field,
+  GraphView,
+  HoverCard,
+  InputOTP,
+  Item,
+  Kbd,
+  LineChart,
+  Menubar,
+  SERIES_COUNT,
+  ScrollArea,
+  Slider,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  monthHeading,
+  monthShape,
+  parseMonth,
+  seriesColor,
+  shiftMonth,
+} from '../index'
+
+/*
+ * The second shadcn wave.
+ *
+ * Specimen data throughout is invented — `Northwind`, `example.com`, and a
+ * fictional caption — for the reason the gallery's is: a fixture is read by
+ * everyone who clones the repository.
+ */
+
+/* ------------------------------------------------------------------ Table -- */
+
+describe('Table', () => {
+  it('renders a caption, a footer, and numeric alignment', () => {
+    render(
+      <Table caption="Fees by stage">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Stage</TableHead>
+            <TableHead numeric>Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow selected>
+            <TableCell>Discovery</TableCell>
+            <TableCell numeric>412000</TableCell>
+          </TableRow>
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell>Total</TableCell>
+            <TableCell numeric>412000</TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>,
+    )
+
+    expect(screen.getByRole('table', { name: 'Fees by stage' })).toBeInTheDocument()
+    // A header cell without a scope leaves a screen reader guessing.
+    expect(screen.getByRole('columnheader', { name: 'Stage' })).toHaveAttribute('scope', 'col')
+    expect(screen.getAllByRole('cell', { name: '412000' })[0]).toHaveClass(
+      'nav-table__cell--numeric',
+    )
+  })
+
+  it('marks the selected row so a stylesheet can reach it', () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableRow selected>
+            <TableCell>Chosen</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Other</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    )
+    const rows = screen.getAllByRole('row')
+    expect(rows[0]).toHaveAttribute('data-selected', 'true')
+    expect(rows[1]).not.toHaveAttribute('data-selected')
+  })
+
+  it('accepts a column span', () => {
+    render(
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={3}>Spanning</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    )
+    expect(screen.getByRole('cell', { name: 'Spanning' })).toHaveAttribute('colspan', '3')
+  })
+})
+
+/* ------------------------------------------------------------- Indicators -- */
+
+describe('Spinner, Kbd, and Empty', () => {
+  it('names the work rather than the widget', () => {
+    render(<Spinner label="Opening the docket" size="lg" />)
+    const status = screen.getByRole('status')
+    expect(status).toHaveClass('nav-spinner--lg')
+    expect(within(status).getByText('Opening the docket')).toBeInTheDocument()
+  })
+
+  it('defaults the spinner label', () => {
+    render(<Spinner />)
+    expect(screen.getByText('Loading')).toBeInTheDocument()
+  })
+
+  it('renders a chord as a kbd element', () => {
+    const { container } = render(<Kbd>Cmd K</Kbd>)
+    expect(container.querySelector('kbd')).toHaveTextContent('Cmd K')
+  })
+
+  it('shows an empty state with an action', async () => {
+    render(
+      <Empty
+        icon={<span>+</span>}
+        title="No filings yet"
+        description="Filings appear here once the first one is recorded."
+        action={<button type="button">Record a filing</button>}
+      />,
+    )
+    expect(screen.getByText('No filings yet')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Record a filing' })).toBeInTheDocument()
+  })
+
+  it('renders without the optional slots', () => {
+    render(<Empty title="Nothing here" />)
+    expect(screen.getByText('Nothing here')).toBeInTheDocument()
+  })
+})
+
+/* ---------------------------------------------------------------- Layouts -- */
+
+describe('ScrollArea, ButtonGroup, Carousel, and Item', () => {
+  it('makes a scroll region focusable, or it is unreachable by keyboard', () => {
+    render(
+      <ScrollArea label="Docket" maxHeight="12rem">
+        <p>Entry</p>
+      </ScrollArea>,
+    )
+    const region = screen.getByRole('region', { name: 'Docket' })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(region.style.maxHeight).toBe('12rem')
+  })
+
+  it('switches the scroll axis', () => {
+    render(
+      <ScrollArea label="Wide" horizontal>
+        <p>Entry</p>
+      </ScrollArea>,
+    )
+    expect(screen.getByRole('region', { name: 'Wide' })).toHaveClass('nav-scroll-area--x')
+  })
+
+  it('groups buttons under one label', () => {
+    render(
+      <ButtonGroup label="Document actions" vertical>
+        <button type="button">Copy</button>
+        <button type="button">Download</button>
+      </ButtonGroup>,
+    )
+    const group = screen.getByRole('group', { name: 'Document actions' })
+    expect(group).toHaveClass('nav-button-group--vertical')
+    expect(within(group).getAllByRole('button')).toHaveLength(2)
+  })
+
+  it('pages a carousel by the visible width', async () => {
+    const user = userEvent.setup()
+    render(
+      <Carousel label="Exhibits">
+        <CarouselItem>A</CarouselItem>
+        <CarouselItem>B</CarouselItem>
+      </Carousel>,
+    )
+
+    const track = screen.getByText('A').parentElement as HTMLDivElement
+    // jsdom reports zero for clientWidth and does not implement scrollBy.
+    Object.defineProperty(track, 'clientWidth', { value: 300, configurable: true })
+    const scrollBy = vi.fn()
+    track.scrollBy = scrollBy
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(scrollBy).toHaveBeenCalledWith({ left: 300, behavior: 'smooth' })
+
+    await user.click(screen.getByRole('button', { name: 'Previous' }))
+    expect(scrollBy).toHaveBeenLastCalledWith({ left: -300, behavior: 'smooth' })
+  })
+
+  it('hides the carousel controls on request', () => {
+    render(
+      <Carousel label="Exhibits" hideControls>
+        <CarouselItem>A</CarouselItem>
+      </Carousel>,
+    )
+    expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
+  })
+
+  it('renders an item row with every slot, and without them', () => {
+    const { rerender } = render(
+      <Item media={<span>M</span>} title="Notice of rescission" description="Filed 2 Aug" trailing={<span>PDF</span>} />,
+    )
+    expect(screen.getByText('Notice of rescission')).toBeInTheDocument()
+    expect(screen.getByText('PDF')).toBeInTheDocument()
+
+    rerender(<Item title="Bare" />)
+    expect(screen.getByText('Bare')).toBeInTheDocument()
+    expect(screen.queryByText('PDF')).not.toBeInTheDocument()
+  })
+
+  it('wires a field label, help, and error to the control', () => {
+    render(
+      <Field label="Docket" help="As filed" error="Required" required>
+        {(id, describedBy) => <input id={id} aria-describedby={describedBy} />}
+      </Field>,
+    )
+    const input = screen.getByLabelText(/Docket/)
+    const describedBy = input.getAttribute('aria-describedby') ?? ''
+    // Both the error and the help must be reachable, error first.
+    expect(describedBy.split(' ')).toHaveLength(2)
+    expect(screen.getByRole('alert')).toHaveTextContent('Required')
+  })
+})
+
+/* ----------------------------------------------------------------- Fields -- */
+
+describe('Slider', () => {
+  it('reports its value and formats the readout', async () => {
+    function Harness() {
+      const [value, setValue] = useState(40)
+      return (
+        <Slider
+          label="Exposure"
+          value={value}
+          onValueChange={setValue}
+          max={100}
+          format={(v) => `$${v}k`}
+          help="Drag to model"
+        />
+      )
+    }
+    render(<Harness />)
+    const slider = screen.getByRole('slider')
+    expect(slider).toHaveValue('40')
+    expect(screen.getByText('$40k')).toBeInTheDocument()
+  })
+
+  it('emits the numeric value on change', () => {
+    const onValueChange = vi.fn()
+    render(<Slider label="Weight" value={2} onValueChange={onValueChange} min={0} max={10} />)
+    const slider = screen.getByRole('slider')
+    slider.setAttribute('value', '7')
+    // fireEvent through userEvent's change path: range inputs need a direct set.
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+    setter?.call(slider, '7')
+    slider.dispatchEvent(new Event('change', { bubbles: true }))
+    expect(onValueChange).toHaveBeenCalledWith(7)
+  })
+})
+
+describe('InputOTP', () => {
+  it('fills every box from a single paste', async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<InputOTP label="Code" value="" onValueChange={onValueChange} length={6} />)
+
+    const boxes = screen.getAllByRole('textbox')
+    expect(boxes).toHaveLength(6)
+    boxes[0]?.focus()
+    await user.paste('123456')
+    expect(onValueChange).toHaveBeenCalledWith('123456')
+  })
+
+  it('ignores an empty paste', async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<InputOTP label="Code" value="" onValueChange={onValueChange} />)
+    screen.getAllByRole('textbox')[0]?.focus()
+    await user.paste('   ')
+    expect(onValueChange).not.toHaveBeenCalled()
+  })
+
+  it('offers the one-time code only on the first box', () => {
+    render(<InputOTP label="Code" value="12" onValueChange={vi.fn()} length={3} />)
+    const boxes = screen.getAllByRole('textbox')
+    expect(boxes[0]).toHaveAttribute('autocomplete', 'one-time-code')
+    expect(boxes[1]).toHaveAttribute('autocomplete', 'off')
+  })
+
+  it('walks backwards from an empty box on Backspace', async () => {
+    const user = userEvent.setup()
+    render(<InputOTP label="Code" value="" onValueChange={vi.fn()} length={3} />)
+    const boxes = screen.getAllByRole('textbox')
+    boxes[1]?.focus()
+    await user.keyboard('{Backspace}')
+    expect(boxes[0]).toHaveFocus()
+  })
+
+  it('moves with the arrow keys', async () => {
+    const user = userEvent.setup()
+    render(<InputOTP label="Code" value="" onValueChange={vi.fn()} length={3} />)
+    const boxes = screen.getAllByRole('textbox')
+    boxes[1]?.focus()
+    await user.keyboard('{ArrowLeft}')
+    expect(boxes[0]).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    expect(boxes[1]).toHaveFocus()
+  })
+
+  it('writes one character per box and advances', async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(<InputOTP label="Code" value="" onValueChange={onValueChange} length={3} help="Six digits" />)
+    const boxes = screen.getAllByRole('textbox')
+    boxes[0]?.focus()
+    await user.keyboard('4')
+    expect(onValueChange).toHaveBeenCalledWith('4')
+  })
+
+  it('shows an error in place of the help', () => {
+    render(<InputOTP label="Code" value="" onValueChange={vi.fn()} error="That code expired" />)
+    expect(screen.getByRole('alert')).toHaveTextContent('That code expired')
+  })
+})
+
+describe('DatePicker', () => {
+  it('posts an ISO value and enforces bounds in the platform', async () => {
+    const onValueChange = vi.fn()
+    render(
+      <DatePicker
+        label="Hearing"
+        name="hearing"
+        value="2026-09-12"
+        min="2026-01-01"
+        max="2026-12-31"
+        onValueChange={onValueChange}
+        required
+      />,
+    )
+    const input = screen.getByLabelText(/Hearing/)
+    expect(input).toHaveAttribute('type', 'date')
+    expect(input).toHaveAttribute('min', '2026-01-01')
+    expect(input).toHaveValue('2026-09-12')
+  })
+
+  it('surfaces an error', () => {
+    render(<DatePicker label="Hearing" name="hearing" error="Pick a weekday" />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Pick a weekday')
+  })
+})
+
+describe('month arithmetic', () => {
+  it('counts days and finds the Monday-based offset', () => {
+    // August 2026 has 31 days and starts on a Saturday.
+    expect(monthShape('2026-08')).toEqual({ days: 31, offset: 5 })
+    // February 2024 was a leap February.
+    expect(monthShape('2024-02').days).toBe(29)
+  })
+
+  it('falls back rather than producing NaN dates', () => {
+    expect(parseMonth('nonsense')).toEqual({ year: 1970, monthNumber: 1 })
+    expect(monthShape('nonsense').days).toBe(31)
+  })
+
+  it('shifts across a year boundary', () => {
+    expect(shiftMonth('2026-01', -1)).toBe('2025-12')
+    expect(shiftMonth('2026-12', 1)).toBe('2027-01')
+  })
+
+  it('reads a month as a heading', () => {
+    expect(monthHeading('2026-08')).toBe('August 2026')
+  })
+})
+
+describe('Calendar', () => {
+  it('lays out the month with notes and a selection', async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <Calendar
+        month="2026-08"
+        selected="2026-08-14"
+        onSelect={onSelect}
+        days={[
+          { date: '2026-08-14', note: 'Reply due' },
+          { date: '2026-08-20', disabled: true },
+        ]}
+      />,
+    )
+    expect(screen.getByText('August 2026')).toBeInTheDocument()
+    expect(screen.getByText('Reply due')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /^3$/ }))
+    expect(onSelect).toHaveBeenCalledWith('2026-08-03')
+  })
+
+  it('disables navigation when no month handler is given', () => {
+    render(<Calendar month="2026-08" />)
+    expect(screen.getByRole('button', { name: 'Previous month' })).toBeDisabled()
+  })
+
+  it('steps months', async () => {
+    const user = userEvent.setup()
+    const onMonthChange = vi.fn()
+    render(<Calendar month="2026-08" onMonthChange={onMonthChange} />)
+    await user.click(screen.getByRole('button', { name: 'Next month' }))
+    expect(onMonthChange).toHaveBeenCalledWith('2026-09')
+    await user.click(screen.getByRole('button', { name: 'Previous month' }))
+    expect(onMonthChange).toHaveBeenLastCalledWith('2026-07')
+  })
+})
+
+/* ------------------------------------------------------------------ Menus -- */
+
+describe('HoverCard', () => {
+  it('opens on focus and closes on Escape', async () => {
+    const user = userEvent.setup()
+    render(
+      <HoverCard trigger={<span>Ronnow</span>}>
+        <p>330 P.2d 497 (Nev. 1958)</p>
+      </HoverCard>,
+    )
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+
+    await user.tab()
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+})
+
+describe('ContextMenu', () => {
+  it('opens at the pointer and runs the chosen action', async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <ContextMenu items={[{ label: 'Open', onSelect }, { label: 'Delete', onSelect: vi.fn(), danger: true }]}>
+        <p>Row</p>
+      </ContextMenu>,
+    )
+
+    await user.pointer({ keys: '[MouseRight]', target: screen.getByText('Row') })
+    const menu = screen.getByRole('menu', { name: 'Actions' })
+    expect(within(menu).getAllByRole('menuitem')).toHaveLength(2)
+
+    await user.click(within(menu).getByRole('menuitem', { name: 'Open' }))
+    expect(onSelect).toHaveBeenCalledOnce()
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+  })
+
+  it('marks a destructive action', async () => {
+    const user = userEvent.setup()
+    render(
+      <ContextMenu items={[{ label: 'Delete', onSelect: vi.fn(), danger: true, disabled: true }]}>
+        <p>Row</p>
+      </ContextMenu>,
+    )
+    await user.pointer({ keys: '[MouseRight]', target: screen.getByText('Row') })
+    const item = screen.getByRole('menuitem', { name: 'Delete' })
+    expect(item).toHaveClass('nav-menu__item--danger')
+    expect(item).toBeDisabled()
+  })
+})
+
+describe('Menubar', () => {
+  const menus = [
+    { label: 'Matter', items: [{ label: 'New', onSelect: vi.fn() }] },
+    { label: 'Filing', items: [{ label: 'E-file', onSelect: vi.fn() }] },
+  ]
+
+  it('opens a menu and runs an item', async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(<Menubar menus={[{ label: 'Matter', items: [{ label: 'New', onSelect }] }]} />)
+
+    await user.click(screen.getByRole('menuitem', { name: 'Matter' }))
+    await user.click(screen.getByRole('menuitem', { name: 'New' }))
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it('moves between menus with the arrow keys, wrapping', async () => {
+    const user = userEvent.setup()
+    render(<Menubar menus={menus} />)
+    const matter = screen.getByRole('menuitem', { name: 'Matter' })
+
+    matter.focus()
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('menuitem', { name: 'Filing' })).toHaveAttribute('aria-expanded', 'true')
+
+    matter.focus()
+    await user.keyboard('{ArrowLeft}')
+    // Wraps to the last menu rather than dead-ending at the first.
+    expect(screen.getByRole('menuitem', { name: 'Filing' })).toHaveAttribute('aria-expanded', 'true')
+
+    matter.focus()
+    await user.keyboard('{ArrowDown}')
+    expect(matter).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('toggles a menu shut on a second click', async () => {
+    const user = userEvent.setup()
+    render(<Menubar menus={menus} />)
+    const trigger = screen.getByRole('menuitem', { name: 'Matter' })
+    await user.click(trigger)
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await user.click(trigger)
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  })
+})
+
+/* ----------------------------------------------------------------- Charts -- */
+
+const SERIES = [
+  { label: 'Q1', value: 12 },
+  { label: 'Q2', value: 30 },
+  { label: 'Q3', value: 22 },
+]
+
+describe('Charts', () => {
+  it('wraps the series palette at six', () => {
+    expect(SERIES_COUNT).toBe(6)
+    expect(seriesColor(0)).toBe('var(--nav-chart-1)')
+    expect(seriesColor(6)).toBe('var(--nav-chart-1)')
+    expect(seriesColor(7)).toBe('var(--nav-chart-2)')
+    // Caller error falls back rather than producing an uncolored mark.
+    expect(seriesColor(-1)).toBe('var(--nav-chart-2)')
+    expect(seriesColor(1.7)).toBe('var(--nav-chart-2)')
+  })
+
+  it('summarizes a bar chart rather than naming the widget', () => {
+    render(<BarChart data={SERIES} label="Exposure by quarter" format={(v) => `$${v}k`} />)
+    const chart = screen.getByRole('img')
+    expect(chart).toHaveAccessibleName(
+      'Exposure by quarter. 3 points from Q1 to Q3, ranging $12k to $30k. Ends at $22k.',
+    )
+  })
+
+  it('says so when there is nothing to plot', () => {
+    render(<BarChart data={[]} label="Empty" />)
+    expect(screen.getByRole('img')).toHaveAccessibleName('Empty: no data')
+  })
+
+  it('draws a line and an area', () => {
+    const { container, rerender } = render(<LineChart data={SERIES} label="Trend" />)
+    expect(container.querySelector('.nav-chart__line')).toBeInTheDocument()
+    expect(container.querySelector('.nav-chart__area')).not.toBeInTheDocument()
+
+    rerender(<AreaChart data={SERIES} label="Trend" />)
+    expect(container.querySelector('.nav-chart__area')).toBeInTheDocument()
+  })
+
+  it('survives a flat series without dividing by zero', () => {
+    const flat = [
+      { label: 'A', value: 5 },
+      { label: 'B', value: 5 },
+    ]
+    const { container } = render(<LineChart data={flat} label="Flat" />)
+    const path = container.querySelector('.nav-chart__line')?.getAttribute('d') ?? ''
+    expect(path).not.toContain('NaN')
+  })
+
+  it('omits the endpoint when there is no data', () => {
+    const { container } = render(<LineChart data={[]} label="Nothing" />)
+    expect(container.querySelector('.nav-chart__endpoint')).not.toBeInTheDocument()
+  })
+
+  it('renders a legend keyed to the series colors', () => {
+    render(<ChartLegend entries={[{ label: 'Fees', series: 0 }, { label: 'Costs', series: 1 }]} />)
+    expect(screen.getByText('Fees')).toBeInTheDocument()
+    expect(screen.getByText('Costs')).toBeInTheDocument()
+  })
+})
+
+/* -------------------------------------------------------------- GraphView -- */
+
+const NODES = [
+  { id: 'a', label: 'Vance', kind: 'party', fields: { role: 'Plaintiff' } },
+  { id: 'b', label: 'Northwind', kind: 'party', fields: { role: 'Defendant' } },
+  { id: 'c', label: 'Agreement', kind: 'instrument' },
+]
+const EDGES = [
+  { source: 'a', target: 'b', kind: 'adverse' },
+  { source: 'a', target: 'c', kind: 'instrument' },
+]
+
+describe('GraphView', () => {
+  it('reports its size to a reader who cannot see it', () => {
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Record graph. 3 nodes, 2 connections.',
+    )
+  })
+
+  it('filters a kind out of the graph and back', async () => {
+    const user = userEvent.setup()
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
+
+    await user.click(screen.getByRole('button', { name: 'party' }))
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Record graph. 1 nodes, 0 connections.',
+    )
+
+    await user.click(screen.getByRole('button', { name: 'party' }))
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Record graph. 3 nodes, 2 connections.',
+    )
+  })
+
+  it('reads a record into the panel on select', async () => {
+    const user = userEvent.setup()
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
+    expect(screen.getByText('Select a node to read its record.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Vance, party' }))
+    expect(screen.getByText('Plaintiff')).toBeInTheDocument()
+  })
+
+  it('selects with the keyboard', async () => {
+    const user = userEvent.setup()
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
+    const node = screen.getByRole('button', { name: 'Vance, party' })
+    node.focus()
+    await user.keyboard('{Enter}')
+    expect(screen.getByText('Plaintiff')).toBeInTheDocument()
+  })
+
+  it('edits a field when a handler is supplied', async () => {
+    const user = userEvent.setup()
+    const onFieldChange = vi.fn()
+    render(
+      <GraphView nodes={NODES} edges={EDGES} label="Record graph" onFieldChange={onFieldChange} />,
+    )
+    await user.click(screen.getByRole('button', { name: 'Vance, party' }))
+    await user.type(screen.getByLabelText('Vance role'), '!')
+    expect(onFieldChange).toHaveBeenCalledWith('a', 'role', 'Plaintiff!')
+  })
+
+  it('hides the panel on request', () => {
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" showPanel={false} />)
+    expect(screen.queryByText('Select a node to read its record.')).not.toBeInTheDocument()
+  })
+})
+
+/* ---------------------------------------------------------------- dragging -- */
+
+describe('GraphView dragging', () => {
+  /** jsdom lays nothing out, so the SVG has to be told how big it is. */
+  function sizeCanvas() {
+    const svg = document.querySelector('.nav-graph__canvas') as SVGSVGElement
+    svg.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, width: 800, height: 460 }) as DOMRect
+    return svg
+  }
+
+  it('pins a node while dragging and releases it on drop', () => {
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
+    sizeCanvas()
+    const node = screen.getByRole('button', { name: 'Vance, party' })
+
+    fireEvent.pointerDown(node, { pointerId: 1 })
+    fireEvent.pointerMove(node, { pointerId: 1, clientX: 400, clientY: 230 })
+    fireEvent.pointerUp(node, { pointerId: 1 })
+
+    // The graph is still readable afterwards — the drag did not detach it.
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Record graph. 3 nodes, 2 connections.',
+    )
+  })
+
+  it('ignores a pointer move with no drag in progress', () => {
+    render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
+    sizeCanvas()
+    const node = screen.getByRole('button', { name: 'Vance, party' })
+
+    // No pointerDown first, so this must be a no-op rather than a throw.
+    expect(() => fireEvent.pointerMove(node, { clientX: 10, clientY: 10 })).not.toThrow()
+    expect(() => fireEvent.pointerUp(node)).not.toThrow()
+  })
+
+  it('renders an unknown node kind without a color lookup failure', () => {
+    render(
+      <GraphView
+        nodes={[{ id: 'z', label: 'Lone', kind: 'unheard-of' }]}
+        edges={[]}
+        label="Sparse"
+      />,
+    )
+    expect(screen.getByRole('img')).toHaveAccessibleName('Sparse. 1 nodes, 0 connections.')
+  })
+})

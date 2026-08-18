@@ -184,6 +184,80 @@ export {
   type UseToasts,
 } from './lib/use-toasts'
 
+/* -- The second shadcn wave, plus the two surfaces that carry a dependency. --
+ * -- Table through Menubar are platform-built like the set above. Charts,   --
+ * -- GraphView, and PdfViewer are the exceptions: d3 and pdf.js are real    --
+ * -- dependencies, externalized in the build so a consumer resolves one     --
+ * -- copy. See the note in CLAUDE.md for what changed and why.              -- */
+
+export {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  type TableCellProps,
+  type TableProps,
+  type TableRowProps,
+} from './components/Table'
+export { Empty, Kbd, Spinner, type EmptyProps, type KbdProps, type SpinnerProps } from './components/Indicators'
+export {
+  ButtonGroup,
+  Carousel,
+  CarouselItem,
+  Field,
+  Item,
+  ScrollArea,
+  type ButtonGroupProps,
+  type CarouselProps,
+  type FieldProps,
+  type ItemProps,
+  type ScrollAreaProps,
+} from './components/Layouts'
+export {
+  Calendar,
+  DatePicker,
+  InputOTP,
+  Slider,
+  type CalendarDay,
+  type CalendarProps,
+  type DatePickerProps,
+  type InputOTPProps,
+  type SliderProps,
+} from './components/Fields'
+export {
+  ContextMenu,
+  HoverCard,
+  Menubar,
+  type ContextMenuItem,
+  type ContextMenuProps,
+  type HoverCardProps,
+  type MenubarMenu,
+  type MenubarProps,
+} from './components/Menus'
+export {
+  AreaChart,
+  BarChart,
+  ChartLegend,
+  LineChart,
+  type ChartLegendProps,
+  type ChartPoint,
+  type ChartProps,
+} from './components/Charts'
+export {
+  GraphView,
+  type GraphEdge,
+  type GraphNode,
+  type GraphViewProps,
+} from './components/GraphView'
+export { PdfViewer, type PdfViewerProps } from './components/PdfViewer'
+
+export { useDismissible, type DismissibleOptions } from './lib/use-dismissible'
+export { SERIES_COUNT, seriesColor } from './lib/chart-series'
+export { monthHeading, monthShape, parseMonth, shiftMonth } from './lib/month'
+
 /* ------------------------------ Matter surfaces, on the new token layer -- */
 
 export { SessionProvider, useSession, type SessionProviderProps } from './session/SessionProvider'

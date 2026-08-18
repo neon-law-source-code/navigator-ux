@@ -110,7 +110,7 @@ server-rendered endpoint rather than parsing anything itself.
 **Design tokens are designed here, and every ratio is enforced.** `src/styles/tokens.css`
 used to be a byte-for-byte transcription of a client's stylesheet, kept frozen because changing a
 value moved live client pages. That constraint is gone. What replaced it is arithmetic: every pairing
-carries its measured contrast ratio, and `pnpm check:contrast` recomputes all 88 of them from the file
+carries its measured contrast ratio, and `pnpm check:contrast` recomputes all 102 of them from the file
 and fails the build if one drops under its floor.
 
 That gate is not decoration. The first time it ran it found two status colors that had never cleared
@@ -182,16 +182,43 @@ asset a stylesheet references as a data: URI and ignores `assetsInlineLimit` doi
 two woff2 files into `dist`, and prepends the `@import` to the emitted stylesheet. Consumers still import one
 stylesheet.
 
-**The shadcn-derived set has no runtime dependencies, and that is the point.** `Accordion`,
-`Dialog`, `Sheet`, `Switch`, `Combobox`, `AspectRatio`, and the rest take shadcn/ui's semantics and
-rebuild them on the platform primitive that already carries them — `<details>`, `<dialog>`, a
-checkbox with `role="switch"`, `<input list>`, CSS `aspect-ratio`. This library loads on every page
-of every portal, so five Radix packages is a cost imposed on all of them, and each platform
-primitive brings something Radix cannot: `<details>` participates in in-page find, `<dialog>` gets
-the top layer and inertness from the browser, a checkbox posts without JavaScript. `Popover`,
-`DropdownMenu`, and `Tooltip` are the exception — no platform primitive covers them, so they share
-one `useDismissible` hook rather than three hand-rolled copies. Reach for Radix only when you can
-name what the platform is missing.
+**The shadcn-derived set is built on platform primitives, and that is still the point.**
+`Accordion`, `Dialog`, `Sheet`, `Switch`, `Combobox`, `AspectRatio`, `Table`, `Slider`, `InputOTP`,
+`DatePicker`, `ScrollArea`, `Carousel`, `ButtonGroup`, and the rest take shadcn/ui's semantics and
+rebuild them on the element that already carries them — `<details>`, `<dialog>`, a checkbox with
+`role="switch"`, `<input list>`, `<input type=range>`, `<input type=date>`, `<table>`, CSS
+`aspect-ratio`, CSS `scroll-snap`. This library loads on every page of every portal, so five Radix
+packages is a cost imposed on all of them, and each platform primitive brings something Radix
+cannot: `<details>` participates in in-page find, `<dialog>` gets the top layer and inertness from
+the browser, a checkbox posts without JavaScript, a native date input is localized to the reader
+rather than the app and can be autofilled. `Popover`, `DropdownMenu`, `Tooltip`, `HoverCard`,
+`ContextMenu`, and `Menubar` are the exceptions — no platform primitive covers them, so they share
+one `useDismissible` hook rather than six hand-rolled copies. Reach for Radix only when you can name
+what the platform is missing.
+
+**The package is no longer dependency-free, and the line that said so is gone.** It had been true
+since the first release and it was load-bearing prose, so removing it is worth recording rather than
+quietly editing. Three things now come from outside:
+
+| Dependency | Consumers | Why not hand-rolled |
+| --- | --- | --- |
+| `d3-array`, `d3-scale`, `d3-shape` | `BarChart`, `LineChart`, `AreaChart` | Scale, tick, and path arithmetic. Correct axis ticks alone are more subtle than they look. |
+| `d3-force` | `GraphView` | A force simulation is a physics engine; there is no version of writing one that is cheaper than importing it. |
+| `pdfjs-dist` | `PdfViewer` | A PDF renderer is not a component-library-sized problem. |
+
+The submodules matter: `d3` as a metapackage pulls in everything, and only four of its modules are
+used. d3 here is a *math* library — it computes numbers and path strings and never touches the DOM.
+React owns every element, which is why none of the chart components needs a ref or an effect, and
+why d3 and React cannot fight over who holds a node.
+
+All three are **externalized in the library build**. They are real `dependencies`, so a consumer's
+installer resolves them already; bundling a copy would ship two d3s to any app that also uses one.
+That is also what keeps `check:bundle` readable — it reads `dist` for off-origin references, and a
+megabyte of inlined vendor code would bury the signal.
+
+What has *not* changed is the rule these replace. No Tailwind, no Radix, no CVA, no icon package,
+and nothing at all for a problem the platform already solves. A dependency here has to be a thing
+that would be irresponsible to write ourselves. `pdf.js` clears that bar; a dropdown menu does not.
 
 **The shipped font is OFL, and the recommended one is not shipped at all.** `fonts.css` vendors
 Source Serif 4 at 400 and 700 — the Google Fonts latin subset, from `@fontsource/source-serif-4`,
@@ -308,6 +335,27 @@ built against `dist` is a page that silently shows you last build's components. 
 brand-layer switch is **not** a theme toggle — it attaches and detaches
 `gallery/brand-example-tokens.css`, which is the only way to see the middle layer swap.
 
+**pdf.js's worker cannot be resolved the same way in both builds.** The package emits ESM *and* CJS.
+`import.meta.url` is how a bundler is told to emit the worker as a same-origin asset — but in the CJS
+output Vite replaces `import.meta` with `{}`, so `import.meta.url` is `undefined` and `new URL()`
+throws. That is a crash instead of a document, for exactly the consumers least likely to be testing
+the ESM path. `defaultWorkerSrc()` therefore returns `null` rather than throwing, pdf.js falls back
+to its own default, and `PdfViewer` takes a `workerSrc` prop for a bundler that needs telling. The
+build warns about this — `This 'import.meta' will be replaced with an empty object` — and the warning
+is worth reading rather than silencing.
+
+**pdf.js's worker is resolved through `import.meta.url`, never a CDN.** Every pdf.js tutorial sets
+`workerSrc` to a `cdnjs` URL, and it works immediately — which is exactly why it is worth stating.
+The bundler has to emit the worker as a same-origin asset instead, or `check:bundle` fails, and it
+would be right to: a component library that quietly fetches a megabyte of script from someone else's
+origin is a supply-chain dependency nobody reviewed.
+
+**The text layer is the point of the PDF viewer, not a nicety.** These documents come out of
+`navigator template render` — Typst on court-paper geometry, from a validated notation template. A
+lawyer reading one needs to quote from it and cite a page, so a canvas-only viewer fails at the job.
+The text layer is what makes the document selectable, findable by the browser's own find, and
+copyable into a brief without retyping.
+
 **Four gates run in CI, and all of them are cheap to break.** `pnpm check:tokens` fails on any
 literal color outside the token layer — including a *named* color, which is why `FeedAccent` is
 `'brand' | 'link' | 'danger' | …` and not `'blue' | 'red' | …`. `pnpm check:type` fails on a font
@@ -318,6 +366,11 @@ fails any that drops under its WCAG floor. `pnpm check:bundle` fails on any off-
 
 The first three are source-level and dependency-free, so they run in the `lint` job and report in
 seconds rather than behind a full build.
+
+`check:tokens` blanks numeric character references before it scans. `&#8249;` is a left angle quote
+and `&#8722;` a minus sign — both routine in a control that draws its own chevrons — and the hex
+pattern read the `#8249` inside them as a four-digit color. That false positive costs an afternoon
+to recognise, because the reported color does not appear anywhere in the file you are sent to.
 
 **The type contract had to be enforced because documenting it did not work.** `fonts.css` has said
 "two weights, 400 and 700" since the font was vendored, and `theme.css` still asked for 600 in
@@ -358,6 +411,13 @@ providers (a provider and its hook belong in one file) and `no-array-index-key`
 in `StatusStrip`, which lives in `src/components/Cards.tsx` (status cells have
 no stable id). If you add a fourth, either
 fix it or record it here with the reason — the count is the point.
+
+It has already done its job once. The second shadcn wave added four, and all four
+were worth fixing rather than recording: `seriesColor` and the month helpers moved
+to `src/lib/` (a module exporting a plain function beside a component breaks fast
+refresh, and the rule is right about that), and `Calendar`'s `days = []` default
+became a module constant, because an inline literal is a new array every render
+and re-runs every `useMemo` below it.
 
 `no-console` is off under `scripts/**`: a build script reports what it
 emitted through stdout, which is its interface rather than a stray debug line.

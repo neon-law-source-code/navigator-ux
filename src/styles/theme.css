@@ -2241,3 +2241,866 @@ dialog.confirm-delete:not([open]) {
   outline: var(--nav-focus-ring) solid var(--nav-color-focus);
   outline-offset: var(--nav-focus-offset);
 }
+
+/* ============================================================================
+ * The second shadcn wave — Table, Slider, InputOTP, Calendar, DatePicker,
+ * ScrollArea, ButtonGroup, Carousel, Spinner, Kbd, Empty, Item, HoverCard,
+ * ContextMenu, Menubar — plus the d3 surfaces (charts, graph) and the PDF
+ * viewer.
+ *
+ * Same three contracts as everything above: a class name here, a `--nav-*`
+ * token for every color, and a `--nav-radius-*` for every corner. The two
+ * charting surfaces are the only rules in the file that paint an SVG
+ * presentation attribute, and they do it through `var()` for the same reason
+ * every other rule does.
+ * ========================================================================= */
+
+/* A label only a screen reader gets. Clipped rather than `display: none`,
+   which would remove it from the accessibility tree along with the layout. */
+.nav-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------ Table -- */
+
+.nav-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+}
+
+.nav-table__caption {
+  padding: 0.75rem 1rem;
+  color: var(--nav-color-text-muted);
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.nav-table__header {
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-table__th {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--nav-color-border);
+  color: var(--nav-color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.nav-table__td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--nav-color-border);
+}
+
+.nav-table__body tr:last-child .nav-table__td {
+  border-bottom: 0;
+}
+
+.nav-table__row[data-selected='true'] {
+  background: var(--nav-color-surface-subtle);
+}
+
+.nav-table__footer {
+  background: var(--nav-color-surface-raised);
+  font-weight: 700;
+}
+
+.nav-table__footer .nav-table__td {
+  border-top: 1px solid var(--nav-color-border);
+  border-bottom: 0;
+}
+
+/* Figures in a column are read against each other, which is the one place
+   proportional figures stop being correct. See the note in matter.css. */
+.nav-table__cell--numeric {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- Spinner -- */
+
+.nav-spinner {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-spinner__ring {
+  display: block;
+  border: 2px solid var(--nav-color-secondary);
+  border-top-color: var(--nav-color-primary);
+  border-radius: 50%;
+  animation: nav-spin 700ms linear infinite;
+}
+
+.nav-spinner--sm .nav-spinner__ring {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.nav-spinner--md .nav-spinner__ring {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.nav-spinner--lg .nav-spinner__ring {
+  width: 2rem;
+  height: 2rem;
+  border-width: 3px;
+}
+
+@keyframes nav-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Motion off, but the ring still has to say "busy" — so it stays as a partial
+   arc rather than becoming an indistinguishable full circle. */
+@media (prefers-reduced-motion: reduce) {
+  .nav-spinner__ring {
+    animation: none;
+  }
+}
+
+/* -------------------------------------------------------------------- Kbd -- */
+
+.nav-kbd {
+  display: inline-block;
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--nav-color-border);
+  border-bottom-width: 2px;
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface-raised);
+  color: var(--nav-color-text);
+  font-family: var(--nav-font-mono);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ Empty -- */
+
+.nav-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+  text-align: center;
+}
+
+.nav-empty-state__icon {
+  color: var(--nav-color-text-muted);
+  font-size: 1.5rem;
+}
+
+.nav-empty-state__title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.nav-empty-state__description {
+  margin: 0;
+  max-width: 32rem;
+  color: var(--nav-color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.nav-empty-state__action {
+  margin-top: 0.5rem;
+}
+
+/* ------------------------------------------------------------- ScrollArea -- */
+
+.nav-scroll-area {
+  overflow-y: auto;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+  scrollbar-width: thin;
+  scrollbar-color: var(--nav-color-secondary) transparent;
+}
+
+.nav-scroll-area--x {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.nav-scroll-area:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+/* ------------------------------------------------------------ ButtonGroup -- */
+
+.nav-button-group {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+}
+
+.nav-button-group--vertical {
+  flex-direction: column;
+}
+
+.nav-button-group > * + * {
+  border-left: 1px solid var(--nav-color-border);
+}
+
+.nav-button-group--vertical > * + * {
+  border-left: 0;
+  border-top: 1px solid var(--nav-color-border);
+}
+
+/* The group owns the edge, so the children must not draw their own or the
+   seam doubles. */
+.nav-button-group > .nav-btn {
+  border-radius: 0;
+  border-color: transparent;
+}
+
+/* --------------------------------------------------------------- Carousel -- */
+
+.nav-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.nav-carousel__track {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--nav-color-secondary) transparent;
+  padding-bottom: 0.25rem;
+}
+
+.nav-carousel__track:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+  border-radius: var(--nav-radius-sm);
+}
+
+.nav-carousel__item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.nav-carousel__controls {
+  display: flex;
+  gap: 0.375rem;
+  align-self: flex-end;
+}
+
+.nav-carousel__control,
+.nav-pdf__control,
+.nav-calendar__nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.875rem;
+  min-height: 1.875rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-carousel__control:hover:not(:disabled),
+.nav-pdf__control:hover:not(:disabled),
+.nav-calendar__nav:hover:not(:disabled) {
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-carousel__control:focus-visible,
+.nav-pdf__control:focus-visible,
+.nav-calendar__nav:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+.nav-carousel__control:disabled,
+.nav-pdf__control:disabled,
+.nav-calendar__nav:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------------- Item -- */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+}
+
+.nav-item + .nav-item {
+  border-top: 1px solid var(--nav-color-border);
+}
+
+.nav-item__media {
+  flex: 0 0 auto;
+}
+
+.nav-item__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nav-item__title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.nav-item__description {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.nav-item__trailing {
+  flex: 0 0 auto;
+}
+
+/* ----------------------------------------------------------------- Slider -- */
+
+.nav-slider__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.nav-slider__value {
+  color: var(--nav-color-text-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+.nav-slider {
+  width: 100%;
+  accent-color: var(--nav-color-primary);
+  cursor: pointer;
+}
+
+.nav-slider:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+  border-radius: 999px;
+}
+
+.nav-slider:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------- InputOTP -- */
+
+.nav-otp {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.nav-otp__slot {
+  width: 2.5rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+  font-family: var(--nav-font-mono);
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.nav-otp__slot:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: 1px;
+  border-color: var(--nav-color-primary);
+}
+
+/* --------------------------------------------------------------- Calendar -- */
+
+.nav-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0.875rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+}
+
+.nav-calendar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.nav-calendar__month {
+  margin: 0;
+  font-weight: 700;
+}
+
+.nav-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.nav-calendar__weekday {
+  padding-bottom: 0.25rem;
+  color: var(--nav-color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.nav-calendar__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-height: 2.75rem;
+  padding: 0.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--nav-radius-sm);
+  background: transparent;
+  color: var(--nav-color-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.nav-calendar__day:hover:not(:disabled) {
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-calendar__day:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: -2px;
+}
+
+.nav-calendar__day--selected {
+  background: var(--nav-color-primary);
+  color: var(--nav-color-on-primary);
+}
+
+.nav-calendar__day--selected:hover:not(:disabled) {
+  background: var(--nav-color-primary-hover);
+}
+
+.nav-calendar__day:disabled {
+  color: var(--nav-color-text-muted);
+  cursor: default;
+}
+
+.nav-calendar__note {
+  color: var(--nav-color-text-muted);
+  font-size: 0.625rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.nav-calendar__day--selected .nav-calendar__note {
+  color: var(--nav-color-on-primary);
+}
+
+/* -------------------------------------------------------------- HoverCard -- */
+
+.nav-hovercard {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-hovercard__trigger {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+.nav-hovercard__trigger:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+  border-radius: var(--nav-radius-sm);
+}
+
+.nav-hovercard__content {
+  position: absolute;
+  bottom: calc(100% + 0.375rem);
+  left: 0;
+  z-index: 60;
+  width: max-content;
+  max-width: min(22rem, 90vw);
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--nav-color-overlay-edge);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface-raised);
+  box-shadow: var(--nav-shadow-lg);
+}
+
+/* ------------------------------------------------------------ ContextMenu -- */
+
+.nav-context-menu {
+  position: relative;
+}
+
+.nav-context-menu__content,
+.nav-menubar__content {
+  position: absolute;
+  z-index: 55;
+  min-width: 11rem;
+  padding: 0.25rem;
+  border: 1px solid var(--nav-color-overlay-edge);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface-raised);
+  box-shadow: var(--nav-shadow-lg);
+}
+
+/* ---------------------------------------------------------------- Menubar -- */
+
+.nav-menubar {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface);
+}
+
+.nav-menubar__menu {
+  position: relative;
+}
+
+.nav-menubar__trigger {
+  padding: 0.3rem 0.625rem;
+  border: 0;
+  border-radius: var(--nav-radius-sm);
+  background: transparent;
+  color: var(--nav-color-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-menubar__trigger:hover,
+.nav-menubar__trigger--open {
+  background: var(--nav-color-surface-subtle);
+}
+
+.nav-menubar__trigger:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: -2px;
+}
+
+.nav-menubar__content {
+  top: calc(100% + 0.25rem);
+  left: 0;
+}
+
+/* ----------------------------------------------------------------- Charts -- */
+
+.nav-chart {
+  margin: 0;
+}
+
+.nav-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.nav-chart__grid {
+  stroke: var(--nav-chart-grid);
+  stroke-width: 1;
+}
+
+.nav-chart__tick {
+  fill: var(--nav-color-text-muted);
+  font-size: 11px;
+}
+
+.nav-chart__line {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-chart__bar {
+  rx: 2;
+}
+
+.nav-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.nav-chart-legend__entry {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.nav-chart-legend__swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--nav-radius-sm);
+}
+
+/* -------------------------------------------------------------- GraphView -- */
+
+.nav-graph {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.nav-graph__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.nav-graph__filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: 999px;
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.nav-graph__filter--on {
+  border-color: var(--nav-color-primary);
+  color: var(--nav-color-text);
+}
+
+.nav-graph__filter:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: var(--nav-focus-offset);
+}
+
+.nav-graph__swatch {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+
+.nav-graph__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16rem;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.nav-graph__canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+  touch-action: none;
+}
+
+.nav-graph__edge {
+  stroke-width: 1.75;
+}
+
+.nav-graph__node {
+  cursor: grab;
+}
+
+.nav-graph__node:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+}
+
+.nav-graph__node--selected circle {
+  stroke: var(--nav-color-text);
+  stroke-width: 2.5;
+}
+
+.nav-graph__label {
+  fill: var(--nav-color-on-primary);
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.nav-graph__panel {
+  padding: 0.875rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-graph__panel-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.nav-graph__panel-kind {
+  margin: 0.125rem 0 0.625rem;
+  color: var(--nav-color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.nav-graph__panel-empty {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+  font-size: 0.875rem;
+}
+
+.nav-graph__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.nav-graph__field dt {
+  color: var(--nav-color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.nav-graph__field dd {
+  margin: 0.125rem 0 0;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.nav-graph__input {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 48rem) {
+  .nav-graph__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* -------------------------------------------------------------- PdfViewer -- */
+
+.nav-pdf {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+}
+
+.nav-pdf__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.nav-pdf__pager,
+.nav-pdf__zoom {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.nav-pdf__count,
+.nav-pdf__scale {
+  color: var(--nav-color-text-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.nav-pdf__stage {
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  padding: 1rem;
+  background: var(--nav-color-surface-subtle);
+  max-height: 42rem;
+}
+
+.nav-pdf__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 3rem 1rem;
+  color: var(--nav-color-text-muted);
+}
+
+.nav-pdf__status--failed {
+  color: var(--nav-color-danger);
+}
+
+/* The page is the positioning context for the text layer, which sits exactly
+   over the canvas so a selection lands on the glyphs a reader can see. */
+.nav-pdf__page {
+  position: relative;
+  box-shadow: var(--nav-shadow);
+}
+
+.nav-pdf__canvas {
+  display: block;
+  border-radius: var(--nav-radius-sm);
+}
+
+.nav-pdf__text {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+  opacity: 0.2;
+}
+
+/* pdf.js positions each run absolutely and scales it to match the raster. The
+   glyphs stay transparent — the canvas underneath is what is read — but they
+   have to be selectable, which `color: transparent` preserves and
+   `visibility: hidden` would not. */
+.nav-pdf__text > span {
+  position: absolute;
+  color: transparent;
+  transform-origin: 0 0;
+  white-space: pre;
+  cursor: text;
+}

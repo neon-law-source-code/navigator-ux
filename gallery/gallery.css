@@ -131,3 +131,33 @@
   border: 1px solid var(--nav-color-border);
   border-radius: var(--nav-radius);
 }
+
+/* -- The second shadcn wave --------------------------------------------- */
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.gallery__row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.gallery__slide {
+  display: flex;
+  align-items: center;
+  min-width: 14rem;
+  min-height: 5rem;
+  padding: 1rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface-raised);
+}
+
+.gallery__scroll-body {
+  padding: 0 0.875rem;
+}

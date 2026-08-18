@@ -81,6 +81,22 @@ async function* walkAll(dirs) {
   for (const dir of dirs) yield* walk(dir)
 }
 
+/*
+ * Numeric character references are not colors.
+ *
+ * `&#8249;` is a single left angle quote, and `&#8722;` a minus sign — both
+ * routine in a control that draws its own chevrons. The hex pattern reads the
+ * `#8249` inside them as a four-digit color and fails the build, which is a
+ * false positive that costs an afternoon to recognise: the reported "color"
+ * does not appear anywhere in the file you are told to look at.
+ *
+ * Blanked to spaces rather than removed, so byte offsets — and therefore the
+ * reported line numbers — stay true to the original text.
+ */
+function blankNumericEntities(text) {
+  return text.replace(/&#(?:x[0-9a-fA-F]+|\d+);/g, (entity) => ' '.repeat(entity.length))
+}
+
 const failures = []
 let scanned = 0
 
@@ -93,7 +109,7 @@ for await (const file of walkAll(ROOTS)) {
 
   scanned += 1
   const raw = await readFile(file, 'utf8')
-  const text = blankComments(raw, ext)
+  const text = blankNumericEntities(blankComments(raw, ext))
 
   for (const { name, re } of PATTERNS) {
     for (const match of text.matchAll(re)) {
