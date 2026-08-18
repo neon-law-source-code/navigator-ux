@@ -1,74 +1,19 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ReactNode,
-  type RefObject,
-} from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
+
+import { useDismissible } from '../lib/use-dismissible'
 
 /*
  * Overlays — Dialog, Sheet, Popover, DropdownMenu, and Tooltip.
  *
- * shadcn gets all five from Radix. This package has no runtime dependencies and
- * adding five to a library every portal loads is a real cost, so the modal pair
- * is built on `<dialog>` — which brings the focus trap, the top layer, the
- * inert background, and Esc from the platform — and the three non-modal ones
- * are built on a shared hook below.
+ * shadcn gets all five from Radix. Radix is still not the answer here: the
+ * modal pair is built on `<dialog>`, which brings the focus trap, the top
+ * layer, the inert background, and Esc from the platform, and the three
+ * non-modal ones share `useDismissible`.
  *
- * The hook is where the behavior that hand-rolled popovers get wrong lives:
- * Esc closes, an outside click closes, focus returns to the trigger, and the
- * trigger reports its own state. Written once, used three times.
+ * That hook now lives in `src/lib/use-dismissible.ts` rather than here, because
+ * `Menus.tsx` needs the same three behaviors and a hook copied into a second
+ * module is a hook that drifts.
  */
-
-/* ------------------------------------------------------- dismissal plumbing -- */
-
-interface DismissibleOptions {
-  open: boolean
-  onClose: () => void
-  /** Focus returns here on close. */
-  triggerRef: RefObject<HTMLElement | null>
-  contentRef: RefObject<HTMLElement | null>
-  /** Skip focus restoration for hover-driven surfaces like a tooltip. */
-  restoreFocus?: boolean
-}
-
-function useDismissible({
-  open,
-  onClose,
-  triggerRef,
-  contentRef,
-  restoreFocus = true,
-}: DismissibleOptions) {
-  useEffect(() => {
-    if (!open) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      // Stop the Esc from also closing a dialog this sits inside.
-      event.stopPropagation()
-      onClose()
-      if (restoreFocus) triggerRef.current?.focus()
-    }
-
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null
-      if (!target) return
-      // A click on the trigger is the trigger's own business — treating it as
-      // "outside" would close and immediately reopen.
-      if (contentRef.current?.contains(target) || triggerRef.current?.contains(target)) return
-      onClose()
-    }
-
-    document.addEventListener('keydown', onKeyDown, true)
-    document.addEventListener('pointerdown', onPointerDown, true)
-    return () => {
-      document.removeEventListener('keydown', onKeyDown, true)
-      document.removeEventListener('pointerdown', onPointerDown, true)
-    }
-  }, [open, onClose, triggerRef, contentRef, restoreFocus])
-}
 
 /* ----------------------------------------------------------------- Dialog -- */
 

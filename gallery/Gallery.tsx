@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { ShadcnSet } from './ShadcnSet'
+import { ShadcnWaveTwo } from './ShadcnWaveTwo'
 
 // The library itself, from source. Editing a component re-renders this page.
 import '../src/styles/theme.css'
@@ -536,6 +537,8 @@ export function Gallery() {
 
         {/* Everything past here is beyond the Dioxus surface — see the file. */}
         <ShadcnSet Section={Section} />
+
+        <ShadcnWaveTwo Section={Section} />
       </PublicShell>
     </>
   )

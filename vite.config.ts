@@ -35,7 +35,20 @@ export default defineConfig({
     },
     rollupOptions: {
       // React is supplied by the consuming app, never bundled here.
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      //
+      // The runtime dependencies are external for a different reason: they are
+      // real `dependencies`, so a consumer's installer already resolves them,
+      // and bundling a copy here would mean an app that also uses d3 ships two.
+      // Externalizing is what lets the package manager dedupe. It also keeps
+      // `check:bundle` meaningful — that gate reads `dist` for off-origin
+      // references, and inlining ~1 MB of vendor code would bury the signal.
+      external: (id) =>
+        id === 'react' ||
+        id === 'react-dom' ||
+        id === 'react/jsx-runtime' ||
+        id.startsWith('d3-') ||
+        id === 'pdfjs-dist' ||
+        id.startsWith('pdfjs-dist/'),
       output: {
         globals: { react: 'React', 'react-dom': 'ReactDOM' },
         // Emit assets under stable, unhashed names so the `exports` map can

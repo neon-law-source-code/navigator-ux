@@ -1,8 +1,9 @@
 # @neon-law-foundation/navigator-ux
 
 A React component library on the Neon Law teal, from the Neon Law Foundation. No Tailwind, no Radix,
-**no runtime dependencies** — every component is built on the platform primitive that already carries
-its semantics, and every color resolves through a CSS custom property you can override in one file.
+no CVA, no icon package — every component that can be is built on the platform primitive that already
+carries its semantics, and every color resolves through a CSS custom property you can override in one
+file.
 
 Free software under the [GNU Affero General Public License, version 3](./LICENSE) — and because that
 is a network copyleft rather than a permissive license, read [License](#license) before you build a
@@ -18,7 +19,10 @@ download URL — no registry account, no token, and no `.npmrc`:
 pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.1.0/navigator-ux-v0.1.0.tgz
 ```
 
-React 19 is a peer dependency. There are no others.
+React 19 is the only peer dependency. Five runtime dependencies come with the package and your
+installer resolves them: `d3-array`, `d3-scale`, and `d3-shape` for the charts, `d3-force` for
+`GraphView`, and `pdfjs-dist` for `PdfViewer`. They are externalized in the build rather than bundled,
+so an app that already uses one of them resolves a single copy. Nothing else is drawn from outside.
 
 The URL pins one exact version, so upgrading is an edit to the URL rather than a range that widens on
 its own. See [docs/consuming-the-library.md](./docs/consuming-the-library.md) for the dependency form
