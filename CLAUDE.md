@@ -293,6 +293,21 @@ how a license story starts describing a package that no longer exists. Both name
 OFL typeface, the two MIT sources — rather than enumerating files, so adding a third MIT dependency
 means editing the notices file and nothing else.
 
+**Adding a runtime dependency means editing the notices file too.** That file now has two halves, and
+they carry different obligations. Material *in* the repository (the icons, the shadcn derivations, the
+typeface) has to have its notice travel with what we publish. A `dependency` does not: everything in
+`dependencies` is externalized in the build, so `dist` carries a bare `from "d3-scale"` rather than a
+copy of it, and the consumer's installer places the real package with its own `LICENSE`. It is
+recorded anyway, because "look at the lockfile" is not an answer to what the package pulls in.
+
+The compatibility check is the part that is easy to skip and expensive to get wrong. ISC — every d3
+module, including the transitive ones — raises no question. **Apache-2.0 is compatible with AGPLv3 in
+one direction only**: Apache code may be included in an AGPLv3 work, but not in a GPLv2 one, because
+of clauses GPLv2 has no room for. `pdfjs-dist` is Apache-2.0, so it is fine under AGPL-3.0-only and
+would not be under GPLv2. Nothing in CI checks this. If the license ever moves again, the dependency
+table in the notices file is the list to re-verify, and `PdfViewer` is the first thing that breaks —
+as a legal problem, silently, with a green build.
+
 The font is the one piece the AGPL must not swallow. The OFL requires the font software to stay
 entirely under the OFL and forbids releasing it under another license, so the two woff2 files are not
 AGPL, and both the README and the notices file say so. Declaring the whole tree AGPL would be a

@@ -381,6 +381,13 @@ licenses require, in [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md), which i
 file and with the package. Where those terms and the AGPL differ, the third-party terms govern that
 material.
 
+**The runtime dependencies are a separate matter, and lighter.** `d3-array`, `d3-scale`, `d3-shape`
+and `d3-force` are ISC; `pdfjs-dist` is Apache-2.0. None of them is bundled — the build externalizes
+every one, so what you install from this package contains import statements rather than copies, and
+your own installer places each dependency with its own license file. They are listed in the notices
+file for completeness rather than obligation. Both licenses sit comfortably inside AGPLv3; Apache-2.0
+does so in one direction only, which the notices file explains.
+
 The font is worth stating separately: the OFL requires the font software to stay under the OFL and
 forbids relicensing it, so **the two woff2 files are not AGPL** and the AGPL does not purport to
 cover them. Nothing here licenses anything the Foundation does not own.
