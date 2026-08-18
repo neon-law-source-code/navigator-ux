@@ -1,6 +1,6 @@
 /**
- * @neon-law-foundation/navigator-ux — a dependency-free React component
- * library on the Neon Law teal.
+ * @neon-law-foundation/navigator-ux — a React component library for legal
+ * work, on the Neon Law teal.
  *
  * Copyright (C) 2026 Neon Law Foundation.
  * SPDX-License-Identifier: AGPL-3.0-only
