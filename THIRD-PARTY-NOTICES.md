@@ -4,11 +4,18 @@ Navigator UX is licensed AGPL-3.0-only (see [LICENSE](./LICENSE)). That grant co
 Law Foundation owns. It does not cover the third-party material listed here, which carries its own
 terms and its own copyright holders.
 
-Two of the notices below are MIT and one is the SIL Open Font License. All three permit reuse, and all
-three **require the copyright and permission notice to travel with the work**. That is what this file
-is for — a code comment naming the source is courtesy, not compliance. The font notice travels twice:
-the build also copies `OFL.txt` into `dist` beside the woff2 files, because consumers receive `dist`
-and never see this file.
+There are two kinds of third-party material here, and the difference decides what has to travel.
+
+**Material in this repository** — the sections immediately below. Two are MIT and one is the SIL Open
+Font License. All three permit reuse, and all three **require the copyright and permission notice to
+travel with the work**. That is what this file is for — a code comment naming the source is courtesy,
+not compliance. The font notice travels twice: the build also copies `OFL.txt` into `dist` beside the
+woff2 files, because consumers receive `dist` and never see this file.
+
+**Runtime dependencies** — listed under [Runtime dependencies](#runtime-dependencies). None of their
+code is in this repository or in `dist`, so none of their notices travel with what we publish. They
+are recorded anyway, because the question a reader has is what the package pulls in, and answering
+"look at the lockfile" is not an answer.
 
 The two MIT sources present no tension with the AGPL: MIT is permissive, so MIT-derived work can be
 distributed as part of an AGPL whole, and the notices below are what that costs. **The typeface is
@@ -196,6 +203,39 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 ```
 
 ---
+
+## Runtime dependencies
+
+Five packages are `dependencies`, and their code is **not** distributed by this project. Every one is
+externalized in the library build, so `dist/index.js` carries a bare `from "d3-scale"` and an
+`import("pdfjs-dist")` rather than a copy of either. A consumer's installer resolves them and places
+each package, with its own `LICENSE` file, in their own tree — which is also the point of
+externalizing: an application that already uses d3 gets one copy rather than two.
+
+Nothing below therefore needs a notice inside `dist`. The obligations run with the packages
+themselves, to whoever installs them.
+
+| Package | License | Used by |
+| --- | --- | --- |
+| `d3-array`, `d3-scale`, `d3-shape` | ISC | `BarChart`, `LineChart`, `AreaChart` |
+| `d3-force` | ISC | `GraphView` |
+| `pdfjs-dist` | Apache-2.0 | `PdfViewer` |
+
+The d3 modules pull in further d3 packages transitively — `internmap`, `d3-dispatch`, `d3-quadtree`,
+`d3-timer`, `d3-format`, `d3-interpolate`, `d3-time`, `d3-time-format`, `d3-path` — and every one of
+them is ISC as well. Mike Bostock's d3 family is uniformly ISC, which is why this table stays short
+and why adding a fourth d3 module is not a licensing decision.
+
+**Both licenses are compatible with the AGPL, and one of them only just.** ISC is permissive and
+raises no question. Apache-2.0 is compatible with **GPLv3 and AGPLv3 in one direction only**:
+Apache-2.0 code may be included in an AGPLv3 work, and the FSF says so explicitly. It is *not*
+compatible with GPLv2, because of the patent-termination and indemnification clauses that GPLv2 has
+no room for.
+
+That asymmetry is the thing worth remembering. This project is AGPL-3.0-only, so `pdfjs-dist` is
+fine today. If the license is ever moved to anything in the GPLv2 family, `PdfViewer` is the file
+that breaks first, and it will break as a legal problem rather than a build failure — nothing in CI
+will notice.
 
 ## Not covered here
 
