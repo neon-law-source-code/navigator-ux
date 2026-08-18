@@ -1,7 +1,7 @@
 {
   "name": "@neon-law-foundation/navigator-ux",
   "version": "0.2.0",
-  "description": "Navigator UX \u2014 a dependency-free React component library on the Neon Law teal.",
+  "description": "Navigator UX \u2014 a React component library for legal work, on the Neon Law teal.",
   "license": "AGPL-3.0-only",
   "private": false,
   "type": "module",
@@ -63,6 +63,10 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.4",
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-force": "^3.0.10",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.1.8",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
@@ -88,5 +92,12 @@
   "bugs": {
     "url": "https://github.com/neon-law-foundation/navigator-ux/issues"
   },
-  "author": "Neon Law Foundation"
+  "author": "Neon Law Foundation",
+  "dependencies": {
+    "d3-array": "^3.2.4",
+    "d3-force": "^3.0.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "pdfjs-dist": "^6.2.108"
+  }
 }

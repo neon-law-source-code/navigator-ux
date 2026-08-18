@@ -169,6 +169,25 @@ const PAIRS = [
   // dark page is *supposed* to be close to it, and the check would demand the
   // dialog's backdrop be legible against what it is hiding.
   ['--nav-color-overlay-edge', '--nav-color-scrim', NON_TEXT],
+
+  // Chart series carry meaning, so they take the non-text floor rather than
+  // the tint one — a bar nobody can distinguish from the card behind it is a
+  // bar that reports nothing. Measured against `--nav-color-surface` because
+  // that is what a chart sits on; a chart placed on the raw page has more
+  // contrast, not less, so this is the tighter of the two.
+  //
+  // What this check cannot do is prove the six are distinguishable from *each
+  // other*, which is the other half of a categorical palette. Contrast is a
+  // ratio against one ground; hue separation is a different measurement, and
+  // pretending this covers it would be the same mistake as the hand-written
+  // ratios this gate replaced.
+  ['--nav-chart-1', '--nav-color-surface', NON_TEXT],
+  ['--nav-chart-2', '--nav-color-surface', NON_TEXT],
+  ['--nav-chart-3', '--nav-color-surface', NON_TEXT],
+  ['--nav-chart-4', '--nav-color-surface', NON_TEXT],
+  ['--nav-chart-5', '--nav-color-surface', NON_TEXT],
+  ['--nav-chart-6', '--nav-color-surface', NON_TEXT],
+  ['--nav-chart-grid', '--nav-color-surface', TINT],
 ]
 
 /* --------------------------------------------------------------- running -- */

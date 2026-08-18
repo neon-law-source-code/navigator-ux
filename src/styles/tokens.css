@@ -204,6 +204,34 @@
      rather than an apologetic grey. Measured here at 7.52:1. */
   --nav-color-overlay-edge: var(--nav-color-border);
 
+  /* ------------------------------------------------------- chart series --
+   *
+   * Six categorical series colors, and the only tokens in the file whose job
+   * is to be told apart from *each other* rather than read against a ground.
+   * Both constraints are real, so both are enforced: `check:contrast` holds
+   * each one to the non-text floor against `--nav-color-surface` (a chart sits
+   * on a card, not on the page), and they are ordered so the first three —
+   * which is all most charts use — are the furthest apart in hue.
+   *
+   * They are tinted rather than drawn from a stock categorical ramp, for the
+   * same reason the neutrals are: a teal-tinted card carrying a stock
+   * red/blue/green palette reads as two design systems in one frame. Series 1
+   * is the brand itself, so a single-series chart needs no color decision.
+   *
+   * Six is the ceiling on purpose. A categorical palette stops being readable
+   * before it stops being generatable, and a chart that needs a seventh
+   * category wants a different chart. */
+  --nav-chart-1: var(--nav-teal-600);
+  --nav-chart-2: #5b4bb8;
+  --nav-chart-3: #a3441f;
+  --nav-chart-4: #1f6b45;
+  --nav-chart-5: #2a5c8a;
+  --nav-chart-6: #8a6206;
+
+  /* The grid behind the marks. Deliberately at the tint floor: a gridline
+     that competes with the data is worse than no gridline. */
+  --nav-chart-grid: #dceaed;
+
   --nav-radius: 0.5rem;
   --nav-radius-sm: 0.375rem;
   --nav-radius-lg: 1rem;
@@ -300,6 +328,19 @@
     /* The teal rim described above — the only thing giving a dark dialog an
        edge against a near-black wash. Measured 3.33:1 on the scrim. */
     --nav-color-overlay-edge: var(--nav-teal-600);
+
+    /* Chart series lighten the way every other meaningful color does here:
+       the light stops are ink on white and would vanish on #071619. These are
+       the same six hues carried up the ramp, so a chart keeps its series
+       identity across a scheme change — series 3 is the clay one in both. */
+    --nav-chart-1: var(--nav-teal-400);
+    --nav-chart-2: #a99bf0;
+    --nav-chart-3: #f0a184;
+    --nav-chart-4: #6fd1a0;
+    --nav-chart-5: #84b8e8;
+    --nav-chart-6: #e8c46a;
+
+    --nav-chart-grid: #16333a;
   }
 }
 
