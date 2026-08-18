@@ -190,12 +190,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       # Creating the release and uploading the tarball to it both need write.
+      # Nothing here needs id-token: that was for npm build provenance, and
+      # this project does not publish to a registry.
       contents: write
-      # Provenance is signed with a short-lived OIDC token minted for this run,
-      # which is what lets npm show the "Built and signed on GitHub Actions"
-      # badge and link the tarball back to this commit. It needs id-token:write
-      # and nothing else; the publish itself authenticates with NPM_TOKEN.
-      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -203,15 +200,13 @@ jobs:
         with:
           node-version: '22'
           cache: pnpm
-          registry-url: https://registry.npmjs.org/
 
       # The tag names the version, but the manifest is what actually ships, and
-      # nothing else checks that the two agree: the publish below passes
-      # `--no-git-checks`, and a tarball is named from whatever the manifest
-      # says regardless of the tag it was built from. Tagging v0.2.0 without
-      # bumping package.json would therefore publish 0.1.0 a second time and
-      # attach a 0.1.0 tarball to a release called v0.2.0. Bump the manifest,
-      # merge, then tag — in that order.
+      # nothing else checks that the two agree: a tarball is named from whatever
+      # the manifest says regardless of the tag it was built from. Tagging
+      # v0.2.0 without bumping package.json would therefore attach a 0.1.0
+      # tarball to a release called v0.2.0. Bump the manifest, merge, then tag —
+      # in that order.
       #
       # This runs before `install`, which is the slowest step here: a mismatch
       # is a re-tag either way, so it should report in seconds.
@@ -263,32 +258,6 @@ jobs:
                   --title "${REF_NAME}" \
                   --generate-notes
           fi
-
-      # The registry publish is wired but inert: it skips unless NPM_TOKEN is
-      # configured, and this repository has no secrets at all today. Guarding it
-      # rather than deleting it keeps a tagged release green while the tarball
-      # is the channel, and means adding the secret is the only step needed to
-      # start publishing to npm as well.
-      #
-      # A job-level `if` cannot read `secrets`, which is why the guard is a step
-      # condition on `env` instead. Folding it into this job also reuses the
-      # build above rather than paying for a second one.
-      #
-      # `--access public` is stated rather than left to publishConfig because
-      # the first publish of a *scoped* package defaults to restricted, and a
-      # restricted package on the public registry fails every consumer's
-      # install with a 404 that reads like a typo. It is idempotent after that.
-      - name: publish to npm, if a token is configured
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          set -euo pipefail
-          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
-              echo "NPM_TOKEN is not configured; skipping the registry publish."
-              echo "The GitHub Release tarball attached above is the distribution channel."
-              exit 0
-          fi
-          pnpm publish --access public --provenance --no-git-checks
 
   # The single required status check. It runs nothing itself: the jobs above do
   # the work and this one reports their combined result under one context name
