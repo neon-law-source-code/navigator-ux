@@ -1,6 +1,6 @@
 {
   "name": "@neon-law-foundation/navigator-ux",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Navigator UX \u2014 a React component library for legal work, on the Neon Law teal.",
   "license": "AGPL-3.0-only",
   "private": false,
