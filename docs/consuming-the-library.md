@@ -28,7 +28,7 @@ trademark position.
 
 ```json
 "dependencies": {
-  "@neon-law-foundation/navigator-ux": "https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.4.0/navigator-ux-v0.4.0.tgz",
+  "@neon-law-foundation/navigator-ux": "https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.5.0/navigator-ux-v0.5.0.tgz",
   "react": "^19.2.0",
   "react-dom": "^19.2.0"
 }
@@ -44,7 +44,7 @@ configuration** — for CI or for a laptop.
 library had a longer private life under other names and other registries; none of it is reachable
 here and none of it shares this version line, so nothing should point below `0.1.0`.
 
-The current release is **`v0.4.0`**, and the URL above names it. Because the channel is a URL rather
+The current release is **`v0.5.0`**, and the URL above names it. Because the channel is a URL rather
 than a range, that string is the version — see [A URL is not a range](#a-url-is-not-a-range) below,
 and update it deliberately.
 
