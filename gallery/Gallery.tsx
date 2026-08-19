@@ -39,6 +39,7 @@ import {
   RadioGroup,
   RowActions,
   SelectField,
+  serializeJsonApiSort,
   SiteFooter,
   SiteHeader,
   TestimonialCard,
@@ -367,7 +368,7 @@ export function Gallery() {
 
         <Section
           title="Data table"
-          note="Sort state lives in ?sort= and paging in ?page=, both as real anchors — the table works with no client bundle."
+          note="Sort state lives in ?sort= — a JSON:API sort value, so a server that already speaks JSON:API reads the same parameter it always has — and paging in ?page=, both as real anchors. The table works with no client bundle."
         >
           <DataTable
             columns={COLUMNS}
@@ -375,7 +376,7 @@ export function Gallery() {
             rowKey={(row) => row.id}
             caption="People on the matter"
             sort={{ key: 'name', direction: 'asc' }}
-            sortHref={(key, direction) => `?sort=${key}&dir=${direction}`}
+            sortHref={(key, direction) => `?sort=${serializeJsonApiSort([{ key, direction }])}`}
           />
           <Pagination page={2} totalPages={5} pageHref={(page) => `?page=${page}`} />
         </Section>

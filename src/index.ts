@@ -147,6 +147,13 @@ export {
 } from './components/Display'
 export { initialsFor } from './lib/initials'
 export {
+  parseJsonApiSort,
+  serializeJsonApiSort,
+  toggleJsonApiSort,
+  type SortDescriptor,
+  type ToggleJsonApiSortOptions,
+} from './lib/json-api-sort'
+export {
   Combobox,
   Switch,
   ToggleGroup,
