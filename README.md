@@ -16,7 +16,7 @@ Each release is a tarball attached to its
 download URL — no registry account, no token, and no `.npmrc`:
 
 ```bash
-pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.5.0/navigator-ux-v0.5.0.tgz
+pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.7.0/navigator-ux-v0.7.0.tgz
 ```
 
 React 19 is the only peer dependency. Five runtime dependencies come with the package and your
@@ -315,8 +315,8 @@ CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothin
 version in `package.json`, merge, then tag:
 
 ```bash
-git tag -s v0.5.0 -m "navigator-ux 0.5.0"
-git push origin v0.5.0
+git tag -s v0.7.0 -m "navigator-ux 0.7.0"
+git push origin v0.7.0
 ```
 
 The tag and `package.json` have to agree. CI asserts it before anything else runs and fails the
