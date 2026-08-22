@@ -21,6 +21,10 @@ const here = import.meta.dirname
 export default defineConfig({
   plugins: [react()],
   root: resolve(here,'gallery'),
+  // GitHub Pages serves this repository below /navigator-ux/. Local previews
+  // use a relative base so the same build can be opened from a file-backed
+  // artifact without rewriting asset URLs.
+  base: process.env.GITHUB_PAGES === '1' ? '/navigator-ux/' : './',
   server: {
     port: 5174,
     // Fail loudly rather than wandering to another port — the launch config and
