@@ -161,3 +161,181 @@
 .gallery__scroll-body {
   padding: 0 0.875rem;
 }
+
+/* -- Static page showcase -------------------------------------------------
+ *
+ * The showcase is a consumer of Navigator UX, not part of the published
+ * component stylesheet. It supplies layout for the thirty fictional pages and
+ * leaves surfaces, controls, typography, and color to the library.
+ */
+
+.showcase__root {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.showcase__main {
+  width: min(100%, 76rem);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.showcase__hero-actions,
+.showcase__topic-row,
+.showcase__back {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.showcase__hero-actions {
+  margin-top: 1.25rem;
+}
+
+.showcase__back {
+  margin-bottom: 1.25rem;
+}
+
+.showcase__topic-row {
+  margin: -0.75rem 0 1.5rem;
+}
+
+.showcase__page-grid,
+.showcase__persona-grid,
+.showcase__document-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.showcase__page-grid {
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.showcase__persona-grid {
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+}
+
+.showcase__document-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.85fr);
+  align-items: start;
+}
+
+.showcase__page-card,
+.showcase__persona {
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface-raised);
+  box-shadow: var(--nav-shadow);
+}
+
+.showcase__page-card {
+  display: flex;
+  min-height: 12rem;
+  padding: 1rem;
+  flex-direction: column;
+  color: var(--nav-color-text);
+  text-decoration: none;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.showcase__page-card:hover,
+.showcase__page-card:focus-visible {
+  border-color: var(--nav-color-primary);
+  color: var(--nav-color-text);
+  text-decoration: none;
+  transform: translateY(-0.15rem);
+}
+
+.showcase__page-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.showcase__index,
+.showcase__page-meta,
+.showcase__persona-role,
+.showcase__paper-kicker {
+  color: var(--nav-color-text-muted);
+  font-family: var(--nav-font-mono);
+  font-size: 0.75rem;
+}
+
+.showcase__page-card h3,
+.showcase__persona h3 {
+  margin-bottom: 0.25rem;
+}
+
+.showcase__page-card p,
+.showcase__persona p {
+  margin: 0;
+  color: var(--nav-color-text-muted);
+}
+
+.showcase__page-meta {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.showcase__persona {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: 1rem;
+}
+
+.showcase__persona-role {
+  margin-bottom: 0.4rem !important;
+  font-family: var(--nav-font-family);
+  font-weight: 700;
+}
+
+.showcase__timeline {
+  display: grid;
+  gap: 0;
+}
+
+.showcase__paper {
+  min-height: 20rem;
+  padding: 1.25rem;
+  border: 1px solid var(--nav-color-border);
+  background: var(--nav-color-bg);
+  box-shadow: var(--nav-shadow-lg);
+}
+
+.showcase__paper h3 {
+  max-width: 22ch;
+  margin: 1.5rem 0 0.5rem;
+  font-family: var(--nav-font-family);
+}
+
+.showcase__paper-lines {
+  display: grid;
+  gap: 0.65rem;
+  margin: 2rem 0;
+}
+
+.showcase__paper-lines span {
+  display: block;
+  height: 0.4rem;
+  background: var(--nav-color-surface-subtle);
+}
+
+.showcase__document-grid .nav-form-card {
+  border: 0;
+  box-shadow: none;
+}
+
+.showcase__document-grid .nav-form-card .nav-card__body {
+  padding: 0;
+}
+
+@media (max-width: 52rem) {
+  .showcase__document-grid {
+    grid-template-columns: 1fr;
+  }
+}

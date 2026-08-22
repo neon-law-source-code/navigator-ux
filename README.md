@@ -34,6 +34,18 @@ this records and how to move between versions.
 > surfaces later,
 > as `Cannot find module …/dist/index.js` at your first import.
 
+## Public gallery
+
+The component gallery and the thirty-page legal-work specimen are built as a static GitHub Pages
+site on every push to `main`:
+
+[Open the Navigator UX gallery](https://neon-law-foundation.github.io/navigator-ux/?showcase=home)
+
+The sample site includes twelve Client Council voices, twelve Legal Council voices, and addressable
+pages covering discovery, enforcement, company formation, immigration forms, and planning. It is
+fictional sample data, not legal advice. The GitHub Pages workflow builds `gallery/` into the static
+`gallery-dist/` artifact; the npm/library build remains separate and still emits only `dist/`.
+
 ## Use
 
 Import the stylesheet once, at your app entry:

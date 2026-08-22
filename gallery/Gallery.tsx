@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { ShadcnSet } from './ShadcnSet'
 import { ShadcnWaveTwo } from './ShadcnWaveTwo'
+import { Showcase } from './Showcase'
 
 // The library itself, from source. Editing a component re-renders this page.
 import '../src/styles/theme.css'
@@ -168,15 +169,17 @@ const NAV_LINKS = [
 /* ---------------------------------------------------------------- gallery -- */
 
 export function Gallery() {
+  const [brand, setBrand] = useState<'neon-law' | 'example'>('neon-law')
+  const [confirming, setConfirming] = useState(false)
+  const showcase = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('showcase')
+  if (showcase) return <Showcase />
+
   // Not a theme toggle — the color scheme follows the OS and has no control.
   // This swaps the *brand* layer, which is the one thing a static page cannot
   // demonstrate: the same components, re-toned, with no component touched.
   //
   // The library ships one identity, so the default is the shipped one. The
   // example layer is the opt-in, and it is a sample rather than a second brand.
-  const [brand, setBrand] = useState<'neon-law' | 'example'>('neon-law')
-  const [confirming, setConfirming] = useState(false)
-
   return (
     <>
       {brand === 'example' ? <link rel="stylesheet" href={brandExampleHref} /> : null}
@@ -197,6 +200,9 @@ export function Gallery() {
         >
           Example layer
         </NavButton>
+        <NavLinkButton variant="secondary" href="?showcase=home">
+          Sample pages
+        </NavLinkButton>
         <span className="gallery__bar-note">
           Layer two is a stylesheet, not a fork — attaching one repaints every component below.
           Color scheme follows your OS; there is no toggle, by design.

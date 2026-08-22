@@ -43,6 +43,7 @@
     "dev": "vite build --watch",
     "gallery": "vite --config vite.gallery.config.ts",
     "build:gallery": "vite build --config vite.gallery.config.ts",
+    "build:pages": "GITHUB_PAGES=1 vite build --config vite.gallery.config.ts",
     "build": "tsc --noEmit && vite build && node scripts/emit-font-layer.mjs",
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
