@@ -1,6 +1,6 @@
 # @neon-law-foundation/navigator-ux
 
-[Open the Navigator UX gallery](https://neon-law-foundation.github.io/navigator-ux/?showcase=home)
+[Open the Navigator UX gallery](https://neon-law-source-code.github.io/navigator-ux/?showcase=home)
 
 A React component library on the Neon Law teal, from the Neon Law Foundation. No Tailwind, no Radix,
 no CVA, no icon package — every component that can be is built on the platform primitive that already
