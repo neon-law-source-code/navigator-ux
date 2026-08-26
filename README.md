@@ -7,9 +7,8 @@ no CVA, no icon package — every component that can be is built on the platform
 carries its semantics, and every color resolves through a CSS custom property you can override in one
 file.
 
-Free software under the [GNU Affero General Public License, version 3](./LICENSE) — and because that
-is a network copyleft rather than a permissive license, read [License](#license) before you build a
-product on it.
+Free software under the [GNU Affero General Public License, version 3](./LICENSE) — read
+[License](#license) before you build a product on it.
 
 ## Install
 
@@ -371,13 +370,10 @@ Affero General Public License, version 3**, as published by the Free Software Fo
 license file in this repository. It is distributed WITHOUT ANY WARRANTY, without even the implied
 warranty of merchantability or fitness for a particular purpose.
 
-**What that means for an application that imports this library.** The AGPL is a copyleft, so a work
-that includes these components is a derivative of them: distributing it, and under section 13 merely
-*letting users interact with it over a network*, obliges you to offer those users the complete
-corresponding source of your application under the AGPL as well. A private portal is still covered
-the moment a user reaches it over a network. How you installed it changes nothing about this — a
-dependency boundary is not a license boundary, and the components compile into your bundle whether
-they arrived as a release tarball, a registry range, or a checkout.
+**What that means for an application that imports this library.** A work that includes these
+components inherits the AGPL's obligations, including its network-use clause — see
+[`LICENSE`](./LICENSE) for the full terms. How you installed the package changes nothing about this: a
+dependency boundary is not a license boundary.
 
 If you need these components without that obligation, the copyright holder is the only party who can
 grant it. Ask the Foundation about a separate license rather than reading a public download as
