@@ -6,7 +6,7 @@
  *
  * The library ships one identity — the Neon Law teal in `tokens.css`. If you
  * want your own, copy this file into your app, change the ramp, and import it
- * after `@neon-law-foundation/navigator-ux/styles.css`. That is the whole
+ * after `@neon-law-source-code/navigator-ux/styles.css`. That is the whole
  * mechanism. There is no build step and no configuration.
  *
  * Three rules make a brand layer work:

@@ -1,4 +1,4 @@
-# @neon-law-foundation/navigator-ux
+# @neon-law-source-code/navigator-ux
 
 [Open the Navigator UX gallery](https://neon-law-source-code.github.io/navigator-ux/?showcase=home)
 
@@ -13,11 +13,11 @@ Free software under the [GNU Affero General Public License, version 3](./LICENSE
 ## Install
 
 Each release is a tarball attached to its
-[GitHub Release](https://github.com/neon-law-foundation/navigator-ux/releases). Install from the
+[GitHub Release](https://github.com/neon-law-source-code/navigator-ux/releases). Install from the
 download URL — no registry account, no token, and no `.npmrc`:
 
 ```bash
-pnpm add https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.7.0/navigator-ux-v0.7.0.tgz
+pnpm add https://github.com/neon-law-source-code/navigator-ux/releases/download/v0.7.0/navigator-ux-v0.7.0.tgz
 ```
 
 React 19 is the only peer dependency. Five runtime dependencies come with the package and your
@@ -30,7 +30,7 @@ its own. See [docs/consuming-the-library.md](./docs/consuming-the-library.md) fo
 this records and how to move between versions.
 
 > **Do not install from the repository's git URL.** `dist` is not committed and there is no `prepare`
-> script, so `pnpm add github:neon-law-foundation/navigator-ux` resolves, reports success, and leaves
+> script, so `pnpm add github:neon-law-source-code/navigator-ux` resolves, reports success, and leaves
 > you a package containing the license, the notices, and the README, and no code at all. The failure
 > surfaces later,
 > as `Cannot find module …/dist/index.js` at your first import.
@@ -50,9 +50,9 @@ fictional sample data, not legal advice. The GitHub Pages workflow builds `galle
 Import the stylesheet once, at your app entry:
 
 ```tsx
-import '@neon-law-foundation/navigator-ux/styles.css'
+import '@neon-law-source-code/navigator-ux/styles.css'
 
-import { PublicShell, SiteHeader, SiteFooter, PageHeader, Card } from '@neon-law-foundation/navigator-ux'
+import { PublicShell, SiteHeader, SiteFooter, PageHeader, Card } from '@neon-law-source-code/navigator-ux'
 
 export function App() {
   return (
@@ -340,8 +340,8 @@ tag. That tarball is the distribution channel; the filename is pinned rather tha
 consumers paste the URL into a manifest by hand.
 
 **Nothing is published to npmjs.com.** The GitHub Release tarball is the only channel — there is no
-registry publish step in CI, no package under the `@neon-law-foundation` scope, and no token that
-would create one. If you are looking for `pnpm add @neon-law-foundation/navigator-ux`, it does not
+registry publish step in CI, no package under the `@neon-law-source-code` scope, and no token that
+would create one. If you are looking for `pnpm add @neon-law-source-code/navigator-ux`, it does not
 exist; use the release URL above.
 
 ## Contributing

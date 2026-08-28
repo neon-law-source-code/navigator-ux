@@ -1,7 +1,7 @@
 # CODEOWNERS — @nick reviews everything.
 #
 # The handle must resolve on the host this repository lives on, which is
-# github.com: <https://github.com/neon-law-foundation/navigator-ux>.
+# github.com: <https://github.com/neon-law-source-code/navigator-ux>.
 #
 # GitHub does not reject an owner it cannot resolve: it drops the rule and
 # leaves those paths unowned, which is indistinguishable from having no

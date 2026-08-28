@@ -1,4 +1,4 @@
-# neon-law-foundation/navigator-ux
+# neon-law-source-code/navigator-ux
 
 Public, free software, **AGPL-3.0-only** — see [LICENSE](./LICENSE), which is the one license file in
 the repository and the verbatim FSF text. Anyone may read, fork, and ship this, on the condition the
@@ -21,7 +21,7 @@ ours; the components do not.
 ## Layout
 
 **The repository is the package.** `src/` is at the root, `package.json` at the root *is*
-`@neon-law-foundation/navigator-ux`, and there is no workspace and no `packages/` directory.
+`@neon-law-source-code/navigator-ux`, and there is no workspace and no `packages/` directory.
 
 | Path | What |
 | --- | --- |
@@ -166,7 +166,7 @@ CSS is a token, not a call to `useTheme()`.
 
 **CSS ships as one file, and its name is pinned.** The library emits `dist/navigator-ux.css` — fonts,
 tokens, components — which consumers import as
-`@neon-law-foundation/navigator-ux/styles.css`. Vite library mode does not inject it.
+`@neon-law-source-code/navigator-ux/styles.css`. Vite library mode does not inject it.
 
 In library mode Vite derives the stylesheet's filename from the **package name**, so renaming the
 package silently renames the file while the `exports` map goes on pointing at the old one. Nothing
@@ -458,7 +458,7 @@ own type does not know the field, so it goes silently untyped.
 ## Publishing
 
 **The channel is a tarball attached to the GitHub Release. There is no registry publish, and that is
-the policy rather than a gap.** Nothing is on npmjs.com under the `@neon-law-foundation` scope, the
+the policy rather than a gap.** Nothing is on npmjs.com under the `@neon-law-source-code` scope, the
 scope does not exist, and no step in CI would create it. Consumers install from the release download
 URL, which needs no token, no registry configuration, and no `.npmrc` because the repository is
 public.
@@ -473,13 +473,13 @@ guard runs ahead of `pnpm install`
 because a mismatch is a re-tag either way and should report in seconds rather than behind the build.
 
 The tarball filename is **pinned to a literal** (`navigator-ux-<tag>.tgz`) rather than left to pnpm's
-default, which flattens the scope to `neon-law-foundation-navigator-ux-<version>.tgz`. Consumers paste
+default, which flattens the scope to `neon-law-source-code-navigator-ux-<version>.tgz`. Consumers paste
 the URL into a manifest by hand, so the name is part of the contract and has to be predictable from the
 tag. The upload step is idempotent — it clobbers an existing asset rather than failing — so re-running
 a release job is safe.
 
 **Why not the git URL, which is the obvious thing to reach for.** `dist` is gitignored and `files`
-ships only `dist` and the notices, so `pnpm add github:neon-law-foundation/navigator-ux` resolves
+ships only `dist` and the notices, so `pnpm add github:neon-law-source-code/navigator-ux` resolves
 in about a second, reports success, and installs a package with no code in it — `LICENSE`, the
 third-party notices, README, manifest. The consumer's build then fails with `Cannot find module …/dist/index.js`, pointing into
 `node_modules` rather than at anything they did. A `prepare` script is not the fix: pnpm refuses to run
@@ -497,7 +497,7 @@ went with it; both existed only to let npm attach build provenance.
 If a registry publish is ever wanted, add it deliberately along with the decision about who owns the
 scope — do not restore an inert step and wait to be surprised by it.
 
-This package releases from one place: <https://github.com/neon-law-foundation/navigator-ux>, on a `v*`
+This package releases from one place: <https://github.com/neon-law-source-code/navigator-ux>, on a `v*`
 tag. There is no second registry and no scope mapping.
 
 ## Before you commit

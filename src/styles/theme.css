@@ -14,7 +14,7 @@
  * them. What is here is the part three brands share.
  *
  * Imported once, by `src/index.ts`. Consumers get it as
- * `@neon-law-foundation/navigator-ux/styles.css`.
+ * `@neon-law-source-code/navigator-ux/styles.css`.
  */
 
 /* `fonts.css` is deliberately absent from this chain. Vite's library mode

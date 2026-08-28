@@ -6,7 +6,7 @@ specific operating notes.
 
 ## Cursor Cloud specific instructions
 
-This repo *is* the package (`@neon-law-foundation/navigator-ux`): `src/` and `package.json` are at
+This repo *is* the package (`@neon-law-source-code/navigator-ux`): `src/` and `package.json` are at
 the root, there is no workspace and no `packages/` directory, so every command runs from the repo
 root. Package manager is pnpm (pinned via `packageManager` in `package.json`); Node 22 and pnpm are
 already on the VM.

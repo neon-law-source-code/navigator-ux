@@ -1,4 +1,4 @@
-# Consuming `@neon-law-foundation/navigator-ux`
+# Consuming `@neon-law-source-code/navigator-ux`
 
 What an application has to agree with to use this library. If you only want to render a component,
 the [README](../README.md) is enough — this is the integration detail behind it.
@@ -28,7 +28,7 @@ trademark position.
 
 ```json
 "dependencies": {
-  "@neon-law-foundation/navigator-ux": "https://github.com/neon-law-foundation/navigator-ux/releases/download/v0.7.0/navigator-ux-v0.7.0.tgz",
+  "@neon-law-source-code/navigator-ux": "https://github.com/neon-law-source-code/navigator-ux/releases/download/v0.7.0/navigator-ux-v0.7.0.tgz",
   "react": "^19.2.0",
   "react-dom": "^19.2.0"
 }
@@ -63,7 +63,7 @@ Pin the same URL in every place that installs, and change them together.
 
 ```bash
 # Wrong. Resolves, succeeds, and installs nothing usable.
-pnpm add github:neon-law-foundation/navigator-ux
+pnpm add github:neon-law-source-code/navigator-ux
 ```
 
 `dist` is gitignored and the manifest's `files` field ships `dist` and the notices, so a git install
@@ -73,7 +73,7 @@ and your build fails afterwards, pointing into `node_modules`:
 
 ```
 Error [ERR_MODULE_NOT_FOUND]: Cannot find module
-  .../node_modules/@neon-law-foundation/navigator-ux/dist/index.js
+  .../node_modules/@neon-law-source-code/navigator-ux/dist/index.js
 ```
 
 Adding `prepare` to the library would not fix this cleanly either: pnpm refuses to run build scripts
@@ -87,7 +87,7 @@ The library emits its CSS as a separate file; Vite library mode does not inject 
 your own stylesheet so local rules win on equal specificity:
 
 ```ts
-import '@neon-law-foundation/navigator-ux/styles.css'
+import '@neon-law-source-code/navigator-ux/styles.css'
 import './styles/app.css'
 ```
 
@@ -102,7 +102,7 @@ The library ships the Neon Law teal. To wear your own color, write one styleshee
 **after** the library's:
 
 ```ts
-import '@neon-law-foundation/navigator-ux/styles.css'
+import '@neon-law-source-code/navigator-ux/styles.css'
 import './styles/brand.css'
 ```
 
@@ -132,7 +132,7 @@ sibling checkout for as long as it takes:
 
 ```bash
 pnpm --dir ../navigator-ux build
-pnpm add "@neon-law-foundation/navigator-ux@link:../navigator-ux"
+pnpm add "@neon-law-source-code/navigator-ux@link:../navigator-ux"
 # ... work, with `pnpm --dir ../navigator-ux dev` running ...
 git checkout package.json pnpm-lock.yaml && pnpm install
 ```
