@@ -228,7 +228,7 @@ jobs:
       - run: pnpm build
 
       # Pinned to a literal filename rather than left to pnpm's default, which
-      # flattens the scope into `neon-law-foundation-navigator-ux-<version>.tgz`.
+      # flattens the scope into `neon-law-source-code-navigator-ux-<version>.tgz`.
       # Consumers paste this URL into a manifest by hand, so the name is part of
       # the contract and should be predictable from the tag alone.
       - name: pack the tarball

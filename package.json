@@ -1,5 +1,5 @@
 {
-  "name": "@neon-law-foundation/navigator-ux",
+  "name": "@neon-law-source-code/navigator-ux",
   "version": "0.7.0",
   "description": "Navigator UX \u2014 a React component library for legal work, on the Neon Law teal.",
   "license": "AGPL-3.0-only",
@@ -87,11 +87,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/neon-law-foundation/navigator-ux.git"
+    "url": "git+https://github.com/neon-law-source-code/navigator-ux.git"
   },
-  "homepage": "https://github.com/neon-law-foundation/navigator-ux#readme",
+  "homepage": "https://github.com/neon-law-source-code/navigator-ux#readme",
   "bugs": {
-    "url": "https://github.com/neon-law-foundation/navigator-ux/issues"
+    "url": "https://github.com/neon-law-source-code/navigator-ux/issues"
   },
   "author": "Neon Law Foundation",
   "dependencies": {

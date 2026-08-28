@@ -149,7 +149,7 @@ function SiteChrome({ children }: { children: ReactNode }) {
       <div className="showcase__main">{children}</div>
       <NavigatorFooter
         legal="Static sample site · fictional data · not legal advice"
-        links={[{ label: 'View source on GitHub', href: 'https://github.com/neon-law-foundation/navigator-ux' }]}
+        links={[{ label: 'View source on GitHub', href: 'https://github.com/neon-law-source-code/navigator-ux' }]}
         release="Published from main"
       />
     </div>

@@ -39,7 +39,7 @@
  * an authenticated portal, that is a third party watching every one of them.
  *
  * The URLs are relative so the consumer's bundler rewrites them when it
- * processes `@neon-law-foundation/navigator-ux/styles.css`. An absolute
+ * processes `@neon-law-source-code/navigator-ux/styles.css`. An absolute
  * `/assets/...` path would assume every portal serves the library from the
  * document root.
  *
