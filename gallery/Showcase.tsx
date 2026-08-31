@@ -4,7 +4,6 @@ import {
   Accordion,
   Avatar,
   Badge,
-  BarChart,
   Button,
   ButtonRow,
   Callout,
@@ -38,6 +37,7 @@ import {
   TextField,
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
+import { PageCardArt, PageFigurePanel } from './page-figures'
 
 type Council = 'Client Council' | 'Legal Council'
 type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow' | 'outline'
@@ -183,6 +183,9 @@ function Home() {
         <div className="showcase__page-grid">
           {SAMPLE_PAGES.map((page, index) => (
             <a className="showcase__page-card" href={pageHref('page', page.id)} key={page.id}>
+              <div className="showcase__page-card-art">
+                <PageCardArt pageId={page.id} />
+              </div>
               <div className="showcase__page-card-topline">
                 <span className="showcase__index">{String(index + 1).padStart(2, '0')}</span>
                 <Badge tone={page.audience === 'Client' ? 'next' : page.audience === 'Lawyer' ? 'review' : 'source'}>{page.audience}</Badge>
@@ -352,7 +355,6 @@ function PageQueue({ page }: { page: SamplePage }) {
     <>
       <Panel title="Readiness" note="A signal, not a conclusion. The accountable person still owns the decision.">
         <Progress value={data[data.length - 1]} label={`${page.title} readiness`} showValue />
-        <BarChart data={data.map((value, index) => ({ label: `W${index + 1}`, value }))} label={`${page.title} readiness by week`} format={(value) => `${value}%`} height={180} />
       </Panel>
       <Panel title="Work queue">
         <ClaimTable
@@ -438,7 +440,10 @@ function SamplePageView({ page }: { page: SamplePage }) {
         summary={page.summary}
       />
       <div className="showcase__topic-row">{page.topics.map((topic) => <Badge key={topic}>{topic}</Badge>)}</div>
-      <Stack>{body}</Stack>
+      <Stack>
+        <PageFigurePanel pageId={page.id} />
+        {body}
+      </Stack>
     </>
   )
 }
