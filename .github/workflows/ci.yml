@@ -204,9 +204,10 @@ jobs:
       # The tag names the version, but the manifest is what actually ships, and
       # nothing else checks that the two agree: a tarball is named from whatever
       # the manifest says regardless of the tag it was built from. Tagging
-      # v0.2.0 without bumping package.json would therefore attach a 0.1.0
-      # tarball to a release called v0.2.0. Bump the manifest, merge, then tag —
-      # in that order.
+      # v26.8.31 without bumping package.json would therefore attach yesterday's
+      # tarball to a release called v26.8.31. Bump the manifest, merge, then tag
+      # — in that order. The cadence is YY.M.D (see docs/releasing.md); the tag
+      # keeps the `v` prefix this job already matches.
       #
       # This runs before `install`, which is the slowest step here: a mismatch
       # is a re-tag either way, so it should report in seconds.

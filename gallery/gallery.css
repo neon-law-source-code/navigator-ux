@@ -397,12 +397,10 @@
 .showcase__page-card-topline {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
   margin-top: 0.85rem;
 }
 
-.showcase__index,
 .showcase__page-meta,
 .showcase__persona-role,
 .showcase__paper-kicker {
