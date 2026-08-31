@@ -30,6 +30,9 @@ echo "    ok"
 echo "==> is package.json's version a release?"
 node scripts/release-default-tag.mjs --check-manifest
 
+echo "==> YY.M.D ordering"
+node --test scripts/release-semver.test.mjs
+
 echo "==> the workspace gate"
 pnpm check
 

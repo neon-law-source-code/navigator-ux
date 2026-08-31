@@ -52,7 +52,7 @@
     "check:type": "node scripts/check-type-contract.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:bundle": "node scripts/check-no-external-references.mjs",
-    "check": "pnpm lint && pnpm check:tokens && pnpm check:type && pnpm check:contrast && pnpm build && pnpm typecheck && pnpm check:bundle && pnpm test:coverage && node --test scripts/release-semver.test.mjs",
+    "check": "pnpm lint && pnpm check:tokens && pnpm check:type && pnpm check:contrast && pnpm build && pnpm typecheck && pnpm check:bundle && pnpm test:coverage",
     "release:default-tag": "node scripts/release-default-tag.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
