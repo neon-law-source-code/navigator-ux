@@ -19,6 +19,7 @@ import {
   LineChart,
   Menubar,
   NavButton,
+  PieChart,
   ScrollArea,
   Slider,
   Spinner,
@@ -29,6 +30,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  WorldMap,
   type GraphNode,
 } from '../src/index'
 
@@ -96,9 +98,9 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
         note={
           <>
             The two surfaces here that carry a dependency: charts and the record graph run on{' '}
-            <code>d3</code>. d3 does the arithmetic and never touches the DOM — React owns every
-            element on this page. Series colors are <code>--nav-chart-*</code> tokens, so they
-            re-tone with the brand switch above like everything else.
+            <code>d3</code>. Bars, pies, and the world map use the same <code>--nav-chart-*</code>{' '}
+            tokens. d3 does the arithmetic and never touches the DOM — React owns every element on
+            this page.
           </>
         }
       >
@@ -112,11 +114,41 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
             <ChartLegend entries={[{ label: 'Exposure', series: 0 }]} />
           </div>
           <div>
+            <PieChart
+              data={[
+                { label: 'Contract', value: 48 },
+                { label: 'Tort', value: 22 },
+                { label: 'Equity', value: 17 },
+                { label: 'Other', value: 13 },
+              ]}
+              label="Open matters by posture"
+              format={(value) => `${value}%`}
+            />
+          </div>
+        </div>
+        <WorldMap
+          data={[
+            { id: 'USA', value: 42 },
+            { id: 'GBR', value: 18 },
+            { id: 'CAN', value: 11 },
+            { id: 'AUS', value: 9 },
+            { id: 'DEU', value: 7 },
+            { id: 'JPN', value: 4 },
+            { id: 'BRA', value: 3 },
+            { id: 'ZAF', value: 2 },
+          ]}
+          label="Counsel admitted, by jurisdiction"
+          format={(value) => `${value}`}
+        />
+        <div className="gallery__grid">
+          <div>
             <AreaChart data={THROUGHPUT} label="Matters closed by month" series={3} />
             <ChartLegend entries={[{ label: 'Closed', series: 3 }]} />
           </div>
+          <div>
+            <LineChart data={THROUGHPUT} label="Matters closed, trend" series={1} />
+          </div>
         </div>
-        <LineChart data={THROUGHPUT} label="Matters closed, trend" series={1} />
       </Section>
 
       <Section
