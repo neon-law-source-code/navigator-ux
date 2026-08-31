@@ -48,9 +48,11 @@ configuration** — for CI or for a laptop.
 library had a longer private life under other names and other registries; none of it is reachable
 here and none of it shares this version line, so nothing should point below `0.1.0`.
 
-The current release is **`v0.7.0`**, and the URL above names it. Because the channel is a URL rather
-than a range, that string is the version — see [A URL is not a range](#a-url-is-not-a-range) below,
-and update it deliberately.
+The current release is **`v0.7.0`**, and the URL above names it. Subsequent cuts use the same
+**`YY.M.D`** cadence as Neon Law Navigator (`26.8.31`), with the GitHub tag still prefixed `v`. Because
+the channel is a URL rather than a range, that string is the version — see
+[A URL is not a range](#a-url-is-not-a-range) below, and update it deliberately. See
+[docs/releasing.md](./releasing.md).
 
 ### A URL is not a range
 

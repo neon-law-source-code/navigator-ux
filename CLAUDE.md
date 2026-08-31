@@ -470,12 +470,16 @@ scope does not exist, and no step in CI would create it. Consumers install from 
 URL, which needs no token, no registry configuration, and no `.npmrc` because the repository is
 public.
 
+The cadence is Navigator's: **`YY.M.D`** (`26.8.31`), documented in [docs/releasing.md](./docs/releasing.md)
+and operated through [`.agents/skills/cut-release/SKILL.md`](./.agents/skills/cut-release/SKILL.md).
+`package.json` holds the bare version; the GitHub tag keeps the `v` prefix this job already matches.
+
 CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump
 `package.json`, merge, then tag.
 
 **The `release` job asserts the tag matches `package.json` before it does anything else.** Nothing else
 would: `pnpm pack` names the tarball from the manifest regardless of the tag it was built from, so
-tagging `v0.2.0` without bumping would attach a `0.1.0` tarball to a release called `v0.2.0`. The
+tagging `v26.8.31` without bumping would attach yesterday's tarball to a release called `v26.8.31`. The
 guard runs ahead of `pnpm install`
 because a mismatch is a re-tag either way and should report in seconds rather than behind the build.
 

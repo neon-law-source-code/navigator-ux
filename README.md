@@ -324,18 +324,22 @@ should not be the one place that models bad habits.
 
 ## Releasing
 
+The cadence is the same as Neon Law Navigator: **`YY.M.D`**, year, month, and day in UTC, with no
+leading zeros (`26.8.31`, not `26.08.31`). `/cut-release` is the operator procedure; the detail lives in
+[docs/releasing.md](./docs/releasing.md).
+
 CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump the
 version in `package.json`, merge, then tag:
 
 ```bash
-git tag -s v0.7.0 -m "navigator-ux 0.7.0"
-git push origin v0.7.0
+git tag -s v26.8.31 -m "navigator-ux 26.8.31"
+git push origin v26.8.31
 ```
 
-The tag and `package.json` have to agree. CI asserts it before anything else runs and fails the
-release if they differ, because nothing else would catch the mismatch: the tarball is named from the
-manifest regardless of the tag it was built from, so tagging `v0.2.0` without bumping would attach a
-`0.1.0` tarball to a release called `v0.2.0`.
+The tag and `package.json` have to agree (`v26.8.31` ↔ `26.8.31`). CI asserts it before anything else
+runs and fails the release if they differ, because nothing else would catch the mismatch: the tarball
+is named from the manifest regardless of the tag it was built from, so tagging `v26.8.31` without
+bumping would attach yesterday's tarball to a release called `v26.8.31`.
 
 The release job then builds, runs `pnpm pack`, and attaches the tarball to the GitHub Release for the
 tag. That tarball is the distribution channel; the filename is pinned rather than derived, because
