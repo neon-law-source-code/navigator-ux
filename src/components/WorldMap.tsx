@@ -64,7 +64,7 @@ function countryFeatures(): CountryFeature[] {
   const topology = countriesTopology as unknown as WorldObjects
   const collection = feature(topology, topology.objects.countries)
   return collection.features.flatMap((entry) => {
-    const id = entry.id == null ? '' : String(entry.id).padStart(3, '0')
+    const id = entry.id === undefined || entry.id === null ? '' : String(entry.id).padStart(3, '0')
     const name =
       entry.properties && typeof entry.properties === 'object' && 'name' in entry.properties
         ? String(entry.properties.name)
