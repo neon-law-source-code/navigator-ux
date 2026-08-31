@@ -1,22 +1,23 @@
 # neon-law-source-code/navigator-ux
 
-Public, free software, **AGPL-3.0-only** — see [LICENSE](./LICENSE), which is the one license file in
-the repository and the verbatim FSF text. Anyone may read, fork, and ship this, on the condition the
-AGPL attaches: a work that includes these components is a derivative of them, and section 13 makes
-merely serving it to users over a network trigger the obligation to offer those users the whole
-application's source under the same terms. Write for that audience: a comment that assumes the reader
-works here is a comment that will confuse most of the people who read it.
+Source-available under the **Business Source License 1.1** — see [LICENSE](./LICENSE), which is the
+MariaDB instrument with its parameters filled in and nothing else in the file. GitHub and every
+scanner that reads a license file need that file to look like BUSL, so Firm commentary lives in
+[NOTICE](./NOTICE), not here and not as a preamble. Anyone may read, copy, modify, and make
+non-production use of this work. Shipping it in an application that delivers legal services is
+production use and needs a commercial licence from Shook Law PLLC. Four years after a version is
+published, that version converts to AGPL-3.0-only. Write for that audience: a comment that assumes
+the reader works here is a comment that will confuse most of the people who read it.
 
-The license changed from dual MIT-or-Apache-2.0 to AGPL-3.0-only at the Foundation's direction. Two
-things follow for anyone working in here. Copyleft means the *consuming applications* inherit the
-obligation, so before assuming a Neon Law portal can just `pnpm add` this, check that the Foundation
-has settled how those apps are licensed — a download is not a license boundary. And the
-permissive files are gone rather than kept alongside: `LICENSE-MIT` and `LICENSE-APACHE` were deleted,
-so there is no second option to fall back on and no dual grant anywhere. Anything still offering a
-choice of license is stale and should be fixed.
+The license changed from dual MIT-or-Apache-2.0 to AGPL-3.0-only, then from AGPL-3.0-only to BUSL-1.1,
+at the copyright holder's direction. Relicensing is forward-only: already-published tarballs under
+AGPL-3.0-only stay under that grant. The permissive files are gone rather than kept alongside:
+`LICENSE-MIT` and `LICENSE-APACHE` were deleted, so there is no second option to fall back on and no
+dual grant anywhere. Anything still offering a choice of license, or still naming the Neon Law
+Foundation as copyright holder, is stale and should be fixed.
 
-The trademark is not licensed with the code. The Neon Law and Neon Law Foundation names and logos stay
-ours; the components do not.
+The trademark is not licensed with the code. The Neon Law name and logos stay with Shook Law PLLC;
+the components do not.
 
 ## Layout
 
@@ -235,9 +236,9 @@ binaries with `fontTools`, and stated nowhere in the repository, which is how it
 Two problems, both live the moment the repository went public: `files: ["dist"]` plus the `@font-face`
 rules meant **the build shipped them and every consumer redistributed them too**, and the license file
 of the day granted everyone MIT-or-Apache rights over "this software" under a
-`Copyright (c) 2026 Neon Law Foundation` line, purporting to license files the Foundation does not
-own. The same trap exists under the AGPL and is worse, because the AGPL is the more sweeping
-grant — scope it, do not widen it. Commercial
+`Copyright (c) 2026 Neon Law Foundation` line, purporting to license files the holder does not
+own. The same trap exists under BUSL and under the eventual AGPL conversion — both are sweeping
+grants — so scope them, do not widen them. Commercial
 webfont licences are typically domain- or pageview-limited and forbid redistribution outright; a
 public repository plus a public package is redistribution twice over.
 
@@ -283,15 +284,17 @@ gets. Drop GORP from the stack before you judge how a release looks:
 document.documentElement.style.setProperty('--nav-font-family', '"Source Serif 4", Georgia, serif')
 ```
 
-**`LICENSE` is the license and nothing else, so the scoping prose moved.** It is the FSF's verbatim
-AGPL-3.0 text with nothing added and nothing removed — that is what makes it detectable as AGPL by
-GitHub, npm, and every license scanner a consumer's legal review runs, and a prepended Foundation
-header is exactly what breaks that. The copyright notice, the **Third-party material** scoping, and
-the trademark note therefore live in the README's `## License` section, which ships in `files` beside
-it. Keep that section and `THIRD-PARTY-NOTICES.md` in step: a notice added to one and not the other is
-how a license story starts describing a package that no longer exists. Both name the categories — the
-OFL typeface, the two MIT sources — rather than enumerating files, so adding a third MIT dependency
-means editing the notices file and nothing else.
+**`LICENSE` is the license and nothing else, so the scoping prose moved.** It is the MariaDB BUSL 1.1
+text with the four parameters filled in (`Licensor: Shook Law PLLC`, `Licensed Work: Navigator UX`,
+`Additional Use Grant: None`, `Change License: AGPL-3.0-only`) and nothing added and nothing removed
+— that is what makes it detectable as BUSL-1.1 by GitHub, npm, and every license scanner a consumer's
+legal review runs, and a prepended Firm header is exactly what breaks that. The copyright holder's
+account of the grant lives in `NOTICE`. The README's `## License` section, which ships in `files`
+beside both, is the consumer-facing summary. Keep that section, `NOTICE`, and `THIRD-PARTY-NOTICES.md`
+in step: a notice added to one and not the others is how a license story starts describing a package
+that no longer exists. The third-party file names the categories — the OFL typeface, the two MIT
+sources — rather than enumerating files, so adding a third MIT dependency means editing that file and
+nothing else.
 
 **Adding a runtime dependency means editing the notices file too.** That file now has two halves, and
 they carry different obligations. Material *in* the repository (the icons, the shadcn derivations, the
@@ -303,15 +306,15 @@ recorded anyway, because "look at the lockfile" is not an answer to what the pac
 The compatibility check is the part that is easy to skip and expensive to get wrong. ISC — every d3
 module, including the transitive ones — raises no question. **Apache-2.0 is compatible with AGPLv3 in
 one direction only**: Apache code may be included in an AGPLv3 work, but not in a GPLv2 one, because
-of clauses GPLv2 has no room for. `pdfjs-dist` is Apache-2.0, so it is fine under AGPL-3.0-only and
-would not be under GPLv2. Nothing in CI checks this. If the license ever moves again, the dependency
-table in the notices file is the list to re-verify, and `PdfViewer` is the first thing that breaks —
-as a legal problem, silently, with a green build.
+of clauses GPLv2 has no room for. `pdfjs-dist` is Apache-2.0, so it is fine under BUSL and under the
+eventual AGPL-3.0-only conversion, and would not be under GPLv2. Nothing in CI checks this. If the
+Change License ever moves, the dependency table in the notices file is the list to re-verify, and
+`PdfViewer` is the first thing that breaks — as a legal problem, silently, with a green build.
 
-The font is the one piece the AGPL must not swallow. The OFL requires the font software to stay
-entirely under the OFL and forbids releasing it under another license, so the two woff2 files are not
-AGPL, and both the README and the notices file say so. Declaring the whole tree AGPL would be a
-licence violation dressed up as a simplification.
+The font is the one piece BUSL (and the eventual AGPL conversion) must not swallow. The OFL requires
+the font software to stay entirely under the OFL and forbids releasing it under another license, so
+the two woff2 files are not BUSL, and both the README and the notices file say so. Declaring the
+whole tree BUSL would be a licence violation dressed up as a simplification.
 
 **Specimen data is invented, and that now includes the tests.** The gallery already had this rule.
 The test suite did not, and carried a real client name, a real matter path, and a real case caption
@@ -331,16 +334,18 @@ Two things follow. Cite `neonlaw.com` and nothing else if you add a provenance n
 comment needs to name a specific matter or client to make sense, that is a sign the comment belongs
 in the application repository, not here.
 
-**American spelling, including in comments.** `color`, not `colour`. The one deliberate exception is
-`LICENSE`, and it is no longer a matter of house style: the file is the FSF's own document, and its
-spelling, its line breaks, and its every word are not ours to touch. The AGPL permits copying it
-verbatim and nothing else. A typo fix in it is a licence violation, not a typo fix.
+**American spelling, including in comments.** `color`, not `colour`. Two deliberate exceptions are
+not house style. `LICENSE` is MariaDB's BUSL 1.1 text; its spelling, its line breaks, and its every
+word (including the curly quotes) are not ours to touch. A typo fix in it is a licence violation, not
+a typo fix. `NOTICE` uses the Firm's British "licence" to stay in step with Navigator's NOTICE; do
+not Americanize it to match the rest of this tree.
 
-`LICENSE` is replaced only at the Foundation's direction, and it has been replaced once — the
-dual MIT-or-Apache-2.0 pair became AGPL-3.0-only, and `LICENSE-MIT`, `LICENSE-APACHE`, and the old
-`LICENSE.md` wrapper went with it. Treat that as the pattern rather than as permission: choosing a
-license is the Foundation's call, and the prose *about* the license — the README's `## License`
-section — is the part anyone here may edit for clarity.
+`LICENSE` is replaced only at the copyright holder's direction. It has been replaced twice — the
+dual MIT-or-Apache-2.0 pair became AGPL-3.0-only, then AGPL-3.0-only became BUSL-1.1 — and
+`LICENSE-MIT`, `LICENSE-APACHE`, and the old `LICENSE.md` wrapper went with the first change. Treat
+that as the pattern rather than as permission: choosing a license is Shook Law PLLC's call, and the
+prose *about* the license — `NOTICE` and the README's `## License` section — is the part anyone here
+may edit for clarity.
 
 **The gallery imports `src`, not `dist`.** `gallery/` is the specimen page, served by
 `pnpm gallery` on :5174. Importing source is what stops it drifting from the library — a specimen page

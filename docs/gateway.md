@@ -1,6 +1,6 @@
 # Gateway integration
 
-Copyright (C) 2026 Neon Law Foundation. SPDX-License-Identifier: AGPL-3.0-only
+Copyright (C) 2026 Shook Law PLLC. SPDX-License-Identifier: BUSL-1.1
 
 `SessionProvider` does no authentication of its own — it reads an already-verified session from an
 endpoint and renders. This document records the server-side contract behind that endpoint as Neon Law

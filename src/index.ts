@@ -2,22 +2,14 @@
  * @neon-law-source-code/navigator-ux — a React component library for legal
  * work, on the Neon Law teal.
  *
- * Copyright (C) 2026 Neon Law Foundation.
- * SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Shook Law PLLC.
+ * SPDX-License-Identifier: BUSL-1.1
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Affero General Public License, version 3, as
- * published by the Free Software Foundation.
- *
- * It is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
- * more details. You should have received a copy of it along with this
- * program; the verbatim text is in LICENSE, and also at
- * https://www.gnu.org/licenses/agpl-3.0.html
- *
- * The grant covers what the Foundation owns. Third-party material shipped
- * alongside it keeps its own terms — see THIRD-PARTY-NOTICES.md.
+ * Source-available under the Business Source License 1.1. Production use
+ * requires a commercial licence from Shook Law PLLC. Four years after a
+ * version is published, that version converts to AGPL-3.0-only. See LICENSE
+ * and NOTICE. Third-party material shipped alongside it keeps its own terms
+ * — see THIRD-PARTY-NOTICES.md.
  */
 
 // The base stylesheet: fonts, the token contract, and every component rule.

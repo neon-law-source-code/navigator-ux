@@ -213,7 +213,7 @@ export function Gallery() {
       </div>
 
       <PublicShell
-        header={<SiteHeader brand="Neon Law Foundation" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />}
+        header={<SiteHeader brand="Neon Law" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />}
         footer={
           <SiteFooter
             cta={{ label: 'Book a call', href: '#book' }}
@@ -231,7 +231,7 @@ export function Gallery() {
                 note: 'Admission pending.',
               },
             ]}
-            legal={<p>Navigator UX is free software under AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
+            legal={<p>Navigator UX is source-available under BUSL-1.1. This page is a specimen, not legal advice.</p>}
           />
         }
       >
@@ -545,7 +545,7 @@ export function Gallery() {
               }
               footer={
                 <NavigatorFooter
-                  legal="© 2026 Neon Law Foundation"
+                  legal="© 2026 Shook Law PLLC"
                   links={[{ label: 'Support', href: '#support' }]}
                   release="v0.5.0"
                 />
