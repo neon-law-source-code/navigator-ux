@@ -204,16 +204,17 @@ quietly editing. Three things now come from outside:
 
 | Dependency | Consumers | Why not hand-rolled |
 | --- | --- | --- |
-| `d3-array`, `d3-scale`, `d3-shape` | `BarChart`, `LineChart`, `AreaChart` | Scale, tick, and path arithmetic. Correct axis ticks alone are more subtle than they look. |
+| `d3-array`, `d3-scale`, `d3-shape` | `BarChart`, `LineChart`, `AreaChart`, `PieChart` | Scale, tick, and path arithmetic. Correct axis ticks alone are more subtle than they look. |
+| `d3-geo`, `topojson-client` | `WorldMap` | Projection and path generation from a spherical outline; a world map is not a component-library-sized geometry problem. |
 | `d3-force` | `GraphView` | A force simulation is a physics engine; there is no version of writing one that is cheaper than importing it. |
 | `pdfjs-dist` | `PdfViewer` | A PDF renderer is not a component-library-sized problem. |
 
-The submodules matter: `d3` as a metapackage pulls in everything, and only four of its modules are
-used. d3 here is a *math* library — it computes numbers and path strings and never touches the DOM.
+The submodules matter: `d3` as a metapackage pulls in everything, and only the modules named above
+are used. d3 here is a *math* library — it computes numbers and path strings and never touches the DOM.
 React owns every element, which is why none of the chart components needs a ref or an effect, and
 why d3 and React cannot fight over who holds a node.
 
-All three are **externalized in the library build**. They are real `dependencies`, so a consumer's
+All of them are **externalized in the library build**. They are real `dependencies`, so a consumer's
 installer resolves them already; bundling a copy would ship two d3s to any app that also uses one.
 That is also what keeps `check:bundle` readable — it reads `dist` for off-origin references, and a
 megabyte of inlined vendor code would bury the signal.

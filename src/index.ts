@@ -242,10 +242,13 @@ export {
   BarChart,
   ChartLegend,
   LineChart,
+  PieChart,
   type ChartLegendProps,
   type ChartPoint,
   type ChartProps,
+  type PieChartProps,
 } from './components/Charts'
+export { WorldMap, type MapValue, type WorldMapProps } from './components/WorldMap'
 export {
   GraphView,
   type GraphEdge,

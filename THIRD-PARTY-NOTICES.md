@@ -6,11 +6,12 @@ its own terms and its own copyright holders.
 
 There are two kinds of third-party material here, and the difference decides what has to travel.
 
-**Material in this repository** — the sections immediately below. Two are MIT and one is the SIL Open
-Font License. All three permit reuse, and all three **require the copyright and permission notice to
-travel with the work**. That is what this file is for — a code comment naming the source is courtesy,
-not compliance. The font notice travels twice: the build also copies `OFL.txt` into `dist` beside the
-woff2 files, because consumers receive `dist` and never see this file.
+**Material in this repository** — the sections immediately below. Two are MIT, one is the SIL Open
+Font License, and one is the Natural Earth / world-atlas topology `WorldMap` draws. All four permit
+reuse. MIT and ISC require the copyright and permission notice to travel with the work; the OFL
+additionally forbids relicensing the font. That is what this file is for — a code comment naming the
+source is courtesy, not compliance. The font notice travels twice: the build also copies `OFL.txt`
+into `dist` beside the woff2 files, because consumers receive `dist` and never see this file.
 
 **Runtime dependencies** — listed under [Runtime dependencies](#runtime-dependencies). None of their
 code is in this repository or in `dist`, so none of their notices travel with what we publish. They
@@ -204,9 +205,40 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ---
 
+## World atlas (Natural Earth 110m)
+
+`src/assets/geo/countries-110m.json` is the 1:110m country topology from
+[world-atlas](https://github.com/topojson/world-atlas), itself a TopoJSON encoding of
+[Natural Earth](https://www.naturalearthdata.com/) admin-0 countries.
+
+- Geometry: Natural Earth, public domain.
+- Topology encoding: Copyright 2013-2019 Michael Bostock, ISC (same grant as the d3 modules).
+
+The file is vendored so `WorldMap` never fetches an outline. A remote atlas would fail
+`check:bundle` and would be a supply-chain dependency nobody reviewed. The project's BUSL grant
+does not purport to relicense the Natural Earth geometry.
+
+```
+Copyright 2013-2019 Michael Bostock
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+```
+
+---
+
 ## Runtime dependencies
 
-Five packages are `dependencies`, and their code is **not** distributed by this project. Every one is
+The packages in `dependencies` are **not** distributed by this project. Every one is
 externalized in the library build, so `dist/index.js` carries a bare `from "d3-scale"` and an
 `import("pdfjs-dist")` rather than a copy of either. A consumer's installer resolves them and places
 each package, with its own `LICENSE` file, in their own tree — which is also the point of
@@ -217,14 +249,14 @@ themselves, to whoever installs them.
 
 | Package | License | Used by |
 | --- | --- | --- |
-| `d3-array`, `d3-scale`, `d3-shape` | ISC | `BarChart`, `LineChart`, `AreaChart` |
-| `d3-force` | ISC | `GraphView` |
+| `d3-array`, `d3-scale`, `d3-shape`, `d3-geo`, `d3-force` | ISC | Charts, `WorldMap`, `GraphView` |
+| `topojson-client` | ISC | `WorldMap` |
 | `pdfjs-dist` | Apache-2.0 | `PdfViewer` |
 
 The d3 modules pull in further d3 packages transitively — `internmap`, `d3-dispatch`, `d3-quadtree`,
 `d3-timer`, `d3-format`, `d3-interpolate`, `d3-time`, `d3-time-format`, `d3-path` — and every one of
 them is ISC as well. Mike Bostock's d3 family is uniformly ISC, which is why this table stays short
-and why adding a fourth d3 module is not a licensing decision.
+and why adding another d3 module is not a licensing decision.
 
 **Both licenses are compatible with BUSL and with the eventual AGPL-3.0-only conversion, and one of
 them only just.** ISC is permissive and raises no question. Apache-2.0 is compatible with **GPLv3 and

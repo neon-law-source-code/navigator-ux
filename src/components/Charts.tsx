@@ -1,18 +1,18 @@
 import { max as d3Max, min as d3Min } from 'd3-array'
 import { scaleBand, scaleLinear } from 'd3-scale'
-import { area as d3Area, line as d3Line, curveMonotoneX } from 'd3-shape'
+import { area as d3Area, arc as d3Arc, line as d3Line, pie as d3Pie, curveMonotoneX, type PieArcDatum } from 'd3-shape'
 import { useId, useMemo, type ReactNode } from 'react'
 
 import { seriesColor } from '../lib/chart-series'
 
 /*
- * Bar, Line, and Area charts on d3.
+ * Bar, Line, Area, and Pie charts on d3.
  *
  * d3 does the arithmetic and never touches the DOM. `scaleBand`, `scaleLinear`,
- * `line`, and `area` are pure functions from data to numbers and path strings;
- * React renders the SVG. That split is the whole reason d3 and React can share
- * a component without fighting over who owns the element, and it is why none of
- * these needs a ref or an effect.
+ * `line`, `area`, `pie`, and `arc` are pure functions from data to numbers and
+ * path strings; React renders the SVG. That split is the whole reason d3 and
+ * React can share a component without fighting over who owns the element, and
+ * it is why none of these needs a ref or an effect.
  *
  * shadcn's Chart wraps Recharts. Recharts is a renderer as well as a chart
  * library, so it brings its own reconciliation and its own opinions about SVG;
@@ -296,5 +296,87 @@ export function ChartLegend({ entries }: ChartLegendProps) {
         </li>
       ))}
     </ul>
+  )
+}
+
+/* ------------------------------------------------------------------- pie -- */
+
+export interface PieChartProps {
+  data: ChartPoint[]
+  label: string
+  height?: number
+  format?: (value: number) => string
+  /**
+   * Hole as a fraction of the radius. `0` is a pie; `0.6` is a donut. The
+   * bar chart starts at zero for the same reason this default does: a hole
+   * is a choice, not the type.
+   */
+  innerRadius?: number
+}
+
+function summarizePie(data: ChartPoint[], label: string, format: (value: number) => string): string {
+  const slices = data.filter((point) => point.value > 0)
+  if (slices.length === 0) return `${label}: no data`
+  const total = slices.reduce((sum, point) => sum + point.value, 0)
+  const largest = slices.reduce((best, point) => (point.value > best.value ? point : best))
+  const share = total === 0 ? 0 : Math.round((largest.value / total) * 100)
+  return `${label}. ${slices.length} slices totaling ${format(total)}. Largest is ${largest.label} at ${format(largest.value)} (${share}%).`
+}
+
+/**
+ * A pie (or donut) of categories.
+ *
+ * Each slice takes the next `--nav-chart-*` token, wrapping at six — the same
+ * palette as the bar chart, so a brief that shows both reads as one system.
+ * Labels live in `ChartLegend`; a label on a thin slice is a label nobody
+ * can read.
+ */
+export function PieChart({
+  data,
+  label,
+  height = 260,
+  format = String,
+  innerRadius = 0,
+}: PieChartProps) {
+  const titleId = useId()
+  const radius = Math.min(WIDTH, height) / 2 - 8
+  const hole = Math.max(0, Math.min(0.85, innerRadius)) * radius
+
+  const slices = useMemo(() => {
+    const values = data.filter((point) => point.value > 0)
+    const pie = d3Pie<ChartPoint>()
+      .value((point) => point.value)
+      .sort(null)
+    const arc = d3Arc<PieArcDatum<ChartPoint>>()
+      .innerRadius(hole)
+      .outerRadius(radius)
+    return pie(values).map((datum, index) => ({
+      datum,
+      path: arc(datum) ?? '',
+      series: index,
+    }))
+  }, [data, hole, radius])
+
+  return (
+    <figure className="nav-chart nav-chart--pie">
+      <svg viewBox={`0 0 ${WIDTH} ${height}`} role="img" aria-labelledby={titleId}>
+        <title id={titleId}>{summarizePie(data, label, format)}</title>
+        <g transform={`translate(${WIDTH / 2},${height / 2})`}>
+          {slices.map(({ datum, path, series }) => (
+            <path
+              key={datum.data.label}
+              className="nav-chart__slice"
+              d={path}
+              fill={seriesColor(series)}
+            >
+              <title>
+                {datum.data.label}: {format(datum.data.value)}
+              </title>
+            </path>
+          ))}
+        </g>
+      </svg>
+      <ChartLegend entries={slices.map(({ datum, series }) => ({ label: datum.data.label, series }))} />
+    </figure>
   )
 }

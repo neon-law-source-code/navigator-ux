@@ -47,6 +47,8 @@ export default defineConfig({
         id === 'react-dom' ||
         id === 'react/jsx-runtime' ||
         id.startsWith('d3-') ||
+        id === 'topojson-client' ||
+        id.startsWith('topojson-client/') ||
         id === 'pdfjs-dist' ||
         id.startsWith('pdfjs-dist/'),
       output: {

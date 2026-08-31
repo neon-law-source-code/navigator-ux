@@ -2873,6 +2873,36 @@ dialog.confirm-delete:not([open]) {
   rx: 2;
 }
 
+.nav-chart__slice {
+  stroke: var(--nav-color-surface);
+  stroke-width: 1;
+}
+
+.nav-chart__sphere {
+  fill: var(--nav-color-surface-subtle);
+  stroke: var(--nav-color-border);
+  stroke-width: 0.6;
+}
+
+.nav-chart__land {
+  stroke: var(--nav-color-border);
+  stroke-width: 0.4;
+}
+
+.nav-chart__land:not(.nav-chart__land--valued) {
+  fill: var(--nav-color-surface-raised);
+}
+
+.nav-chart__land--selectable {
+  cursor: pointer;
+}
+
+.nav-chart__map-range {
+  margin: 0.375rem 0 0;
+  color: var(--nav-color-text-muted);
+  font-size: 0.75rem;
+}
+
 .nav-chart-legend {
   display: flex;
   flex-wrap: wrap;

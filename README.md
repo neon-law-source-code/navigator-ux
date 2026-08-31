@@ -20,10 +20,12 @@ download URL — no registry account, no token, and no `.npmrc`:
 pnpm add https://github.com/neon-law-source-code/navigator-ux/releases/download/v0.7.0/navigator-ux-v0.7.0.tgz
 ```
 
-React 19 is the only peer dependency. Five runtime dependencies come with the package and your
-installer resolves them: `d3-array`, `d3-scale`, and `d3-shape` for the charts, `d3-force` for
-`GraphView`, and `pdfjs-dist` for `PdfViewer`. They are externalized in the build rather than bundled,
-so an app that already uses one of them resolves a single copy. Nothing else is drawn from outside.
+React 19 is the only peer dependency. Runtime dependencies come with the package and your
+installer resolves them: `d3-array`, `d3-scale`, and `d3-shape` for the charts, `d3-geo` and
+`topojson-client` for `WorldMap`, `d3-force` for `GraphView`, and `pdfjs-dist` for `PdfViewer`. They
+are externalized in the build rather than bundled, so an app that already uses one of them resolves a
+single copy. The world outline is vendored (Natural Earth 110m) rather than fetched. Nothing else is
+drawn from outside.
 
 The URL pins one exact version, so upgrading is an edit to the URL rather than a range that widens on
 its own. See [docs/consuming-the-library.md](./docs/consuming-the-library.md) for the dependency form
@@ -173,7 +175,7 @@ The shadcn-derived set:
 | --- | --- |
 | Disclosure | `Accordion`, `Collapsible` |
 | Tabs | `LinkTabs`, `Tabs` |
-| Display | `Separator`, `Avatar`, `Skeleton`, `Progress`, `AspectRatio` |
+| Charts | `BarChart`, `LineChart`, `AreaChart`, `PieChart`, `WorldMap`, `ChartLegend` |
 | Controls | `Switch`, `ToggleGroup`, `Combobox` |
 | Overlays | `Dialog`, `Sheet`, `Popover`, `DropdownMenu`, `Tooltip` |
 | Notifications | `Toaster`, `useToasts` |

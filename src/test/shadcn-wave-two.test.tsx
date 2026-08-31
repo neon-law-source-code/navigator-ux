@@ -21,6 +21,8 @@ import {
   Item,
   Kbd,
   LineChart,
+  PieChart,
+  WorldMap,
   Menubar,
   SERIES_COUNT,
   ScrollArea,
@@ -39,6 +41,7 @@ import {
   seriesColor,
   shiftMonth,
 } from '../index'
+import { numericCountryId } from '../lib/iso-3166'
 
 /*
  * The second shadcn wave.
@@ -593,6 +596,100 @@ describe('Charts', () => {
     render(<ChartLegend entries={[{ label: 'Fees', series: 0 }, { label: 'Costs', series: 1 }]} />)
     expect(screen.getByText('Fees')).toBeInTheDocument()
     expect(screen.getByText('Costs')).toBeInTheDocument()
+  })
+
+  it('summarizes a pie by the largest slice', () => {
+    render(
+      <PieChart
+        data={[
+          { label: 'Contract', value: 50 },
+          { label: 'Tort', value: 30 },
+          { label: 'Equity', value: 20 },
+        ]}
+        label="Posture"
+        format={(value) => `${value}%`}
+      />,
+    )
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Posture. 3 slices totaling 100%. Largest is Contract at 50% (50%).',
+    )
+    expect(screen.getByText('Contract')).toBeInTheDocument()
+  })
+
+  it('drops non-positive slices and says so when none remain', () => {
+    render(
+      <PieChart
+        data={[
+          { label: 'None', value: 0 },
+          { label: 'Debt', value: -4 },
+        ]}
+        label="Empty pie"
+      />,
+    )
+    expect(screen.getByRole('img')).toHaveAccessibleName('Empty pie: no data')
+  })
+
+  it('opens a hole when innerRadius is set', () => {
+    const pie = render(<PieChart data={SERIES} label="Share" />)
+    const solid = pie.container.querySelector('.nav-chart__slice')?.getAttribute('d') ?? ''
+    pie.rerender(<PieChart data={SERIES} label="Share" innerRadius={0.55} />)
+    const donut = pie.container.querySelector('.nav-chart__slice')?.getAttribute('d') ?? ''
+    expect(solid).not.toBe(donut)
+    expect(donut).not.toContain('NaN')
+  })
+})
+
+describe('iso-3166', () => {
+  it('resolves alpha-3, numeric, and padded numeric ids', () => {
+    expect(numericCountryId('USA')).toBe('840')
+    expect(numericCountryId('840')).toBe('840')
+    expect(numericCountryId('36')).toBe('036')
+    expect(numericCountryId('')).toBeNull()
+    expect(numericCountryId('Atlantis')).toBeNull()
+  })
+})
+
+describe('WorldMap', () => {
+  const REGIONS = [
+    { id: 'USA', value: 40 },
+    { id: '826', value: 12 },
+    { id: 'Canada', value: 8 },
+  ]
+
+  it('summarizes the highest region rather than naming the widget', () => {
+    render(<WorldMap data={REGIONS} label="Admissions" format={(value) => `${value}`} />)
+    expect(screen.getByRole('img')).toHaveAccessibleName(
+      'Admissions. 3 regions. Highest is United States of America at 40.',
+    )
+  })
+
+  it('says so when there is nothing to paint', () => {
+    render(<WorldMap data={[]} label="Empty map" />)
+    expect(screen.getByRole('img')).toHaveAccessibleName('Empty map: no data')
+    expect(screen.queryByText(/–/)).not.toBeInTheDocument()
+  })
+
+  it('marks valued countries and leaves the rest as land', () => {
+    const { container } = render(<WorldMap data={REGIONS} label="Admissions" />)
+    const usa = container.querySelector('[data-country="840"]')
+    expect(usa).toHaveClass('nav-chart__land--valued')
+    expect(usa).toHaveAttribute('fill', 'var(--nav-chart-1)')
+    expect(container.querySelector('[data-country="826"]')).toHaveClass('nav-chart__land--valued')
+    expect(container.querySelector('[data-country="124"]')).toHaveClass('nav-chart__land--valued')
+    expect(container.querySelector('[data-country="076"]')).not.toHaveClass('nav-chart__land--valued')
+  })
+
+  it('reports the clicked country', () => {
+    const onSelect = vi.fn()
+    const { container } = render(<WorldMap data={REGIONS} label="Admissions" onSelect={onSelect} />)
+    const usa = container.querySelector('[data-country="840"]')
+    expect(usa).toHaveClass('nav-chart__land--selectable')
+    fireEvent.click(usa!)
+    expect(onSelect).toHaveBeenCalledWith({
+      id: '840',
+      name: 'United States of America',
+      value: 40,
+    })
   })
 })
 
