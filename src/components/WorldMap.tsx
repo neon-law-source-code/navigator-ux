@@ -136,7 +136,7 @@ export function WorldMap({
     return {
       path: makePath,
       sphere: makePath({ type: 'Sphere' }) ?? '',
-      opacityOf: (value: number) => 0.22 + ((value - lowest) / span) * 0.78,
+      opacityOf: (value: number) => 0.4 + ((value - lowest) / span) * 0.6,
       ticks: { lowest, highest },
     }
   }, [data, height])

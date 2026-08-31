@@ -671,7 +671,9 @@ describe('WorldMap', () => {
 
   it('marks valued countries and leaves the rest as land', () => {
     const { container } = render(<WorldMap data={REGIONS} label="Admissions" />)
-    expect(container.querySelector('[data-country="840"]')).toHaveClass('nav-chart__land--valued')
+    const usa = container.querySelector('[data-country="840"]')
+    expect(usa).toHaveClass('nav-chart__land--valued')
+    expect(usa).toHaveAttribute('fill', 'var(--nav-chart-1)')
     expect(container.querySelector('[data-country="826"]')).toHaveClass('nav-chart__land--valued')
     expect(container.querySelector('[data-country="124"]')).toHaveClass('nav-chart__land--valued')
     expect(container.querySelector('[data-country="076"]')).not.toHaveClass('nav-chart__land--valued')

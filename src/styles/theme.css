@@ -2866,9 +2866,12 @@ dialog.confirm-delete:not([open]) {
 }
 
 .nav-chart__land {
-  fill: var(--nav-color-surface-raised);
   stroke: var(--nav-color-border);
   stroke-width: 0.4;
+}
+
+.nav-chart__land:not(.nav-chart__land--valued) {
+  fill: var(--nav-color-surface-raised);
 }
 
 .nav-chart__land--selectable {
