@@ -21,6 +21,15 @@ type SceneName =
   | 'lock'
   | 'journey'
   | 'expunge'
+  | 'outline'
+  | 'verify'
+  | 'packet'
+  | 'warrant'
+  | 'company'
+  | 'board'
+  | 'ownership'
+  | 'gates'
+  | 'estate'
 
 type ChartFigure = {
   kind: 'bar' | 'line' | 'area'
@@ -154,39 +163,15 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     'Each interrogatory is a thread: the question, the draft answer, and the objection live together.',
     'questions',
   ),
-  'motion-outline': web(
-    'How the argument is built',
-    'Outline units as a graph: a heading points at the record it quotes, not at a paraphrase.',
-    [
-      { id: 'issue', label: 'Cure notice', kind: 'issue', fields: { unit: 'I' } },
-      { id: 'rule', label: '§ 2.4(b)', kind: 'authority', fields: { unit: 'I.A' } },
-      { id: 'quote', label: 'thirty days', kind: 'record', fields: { cite: 'R. 42:12–14' } },
-      { id: 'counter', label: 'No notice', kind: 'record', fields: { cite: 'Dep. 18:4–9' } },
-      { id: 'relief', label: 'Dismissal', kind: 'relief', fields: { unit: 'II' } },
-    ],
-    [
-      { source: 'issue', target: 'rule', kind: 'cites' },
-      { source: 'issue', target: 'quote', kind: 'quotes' },
-      { source: 'rule', target: 'relief', kind: 'supports' },
-      { source: 'counter', target: 'issue', kind: 'limits' },
-    ],
+  'motion-outline': scene(
+    'The brief as stacked units',
+    'Harvard numbering is a pile of polygons: issue, rule, quote, relief. The record is cited, not paraphrased.',
+    'outline',
   ),
-  'verify-the-record': web(
-    'How the brief meets the record',
-    'The motion, its quoted spans, and the underlying authority in one matter graph.',
-    [
-      { id: 'motion', label: 'Motion', kind: 'brief', fields: { posture: 'Summary judgment' } },
-      { id: 'issue', label: 'Cure notice', kind: 'issue', fields: { unit: 'I' } },
-      { id: 'rule', label: '§ 2.4(b)', kind: 'authority', fields: { unit: 'I.A' } },
-      { id: 'quote', label: 'thirty days', kind: 'record', fields: { cite: 'R. 42:12–14' } },
-      { id: 'counter', label: 'No notice', kind: 'record', fields: { cite: 'Dep. 18:4–9' } },
-    ],
-    [
-      { source: 'motion', target: 'issue', kind: 'argues' },
-      { source: 'issue', target: 'rule', kind: 'cites' },
-      { source: 'motion', target: 'quote', kind: 'quotes' },
-      { source: 'counter', target: 'issue', kind: 'limits' },
-    ],
+  'verify-the-record': scene(
+    'Brief against the record',
+    'Two pages of the same matter, drawn as polygons: the motion on the left, the excerpt it quotes on the right.',
+    'verify',
   ),
   'requests-production': scene(
     'What still has to be gathered',
@@ -207,22 +192,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     ],
     4,
   ),
-  'subpoena-packet': web(
+  'subpoena-packet': scene(
     'Authority, scope, service, return',
-    'A packet is a chain. Skipping a link is how a return comes back empty.',
-    [
-      { id: 'auth', label: 'Rule 45', kind: 'authority', fields: { status: 'Confirmed' } },
-      { id: 'scope', label: 'Dock 4 files', kind: 'scope', fields: { status: 'In review' } },
-      { id: 'custodian', label: 'Northwind', kind: 'party', fields: { status: 'Named' } },
-      { id: 'service', label: 'Service', kind: 'step', fields: { status: 'Waiting' } },
-      { id: 'return', label: 'Return', kind: 'step', fields: { status: 'Not yet' } },
-    ],
-    [
-      { source: 'auth', target: 'scope', kind: 'limits' },
-      { source: 'scope', target: 'custodian', kind: 'names' },
-      { source: 'custodian', target: 'service', kind: 'next' },
-      { source: 'service', target: 'return', kind: 'next' },
-    ],
+    'A packet is four polygons in a row. Skipping a facet is how a return comes back empty.',
+    'packet',
   ),
   'deposition-prep': trend(
     'area',
@@ -255,22 +228,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     'Safety first: the page separates what cannot wait from what can be gathered after.',
     'shield',
   ),
-  'serve-warrant': web(
+  'serve-warrant': scene(
     'Who may serve, and on what authority',
-    'An operational page is still a record: source, actor, target, and return.',
-    [
-      { id: 'order', label: 'Order 24-11', kind: 'authority', fields: { court: 'District' } },
-      { id: 'officer', label: 'Server', kind: 'actor', fields: { role: 'Authorized' } },
-      { id: 'target', label: 'Premises', kind: 'place', fields: { kind: 'Named address' } },
-      { id: 'inventory', label: 'Inventory', kind: 'record', fields: { status: 'Required' } },
-      { id: 'return', label: 'Return', kind: 'record', fields: { status: 'Not filed' } },
-    ],
-    [
-      { source: 'order', target: 'officer', kind: 'authorizes' },
-      { source: 'officer', target: 'target', kind: 'serves' },
-      { source: 'target', target: 'inventory', kind: 'lists' },
-      { source: 'inventory', target: 'return', kind: 'attaches' },
-    ],
+    'The order is a badge of polygons: source, actor, premises, return.',
+    'warrant',
   ),
   'service-return': trend(
     'line',
@@ -303,22 +264,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     ],
     2,
   ),
-  'company-formation': web(
+  'company-formation': scene(
     'The entity being formed',
-    'Founders, the company, and the first filings as one graph.',
-    [
-      { id: 'founder-a', label: 'J. Rivera', kind: 'person', fields: { role: 'Founder' } },
-      { id: 'founder-b', label: 'M. Chen', kind: 'person', fields: { role: 'Founder' } },
-      { id: 'co', label: 'Harbor LLC', kind: 'entity', fields: { state: 'WA' } },
-      { id: 'ein', label: 'EIN packet', kind: 'filing', fields: { status: 'Draft' } },
-      { id: 'oa', label: 'Operating agr.', kind: 'instrument', fields: { status: 'Questionnaire' } },
-    ],
-    [
-      { source: 'founder-a', target: 'co', kind: 'forms' },
-      { source: 'founder-b', target: 'co', kind: 'forms' },
-      { source: 'co', target: 'ein', kind: 'needs' },
-      { source: 'co', target: 'oa', kind: 'needs' },
-    ],
+    'Founders and the company as a small skyline of polygons — not a cap table.',
+    'company',
   ),
   'operating-agreement': bars(
     'Decisions that become terms',
@@ -375,21 +324,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     ],
     2,
   ),
-  'board-consent': web(
+  'board-consent': scene(
     'Who has to approve',
-    'A small packet: the resolution, the people who must sign, and the minute book it will enter.',
-    [
-      { id: 'resolution', label: 'Resolution', kind: 'instrument', fields: { status: 'Draft' } },
-      { id: 'chair', label: 'Chair', kind: 'person', fields: { vote: 'Required' } },
-      { id: 'director', label: 'Director', kind: 'person', fields: { vote: 'Required' } },
-      { id: 'minutes', label: 'Minute book', kind: 'record', fields: { status: 'Waiting' } },
-    ],
-    [
-      { source: 'resolution', target: 'chair', kind: 'needs' },
-      { source: 'resolution', target: 'director', kind: 'needs' },
-      { source: 'chair', target: 'minutes', kind: 'records' },
-      { source: 'director', target: 'minutes', kind: 'records' },
-    ],
+    'The resolution is a table of polygons: the paper, the seats that must sign, the minute book it will enter.',
+    'board',
   ),
   'trademark-clearance': bars(
     'Live marks near the candidate',
@@ -403,22 +341,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     ],
     1,
   ),
-  'beneficial-ownership': web(
+  'beneficial-ownership': scene(
     'Who owns twenty-five percent or more',
-    'A filing intake is a graph of people and percentages, with a review boundary at the end.',
-    [
-      { id: 'co', label: 'Harbor LLC', kind: 'entity', fields: { filing: 'BOI' } },
-      { id: 'a', label: 'J. Rivera', kind: 'person', fields: { stake: '40%' } },
-      { id: 'b', label: 'M. Chen', kind: 'person', fields: { stake: '35%' } },
-      { id: 'c', label: 'Trust 2024', kind: 'entity', fields: { stake: '25%' } },
-      { id: 'review', label: 'Counsel', kind: 'counsel', fields: { role: 'Review' } },
-    ],
-    [
-      { source: 'a', target: 'co', kind: 'owns' },
-      { source: 'b', target: 'co', kind: 'owns' },
-      { source: 'c', target: 'co', kind: 'owns' },
-      { source: 'review', target: 'co', kind: 'reviews' },
-    ],
+    'Ownership as wedges, not a filing. Counsel still owns the review boundary.',
+    'ownership',
   ),
   'asylum-i589': scene(
     'A packet assembled at a human pace',
@@ -437,22 +363,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     ],
     3,
   ),
-  'naturalization-screening': web(
-    'Eligibility questions as a tree',
-    'A screening is a set of gates, not an application. Follow-up is the product.',
-    [
-      { id: 'age', label: 'Age / status', kind: 'gate', fields: { result: 'Pass' } },
-      { id: 'residence', label: 'Residence', kind: 'gate', fields: { result: 'Pass' } },
-      { id: 'english', label: 'English', kind: 'gate', fields: { result: 'Follow up' } },
-      { id: 'civics', label: 'Civics', kind: 'gate', fields: { result: 'Follow up' } },
-      { id: 'counsel', label: 'Counsel', kind: 'counsel', fields: { next: 'Interview prep' } },
-    ],
-    [
-      { source: 'age', target: 'residence', kind: 'then' },
-      { source: 'residence', target: 'english', kind: 'then' },
-      { source: 'english', target: 'civics', kind: 'then' },
-      { source: 'civics', target: 'counsel', kind: 'hands off' },
-    ],
+  'naturalization-screening': scene(
+    'Eligibility as a sequence of gates',
+    'A screening is a set of polygonal gates, not an application. Follow-up is the product.',
+    'gates',
   ),
   'work-authorization': trend(
     'line',
@@ -469,22 +383,10 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     0,
     days,
   ),
-  'estate-plan': web(
+  'estate-plan': scene(
     'People the plan has to name',
-    'A thoughtful intake still has a graph: the person, the people they care for, and the instruments.',
-    [
-      { id: 'person', label: 'Client', kind: 'person', fields: { role: 'Testator' } },
-      { id: 'spouse', label: 'Spouse', kind: 'person', fields: { role: 'Primary' } },
-      { id: 'child', label: 'Child', kind: 'person', fields: { role: 'Remainder' } },
-      { id: 'will', label: 'Will', kind: 'instrument', fields: { status: 'Intake' } },
-      { id: 'poa', label: 'POA', kind: 'instrument', fields: { status: 'Intake' } },
-    ],
-    [
-      { source: 'person', target: 'will', kind: 'signs' },
-      { source: 'person', target: 'poa', kind: 'signs' },
-      { source: 'will', target: 'spouse', kind: 'names' },
-      { source: 'will', target: 'child', kind: 'names' },
-    ],
+    'A house of polygons: the person, the people they care for, and the instruments they will sign.',
+    'estate',
   ),
   'record-expungement': scene(
     'A private next step',
@@ -608,21 +510,36 @@ function SceneArt({ name, compact, title }: { name: SceneName; compact?: boolean
       {name === 'lock' ? <LockScene width={width} height={height} /> : null}
       {name === 'journey' ? <JourneyScene width={width} height={height} /> : null}
       {name === 'expunge' ? <ExpungeScene width={width} height={height} /> : null}
+      {name === 'outline' ? <OutlineScene width={width} height={height} /> : null}
+      {name === 'verify' ? <VerifyScene width={width} height={height} /> : null}
+      {name === 'packet' ? <PacketScene width={width} height={height} /> : null}
+      {name === 'warrant' ? <WarrantScene width={width} height={height} /> : null}
+      {name === 'company' ? <CompanyScene width={width} height={height} /> : null}
+      {name === 'board' ? <BoardScene width={width} height={height} /> : null}
+      {name === 'ownership' ? <OwnershipScene width={width} height={height} /> : null}
+      {name === 'gates' ? <GatesScene width={width} height={height} /> : null}
+      {name === 'estate' ? <EstateScene width={width} height={height} /> : null}
     </svg>
   )
 }
 
+function Fill({ points, series, opacity = 0.92 }: { points: string; series: number; opacity?: number }) {
+  return <polygon points={points} fill={seriesColor(series)} opacity={opacity} />
+}
+
 function IntakeScene({ width, height }: { width: number; height: number }) {
+  const diamond = (cx: number, cy: number, r: number) =>
+    `${cx},${cy - r} ${cx + r},${cy} ${cx},${cy + r} ${cx - r},${cy}`
   return (
     <g>
-      <path
-        className="showcase-scene__path"
-        d={`M ${width * 0.08} ${height * 0.55} C ${width * 0.28} ${height * 0.1}, ${width * 0.55} ${height * 0.95}, ${width * 0.92} ${height * 0.4}`}
-        fill="none"
+      <Fill
+        series={2}
+        opacity={0.35}
+        points={`${width * 0.08},${height * 0.58} ${width * 0.38},${height * 0.18} ${width * 0.7},${height * 0.72} ${width * 0.92},${height * 0.32} ${width * 0.78},${height * 0.88} ${width * 0.2},${height * 0.9}`}
       />
-      <circle cx={width * 0.12} cy={height * 0.52} r={Math.min(10, height * 0.12)} fill={seriesColor(0)} />
-      <circle cx={width * 0.5} cy={height * 0.58} r={Math.min(8, height * 0.1)} fill={seriesColor(1)} />
-      <circle cx={width * 0.88} cy={height * 0.4} r={Math.min(12, height * 0.14)} fill={seriesColor(3)} />
+      <Fill series={0} points={diamond(width * 0.18, height * 0.48, Math.min(14, height * 0.16))} />
+      <Fill series={1} points={diamond(width * 0.5, height * 0.55, Math.min(11, height * 0.12))} />
+      <Fill series={3} points={diamond(width * 0.82, height * 0.38, Math.min(16, height * 0.18))} />
     </g>
   )
 }
@@ -633,31 +550,17 @@ function QuestionsScene({ width, height }: { width: number; height: number }) {
     <g>
       {Array.from({ length: rows }, (_, index) => {
         const y = height * (0.22 + index * 0.28)
+        const inset = index * width * 0.04
         return (
           <g key={index}>
-            <rect
-              x={width * 0.08}
-              y={y - height * 0.08}
-              width={width * 0.12}
-              height={height * 0.16}
-              rx="0"
-              fill={seriesColor(index)}
+            <Fill
+              series={index}
+              points={`${width * 0.08},${y - height * 0.08} ${width * 0.2},${y - height * 0.08} ${width * 0.24},${y + height * 0.08} ${width * 0.08},${y + height * 0.08}`}
             />
-            <rect
-              className="showcase-scene__block"
-              x={width * 0.26}
-              y={y - height * 0.05}
-              width={width * 0.62}
-              height={height * 0.04}
-              rx="0"
-            />
-            <rect
-              className="showcase-scene__block"
-              x={width * 0.26}
-              y={y + height * 0.02}
-              width={width * 0.44}
-              height={height * 0.04}
-              rx="0"
+            <Fill
+              series={index}
+              opacity={0.35}
+              points={`${width * 0.28 + inset},${y - height * 0.05} ${width * 0.9},${y - height * 0.05} ${width * 0.86},${y + height * 0.05} ${width * 0.28 + inset},${y + height * 0.05}`}
             />
           </g>
         )
@@ -669,35 +572,34 @@ function QuestionsScene({ width, height }: { width: number; height: number }) {
 function UploadsScene({ width, height }: { width: number; height: number }) {
   return (
     <g>
-      {[0, 1, 2, 3].map((index) => (
-        <rect
-          key={index}
-          className="showcase-scene__paper"
-          x={width * (0.12 + index * 0.2)}
-          y={height * (0.22 + (index % 2) * 0.08)}
-          width={width * 0.16}
-          height={height * 0.52}
-          rx="0"
-        />
-      ))}
+      {[0, 1, 2, 3].map((index) => {
+        const x = width * (0.1 + index * 0.21)
+        const skew = index % 2 === 0 ? height * 0.06 : 0
+        return (
+          <Fill
+            key={index}
+            series={index}
+            points={`${x},${height * 0.2 + skew} ${x + width * 0.16},${height * 0.16 + skew} ${x + width * 0.16},${height * 0.78 + skew} ${x},${height * 0.84 + skew}`}
+          />
+        )
+      })}
     </g>
   )
 }
 
 function ShieldScene({ width, height }: { width: number; height: number }) {
   const cx = width / 2
-  const top = height * 0.12
+  const top = height * 0.1
   return (
     <g>
-      <path
-        fill={seriesColor(0)}
-        opacity="0.9"
-        d={`M ${cx} ${top} L ${width * 0.72} ${height * 0.28} L ${width * 0.66} ${height * 0.78} L ${cx} ${height * 0.92} L ${width * 0.34} ${height * 0.78} L ${width * 0.28} ${height * 0.28} Z`}
+      <Fill
+        series={0}
+        points={`${cx},${top} ${width * 0.74},${height * 0.28} ${width * 0.68},${height * 0.8} ${cx},${height * 0.94} ${width * 0.32},${height * 0.8} ${width * 0.26},${height * 0.28}`}
       />
-      <path
-        className="showcase-scene__path-on-accent"
-        d={`M ${width * 0.42} ${height * 0.5} L ${width * 0.48} ${height * 0.62} L ${width * 0.6} ${height * 0.38}`}
-        fill="none"
+      <Fill
+        series={3}
+        opacity={0.55}
+        points={`${width * 0.42},${height * 0.48} ${width * 0.48},${height * 0.64} ${width * 0.62},${height * 0.34} ${width * 0.56},${height * 0.32} ${width * 0.48},${height * 0.52} ${width * 0.44},${height * 0.46}`}
       />
     </g>
   )
@@ -705,22 +607,19 @@ function ShieldScene({ width, height }: { width: number; height: number }) {
 
 function LockScene({ width, height }: { width: number; height: number }) {
   const cx = width / 2
+  const shackle = Math.min(width, height) * 0.12
   return (
     <g>
-      <rect
-        x={cx - width * 0.12}
-        y={height * 0.42}
-        width={width * 0.24}
-        height={height * 0.4}
-        rx="0"
-        fill={seriesColor(4)}
+      <Fill
+        series={4}
+        points={`${cx - width * 0.14},${height * 0.42} ${cx + width * 0.14},${height * 0.42} ${cx + width * 0.16},${height * 0.84} ${cx - width * 0.16},${height * 0.84}`}
       />
-      <path
-        className="showcase-scene__path"
-        d={`M ${cx - width * 0.08} ${height * 0.42} Q ${cx - width * 0.08} ${height * 0.12}, ${cx} ${height * 0.12} Q ${cx + width * 0.08} ${height * 0.12}, ${cx + width * 0.08} ${height * 0.42}`}
-        fill="none"
+      <Fill
+        series={0}
+        opacity={0.4}
+        points={`${cx - shackle},${height * 0.42} ${cx - shackle},${height * 0.2} ${cx},${height * 0.1} ${cx + shackle},${height * 0.2} ${cx + shackle},${height * 0.42} ${cx + shackle * 0.55},${height * 0.42} ${cx + shackle * 0.55},${height * 0.24} ${cx},${height * 0.16} ${cx - shackle * 0.55},${height * 0.24} ${cx - shackle * 0.55},${height * 0.42}`}
       />
-      <circle cx={cx} cy={height * 0.6} r={Math.min(6, height * 0.08)} fill={seriesColor(0)} />
+      <Fill series={0} points={`${cx},${height * 0.54} ${cx + 8},${height * 0.62} ${cx},${height * 0.7} ${cx - 8},${height * 0.62}`} />
     </g>
   )
 }
@@ -729,19 +628,21 @@ function JourneyScene({ width, height }: { width: number; height: number }) {
   const steps = 5
   return (
     <g>
-      <path
-        className="showcase-scene__path"
-        d={`M ${width * 0.08} ${height * 0.7} L ${width * 0.92} ${height * 0.7}`}
-        fill="none"
+      <Fill
+        series={5}
+        opacity={0.3}
+        points={`${width * 0.06},${height * 0.78} ${width * 0.94},${height * 0.78} ${width * 0.94},${height * 0.88} ${width * 0.06},${height * 0.88}`}
       />
       {Array.from({ length: steps }, (_, index) => {
         const x = width * (0.12 + index * 0.19)
-        const y = height * (index % 2 === 0 ? 0.38 : 0.28)
+        const y = height * (index % 2 === 0 ? 0.38 : 0.26)
+        const r = Math.min(14, height * 0.14)
         return (
-          <g key={index}>
-            <line x1={x} y1={height * 0.7} x2={x} y2={y + 10} className="showcase-scene__edge" />
-            <circle cx={x} cy={y} r={Math.min(11, height * 0.12)} fill={seriesColor(index)} />
-          </g>
+          <Fill
+            key={index}
+            series={index}
+            points={`${x},${y - r} ${x + r},${y} ${x},${y + r} ${x - r},${y}`}
+          />
         )
       })}
     </g>
@@ -751,21 +652,211 @@ function JourneyScene({ width, height }: { width: number; height: number }) {
 function ExpungeScene({ width, height }: { width: number; height: number }) {
   return (
     <g>
-      <rect
-        className="showcase-scene__paper"
-        x={width * 0.22}
-        y={height * 0.18}
-        width={width * 0.36}
-        height={height * 0.64}
-        rx="0"
+      <Fill
+        series={5}
+        opacity={0.35}
+        points={`${width * 0.2},${height * 0.18} ${width * 0.56},${height * 0.14} ${width * 0.6},${height * 0.82} ${width * 0.18},${height * 0.84}`}
       />
-      <path
-        className="showcase-scene__path"
-        d={`M ${width * 0.52} ${height * 0.28} C ${width * 0.7} ${height * 0.1}, ${width * 0.82} ${height * 0.7}, ${width * 0.9} ${height * 0.55}`}
-        fill="none"
+      <Fill
+        series={0}
+        points={`${width * 0.28},${height * 0.3} ${width * 0.52},${height * 0.3} ${width * 0.5},${height * 0.4} ${width * 0.28},${height * 0.4}`}
       />
-      <rect x={width * 0.28} y={height * 0.32} width={width * 0.22} height={height * 0.06} rx="0" fill={seriesColor(0)} />
-      <rect x={width * 0.28} y={height * 0.46} width={width * 0.16} height={height * 0.06} rx="0" fill={seriesColor(2)} />
+      <Fill
+        series={2}
+        points={`${width * 0.28},${height * 0.48} ${width * 0.46},${height * 0.48} ${width * 0.44},${height * 0.56} ${width * 0.28},${height * 0.56}`}
+      />
+      <Fill
+        series={3}
+        points={`${width * 0.58},${height * 0.22} ${width * 0.9},${height * 0.4} ${width * 0.72},${height * 0.78} ${width * 0.52},${height * 0.5}`}
+      />
+    </g>
+  )
+}
+
+function OutlineScene({ width, height }: { width: number; height: number }) {
+  return (
+    <g>
+      {[0, 1, 2, 3].map((index) => {
+        const y = height * (0.12 + index * 0.2)
+        const indent = index * width * 0.06
+        return (
+          <Fill
+            key={index}
+            series={index}
+            points={`${width * 0.1 + indent},${y} ${width * 0.88},${y} ${width * 0.84},${y + height * 0.14} ${width * 0.1 + indent},${y + height * 0.14}`}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
+function VerifyScene({ width, height }: { width: number; height: number }) {
+  return (
+    <g>
+      <Fill
+        series={0}
+        points={`${width * 0.08},${height * 0.14} ${width * 0.44},${height * 0.1} ${width * 0.44},${height * 0.86} ${width * 0.08},${height * 0.86}`}
+      />
+      <Fill
+        series={3}
+        points={`${width * 0.56},${height * 0.1} ${width * 0.92},${height * 0.18} ${width * 0.92},${height * 0.88} ${width * 0.56},${height * 0.82}`}
+      />
+      <Fill
+        series={1}
+        opacity={0.55}
+        points={`${width * 0.14},${height * 0.28} ${width * 0.38},${height * 0.28} ${width * 0.38},${height * 0.38} ${width * 0.14},${height * 0.38}`}
+      />
+      <Fill
+        series={2}
+        opacity={0.55}
+        points={`${width * 0.62},${height * 0.34} ${width * 0.86},${height * 0.36} ${width * 0.86},${height * 0.5} ${width * 0.56},${height * 0.48}`}
+      />
+    </g>
+  )
+}
+
+function PacketScene({ width, height }: { width: number; height: number }) {
+  return (
+    <g>
+      {[0, 1, 2, 3].map((index) => {
+        const x = width * (0.08 + index * 0.23)
+        return (
+          <Fill
+            key={index}
+            series={index}
+            points={`${x + width * 0.1},${height * 0.16} ${x + width * 0.2},${height * 0.5} ${x + width * 0.1},${height * 0.84} ${x},${height * 0.5}`}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
+function WarrantScene({ width, height }: { width: number; height: number }) {
+  const cx = width / 2
+  return (
+    <g>
+      <Fill
+        series={0}
+        points={`${cx},${height * 0.08} ${width * 0.78},${height * 0.32} ${width * 0.7},${height * 0.88} ${cx},${height * 0.72} ${width * 0.3},${height * 0.88} ${width * 0.22},${height * 0.32}`}
+      />
+      <Fill
+        series={4}
+        points={`${cx},${height * 0.28} ${width * 0.62},${height * 0.4} ${width * 0.58},${height * 0.68} ${cx},${height * 0.58} ${width * 0.42},${height * 0.68} ${width * 0.38},${height * 0.4}`}
+      />
+    </g>
+  )
+}
+
+function CompanyScene({ width, height }: { width: number; height: number }) {
+  const roofs = [
+    { x: 0.08, w: 0.18, h: 0.55, series: 0 },
+    { x: 0.28, w: 0.22, h: 0.7, series: 1 },
+    { x: 0.52, w: 0.16, h: 0.45, series: 2 },
+    { x: 0.7, w: 0.22, h: 0.62, series: 3 },
+  ]
+  return (
+    <g>
+      {roofs.map((building) => {
+        const x = width * building.x
+        const top = height * (1 - building.h)
+        const w = width * building.w
+        return (
+          <g key={building.x}>
+            <Fill
+              series={building.series}
+              points={`${x + w * 0.5},${top} ${x + w},${top + height * 0.12} ${x + w},${height * 0.88} ${x},${height * 0.88} ${x},${top + height * 0.12}`}
+            />
+          </g>
+        )
+      })}
+    </g>
+  )
+}
+
+function BoardScene({ width, height }: { width: number; height: number }) {
+  return (
+    <g>
+      <Fill
+        series={2}
+        points={`${width * 0.12},${height * 0.55} ${width * 0.88},${height * 0.5} ${width * 0.82},${height * 0.78} ${width * 0.18},${height * 0.82}`}
+      />
+      {[0, 1, 2, 3].map((index) => {
+        const x = width * (0.18 + index * 0.18)
+        return (
+          <Fill
+            key={index}
+            series={index}
+            points={`${x},${height * 0.22} ${x + width * 0.1},${height * 0.22} ${x + width * 0.12},${height * 0.48} ${x - width * 0.02},${height * 0.48}`}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
+function OwnershipScene({ width, height }: { width: number; height: number }) {
+  const cx = width / 2
+  const cy = height / 2
+  const r = Math.min(width, height) * 0.38
+  const wedges = [
+    { start: 0, end: 0.4, series: 0 },
+    { start: 0.4, end: 0.75, series: 1 },
+    { start: 0.75, end: 1, series: 3 },
+  ]
+  return (
+    <g>
+      {wedges.map((wedge) => {
+        const a0 = wedge.start * Math.PI * 2 - Math.PI / 2
+        const a1 = wedge.end * Math.PI * 2 - Math.PI / 2
+        const x0 = cx + Math.cos(a0) * r
+        const y0 = cy + Math.sin(a0) * r
+        const x1 = cx + Math.cos(a1) * r
+        const y1 = cy + Math.sin(a1) * r
+        const mid = (a0 + a1) / 2
+        const xm = cx + Math.cos(mid) * r
+        const ym = cy + Math.sin(mid) * r
+        return <Fill key={wedge.series} series={wedge.series} points={`${cx},${cy} ${x0},${y0} ${xm},${ym} ${x1},${y1}`} />
+      })}
+    </g>
+  )
+}
+
+function GatesScene({ width, height }: { width: number; height: number }) {
+  return (
+    <g>
+      {[0, 1, 2, 3].map((index) => {
+        const x = width * (0.06 + index * 0.24)
+        const open = index < 2
+        return (
+          <Fill
+            key={index}
+            series={open ? 3 : 4}
+            points={`${x},${height * 0.2} ${x + width * 0.18},${height * 0.12} ${x + width * 0.18},${height * 0.88} ${x},${height * 0.8}`}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
+function EstateScene({ width, height }: { width: number; height: number }) {
+  const cx = width / 2
+  return (
+    <g>
+      <Fill
+        series={1}
+        points={`${cx},${height * 0.1} ${width * 0.82},${height * 0.42} ${width * 0.18},${height * 0.42}`}
+      />
+      <Fill
+        series={0}
+        points={`${width * 0.26},${height * 0.42} ${width * 0.74},${height * 0.42} ${width * 0.74},${height * 0.88} ${width * 0.26},${height * 0.88}`}
+      />
+      <Fill
+        series={3}
+        points={`${width * 0.42},${height * 0.58} ${width * 0.58},${height * 0.58} ${width * 0.58},${height * 0.88} ${width * 0.42},${height * 0.88}`}
+      />
     </g>
   )
 }
