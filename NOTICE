@@ -20,6 +20,11 @@ or TITLE.  See LICENSE for the operative disclaimer.
 LICENSE holds that licence and nothing else — the Business Source License 1.1,
 its parameters block filled in and its terms otherwise unaltered, so every tool
 that reads a licence file recognises which one this is.  It is the instrument.
+The line `License text copyright © 2017 MariaDB Corporation Ab` is copyright in
+that form: MariaDB wrote BUSL and requires the notice to travel with it.
+MariaDB is not the Licensor of this program and holds no copyright in it.
+Changing that line, or substituting the Firm's name there, would violate BUSL's
+covenant not to modify the licence except by filling in the four parameters.
 What follows is the copyright holder's own account of how it applies to this
 work: nothing here widens the grant, nothing here narrows it, and nothing here
 is a second licence.

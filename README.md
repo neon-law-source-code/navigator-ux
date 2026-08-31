@@ -375,8 +375,10 @@ for it permanently.
 [`LICENSE`](./LICENSE) is the instrument: BUSL-1.1 with its parameters filled in (`Licensor: Shook Law
 PLLC`, `Licensed Work: Navigator UX`, Additional Use Grant of production use under AGPL-3.0-only,
 `Change License: AGPL-3.0-only`) and nothing else in the file, so licence scanners name the
-instrument. The copyright holder's account of how that grant applies — including what production use
-means for a component library — is in [`NOTICE`](./NOTICE).
+instrument. MariaDB's copyright line in that file is copyright in the BUSL form, not in this package
+— the Licensor and the copyright in Navigator UX are Shook Law PLLC. The copyright holder's account
+of how that grant applies — including what production use means for a component library — is in
+[`NOTICE`](./NOTICE).
 
 **What that means for an application that imports this library.** Importing a component puts the
 library in your bundle. Evaluating it and developing against it is non-production use. Shipping it in
