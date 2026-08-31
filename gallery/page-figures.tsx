@@ -762,6 +762,7 @@ export function PageCardArt({ pageId }: { pageId: string }) {
     return <Spark data={figure.data} series={figure.series} />
   }
   if (figure.kind === 'graph') return <GraphSketch nodes={figure.nodes} edges={figure.edges} />
+  if (figure.kind !== 'scene') return null
   return <SceneArt name={figure.scene} compact />
 }
 
@@ -794,7 +795,7 @@ export function PageFigurePanel({ pageId }: { pageId: string }) {
     )
   } else if (figure.kind === 'graph') {
     body = <GraphView nodes={figure.nodes} edges={figure.edges} label={figure.title} height={340} />
-  } else {
+  } else if (figure.kind === 'scene') {
     body = <SceneArt name={figure.scene} title={figure.title} />
   }
 
