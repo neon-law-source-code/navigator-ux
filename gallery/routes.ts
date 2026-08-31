@@ -1,0 +1,29 @@
+/*
+ * Addressable views on the GitHub Pages site. Kept out of the frame component
+ * file so that file only exports a component — the gallery lint budget is three
+ * warnings, and they already live in the library.
+ */
+
+export type GalleryView = 'components' | 'home' | 'councils' | 'page' | 'license'
+
+export function pageHref(view: Exclude<GalleryView, 'components'>, id?: string) {
+  if (view === 'page' && id) return `?showcase=page&id=${id}`
+  return `?showcase=${view}`
+}
+
+export const COMPONENTS_HREF = './'
+export const LICENSE_HREF = pageHref('license')
+export const VERIFY_HREF = pageHref('page', 'verify-the-record')
+
+export function readGalleryLocation(): { view: GalleryView; pageId: string | null } {
+  if (typeof window === 'undefined') return { view: 'components', pageId: null }
+  const params = new URLSearchParams(window.location.search)
+  const showcase = params.get('showcase')
+  const pageId = params.get('id')
+  if (showcase === 'license') return { view: 'license', pageId: null }
+  if (showcase === 'councils') return { view: 'councils', pageId: null }
+  if (showcase === 'page') return { view: 'page', pageId }
+  if (showcase === 'home') return { view: 'home', pageId: null }
+  if (showcase) return { view: 'home', pageId: null }
+  return { view: 'components', pageId: null }
+}

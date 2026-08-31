@@ -6,9 +6,6 @@ import { Showcase } from './Showcase'
 // The library itself, from source. Editing a component re-renders this page.
 import '../src/styles/theme.css'
 import './gallery.css'
-// `?url` rather than a plain import: the brand layer has to be attachable and
-// detachable at runtime, which means a <link> we control, not a bundled rule.
-import brandExampleHref from './brand-example-tokens.css?url'
 
 import {
   Alert,
@@ -38,7 +35,6 @@ import {
   PricingCard,
   PricingGrid,
   Prose,
-  PublicShell,
   RadioGroup,
   RowActions,
   SelectField,
@@ -53,6 +49,7 @@ import {
   type DataColumn,
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
+import { GalleryFrame } from './site-frame'
 
 /* ------------------------------------------------------------------ shell -- */
 
@@ -172,69 +169,12 @@ const NAV_LINKS = [
 /* ---------------------------------------------------------------- gallery -- */
 
 export function Gallery() {
-  const [brand, setBrand] = useState<'neon-law' | 'example'>('neon-law')
   const [confirming, setConfirming] = useState(false)
   const showcase = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('showcase')
   if (showcase) return <Showcase />
 
-  // Not a theme toggle — the color scheme follows the OS and has no control.
-  // This swaps the *brand* layer, which is the one thing a static page cannot
-  // demonstrate: the same components, re-toned, with no component touched.
-  //
-  // The library ships one identity, so the default is the shipped one. The
-  // example layer is the opt-in, and it is a sample rather than a second brand.
   return (
-    <>
-      {brand === 'example' ? <link rel="stylesheet" href={brandExampleHref} /> : null}
-
-      <div className="gallery__bar nav-theme">
-        <span className="gallery__bar-label">Brand layer</span>
-        <NavButton
-          variant={brand === 'neon-law' ? 'primary' : 'secondary'}
-          onClick={() => setBrand('neon-law')}
-          aria-pressed={brand === 'neon-law'}
-        >
-          Neon Law
-        </NavButton>
-        <NavButton
-          variant={brand === 'example' ? 'primary' : 'secondary'}
-          onClick={() => setBrand('example')}
-          aria-pressed={brand === 'example'}
-        >
-          Example layer
-        </NavButton>
-        <NavLinkButton variant="secondary" href="?showcase=home">
-          Sample pages
-        </NavLinkButton>
-        <span className="gallery__bar-note">
-          Layer two is a stylesheet, not a fork — attaching one repaints every component below.
-          Color scheme follows your OS; there is no toggle, by design.
-        </span>
-      </div>
-
-      <PublicShell
-        header={<SiteHeader brand="Neon Law" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />}
-        footer={
-          <SiteFooter
-            cta={{ label: 'Book a call', href: '#book' }}
-            phone={{ label: '(702) 555-0100', href: 'tel:+17025550100' }}
-            links={[
-              { label: 'Team', href: '#team' },
-              { label: 'Blog', href: '#blog' },
-              { label: 'Contact', href: '#contact' },
-            ]}
-            offices={[
-              { label: 'Nevada', address: '123 Main Street, Las Vegas, NV 89101' },
-              {
-                label: 'California',
-                address: '456 Market Street, San Francisco, CA 94105',
-                note: 'Admission pending.',
-              },
-            ]}
-            legal={<p>Navigator UX is source-available under BUSL-1.1; production use defaults to AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
-          />
-        }
-      >
+    <GalleryFrame>
         <PageHeader
           title="Design system"
           summary="Every block below is the real component the pages use."
@@ -243,7 +183,7 @@ export function Gallery() {
 
         <Section
           title="Brand tokens"
-          note="The eight semantic tokens a brand layer redeclares. Switch the brand above and every chip repaints — no component changes."
+          note="The eight semantic tokens a brand layer redeclares. A consuming app overrides these at :root:root; this gallery ships the library identity only."
         >
           <Swatches tokens={BRAND_TOKENS} />
         </Section>
@@ -527,6 +467,33 @@ export function Gallery() {
         </Section>
 
         <Section
+          title="Public chrome"
+          note="The live header of this site is the gallery's own destinations. The specimen below is the marketing header a consuming app would ship — framed so it does not take over the page."
+        >
+          <div className="gallery__frame">
+            <SiteHeader brand="Neon Law" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />
+            <SiteFooter
+              cta={{ label: 'Book a call', href: '#book' }}
+              phone={{ label: '(702) 555-0100', href: 'tel:+17025550100' }}
+              links={[
+                { label: 'Team', href: '#team' },
+                { label: 'Blog', href: '#blog' },
+                { label: 'Contact', href: '#contact' },
+              ]}
+              offices={[
+                { label: 'Nevada', address: '123 Main Street, Las Vegas, NV 89101' },
+                {
+                  label: 'California',
+                  address: '456 Market Street, San Francisco, CA 94105',
+                  note: 'Admission pending.',
+                },
+              ]}
+              legal={<p>Navigator UX is source-available under BUSL-1.1; production use defaults to AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
+            />
+          </div>
+        </Section>
+
+        <Section
           title="Authenticated chrome"
           note="The same bar renders the client, staff, and admin forms — it takes its destinations and never learns what a role is."
         >
@@ -563,7 +530,6 @@ export function Gallery() {
         <ShadcnSet Section={Section} />
 
         <ShadcnWaveTwo Section={Section} />
-      </PublicShell>
-    </>
+      </GalleryFrame>
   )
 }
