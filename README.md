@@ -2,12 +2,12 @@
 
 [Open the Navigator UX gallery](https://neon-law-source-code.github.io/navigator-ux/?showcase=home)
 
-A React component library on the Neon Law teal, from the Neon Law Foundation. No Tailwind, no Radix,
+A React component library on the Neon Law teal, from Shook Law PLLC. No Tailwind, no Radix,
 no CVA, no icon package — every component that can be is built on the platform primitive that already
 carries its semantics, and every color resolves through a CSS custom property you can override in one
 file.
 
-Free software under the [GNU Affero General Public License, version 3](./LICENSE) — read
+Source-available under the [Business Source License 1.1](./LICENSE) — read
 [License](#license) before you build a product on it.
 
 ## Install
@@ -200,8 +200,8 @@ The matter surfaces, on the same tokens:
 | --- | --- |
 | Chrome | `CaseNav`, `Shell`, `CaseHead`, `Layout`, `Stack`, `ReviewNav` |
 | Primitives | `Panel`, `Badge`, `Button`, `LinkButton`, `ButtonRow`, `Callout` |
-| Review | `Decision`, `DecisionGrid`, `DraftCard`, `AuthorityList`, `AuthorityDialog` |
-| Record | `SourceThread`, `ClaimTable`, `FactGrid`, `DownloadGrid`, `ActionList`, `Record`, `StatusStrip` |
+| Review | `Decision`, `DecisionGrid`, `DraftCard`, `AuthorityList`, `AuthorityDialog`, `HarvardOutlineViewer` |
+| Record | `SourceThread`, `CiteTheRecord`, `RecordCite`, `ClaimTable`, `FactGrid`, `DownloadGrid`, `ActionList`, `Record`, `StatusStrip` |
 | Platform | `ThemeProvider`/`useTheme`, `SessionProvider`/`useSession` |
 
 ## The three contracts
@@ -226,7 +226,7 @@ synthesized 600 or 800, which is why it is now a gate.
 
 **We recommend GORP Serif, and we do not ship it.** GORP is the face this library was designed on and
 the one Neon Law uses; it is a commercial typeface from [TrashType](https://trashtype.com/), and
-buying a licence is the way to get it. It is not the Foundation's to redistribute, and an open-source
+buying a licence is the way to get it. It is not the Firm's to redistribute, and a public
 npm package would hand its binaries to everyone who runs `pnpm add` — so it is not in this repository,
 not in `dist`, and not in the git history.
 
@@ -350,56 +350,64 @@ Issues and pull requests are welcome. Two things worth knowing before you open o
 
 - **Run `pnpm check`.** It is exactly what CI runs, and the gates are cheap to trip — a named color
   in a component or a `font-weight: 600` will fail the build.
-- **Contributions are AGPL-3.0-only**, matching the project, unless you state otherwise. There is no
-  CLA.
+- **Contributions assign to Shook Law PLLC** and reach the tree under BUSL-1.1, matching the rest of
+  the work. See [NOTICE](./NOTICE).
 
 The conventions that are not obvious from the code — and the reasons behind them — are in
 [CLAUDE.md](./CLAUDE.md). It is written for coding agents and is just as useful to people.
 
 ## License
 
-Copyright (C) 2026 Neon Law Foundation.
+Copyright (C) 2026 Shook Law PLLC.
 
 ```
-SPDX-License-Identifier: AGPL-3.0-only
+SPDX-License-Identifier: BUSL-1.1
 ```
 
-Navigator UX is free software: you may redistribute it and modify it under the terms of the **GNU
-Affero General Public License, version 3**, as published by the Free Software Foundation. There is no
-"or later" clause and no second option — [`LICENSE`](./LICENSE) is the verbatim text and the only
-license file in this repository. It is distributed WITHOUT ANY WARRANTY, without even the implied
-warranty of merchantability or fitness for a particular purpose.
+Navigator UX is source-available under the **Business Source License 1.1**. You may read, copy,
+modify, create derivative works from, and redistribute it, and you may make any non-production use of
+it. Production use requires a commercial license from Shook Law PLLC. Four years after a given version
+is published, that version converts to **AGPL-3.0-only**, and the restriction ends for it permanently.
 
-**What that means for an application that imports this library.** A work that includes these
-components inherits the AGPL's obligations, including its network-use clause — see
-[`LICENSE`](./LICENSE) for the full terms. How you installed the package changes nothing about this: a
-dependency boundary is not a license boundary.
+[`LICENSE`](./LICENSE) is the instrument: BUSL-1.1 with its parameters filled in (`Licensor: Shook Law
+PLLC`, `Licensed Work: Navigator UX`, `Additional Use Grant: None`, `Change License: AGPL-3.0-only`)
+and nothing else in the file, so licence scanners name it. The copyright holder's account of how that
+grant applies — including what production use means for a component library — is in
+[`NOTICE`](./NOTICE).
 
-If you need these components without that obligation, the copyright holder is the only party who can
-grant it. Ask the Foundation about a separate license rather than reading a public download as
-permission.
+**What that means for an application that imports this library.** Importing a component puts the
+library in your bundle. Evaluating it and developing against it is non-production use. Shipping it in
+an application that delivers legal services to other people is production use and needs a commercial
+license. How you installed the package changes nothing about this: a dependency boundary is not a
+license boundary. Already-published copies under AGPL-3.0-only remain available under that license to
+anyone who has them; relicensing is forward-only.
+
+If you need production use, write to contact@neonlaw.org. The copyright holder is the only party who
+can grant it.
 
 ### Third-party material
 
-The grant above covers the work the Foundation owns. It does not reach the third-party material
+The grant above covers the work Shook Law PLLC owns. It does not reach the third-party material
 shipped alongside it, which carries its own copyright and its own terms — the bundled typeface under
 the SIL Open Font License 1.1, and two MIT-licensed sources. Those are listed, with the notices their
 licenses require, in [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md), which is published with this
-file and with the package. Where those terms and the AGPL differ, the third-party terms govern that
+file and with the package. Where those terms and BUSL differ, the third-party terms govern that
 material.
 
 **The runtime dependencies are a separate matter, and lighter.** `d3-array`, `d3-scale`, `d3-shape`
 and `d3-force` are ISC; `pdfjs-dist` is Apache-2.0. None of them is bundled — the build externalizes
 every one, so what you install from this package contains import statements rather than copies, and
 your own installer places each dependency with its own license file. They are listed in the notices
-file for completeness rather than obligation. Both licenses sit comfortably inside AGPLv3; Apache-2.0
-does so in one direction only, which the notices file explains.
+file for completeness rather than obligation. Both licenses sit comfortably inside BUSL and inside
+the eventual AGPL-3.0-only conversion; Apache-2.0 does so with AGPLv3 in one direction only, which the
+notices file explains.
 
 The font is worth stating separately: the OFL requires the font software to stay under the OFL and
-forbids relicensing it, so **the two woff2 files are not AGPL** and the AGPL does not purport to
-cover them. Nothing here licenses anything the Foundation does not own.
+forbids relicensing it, so **the two woff2 files are not BUSL** and BUSL does not purport to cover
+them. Nothing here licenses anything the Firm does not own.
 
 ### Trademarks
 
-The license covers the code. It does not grant rights in the Neon Law or Neon Law Foundation names,
-logos, or other trademarks. Fork the library freely; do not imply the Foundation endorses your fork.
+The license covers the code. It does not grant rights in the Neon Law name, logos, or other
+trademarks. Fork the library freely; do not imply the Firm endorses your fork.
+

@@ -15,11 +15,13 @@ import {
   Breadcrumb,
   Card,
   CheckboxField,
+  CiteTheRecord,
   ConfirmDelete,
   DataTable,
   ExternalLink,
   Flash,
   FormCard,
+  HarvardOutlineViewer,
   Icon,
   ICON_NAMES,
   ImpersonationBanner,
@@ -50,6 +52,7 @@ import {
   Toast,
   type DataColumn,
 } from '../src/index'
+import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 
 /* ------------------------------------------------------------------ shell -- */
 
@@ -210,7 +213,7 @@ export function Gallery() {
       </div>
 
       <PublicShell
-        header={<SiteHeader brand="Neon Law Foundation" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />}
+        header={<SiteHeader brand="Neon Law" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />}
         footer={
           <SiteFooter
             cta={{ label: 'Book a call', href: '#book' }}
@@ -228,7 +231,7 @@ export function Gallery() {
                 note: 'Admission pending.',
               },
             ]}
-            legal={<p>Navigator UX is free software under AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
+            legal={<p>Navigator UX is source-available under BUSL-1.1. This page is a specimen, not legal advice.</p>}
           />
         }
       >
@@ -473,6 +476,20 @@ export function Gallery() {
           </FormCard>
         </Section>
 
+        <Section
+          title="Harvard outline"
+          note="The rail is the document's own numbering — Roman, then letter, then Arabic — and it tracks the unit in view as the reader moves down. j/k and the arrow keys step when the navigator has focus. The specimen is an invented motion; the quotes open the record."
+        >
+          <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Sample motion outline" />
+        </Section>
+
+        <Section
+          title="Cite the record"
+          note="Every direct quote the brief already committed to. Selecting one marks those words in the excerpt they came from. A paraphrase does not light up — that is the point of the locator."
+        >
+          <CiteTheRecord citations={RECORD_CITATIONS} />
+        </Section>
+
         <Section title="Navigation">
           <Breadcrumb
             items={[
@@ -528,7 +545,7 @@ export function Gallery() {
               }
               footer={
                 <NavigatorFooter
-                  legal="© 2026 Neon Law Foundation"
+                  legal="© 2026 Shook Law PLLC"
                   links={[{ label: 'Support', href: '#support' }]}
                   release="v0.5.0"
                 />

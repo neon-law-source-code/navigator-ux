@@ -75,7 +75,11 @@
 .term-chip,
 .feed-year,
 .feed-date,
-.source-message pre {
+.source-message pre,
+.harvard-outline__path,
+.cite-the-record__cite,
+.cite-the-record__excerpt,
+.cite-the-record__pin {
   font-variant-numeric: tabular-nums;
 }
 
@@ -1124,6 +1128,219 @@ section[id] {
   color: var(--nav-color-on-warning-subtle);
 }
 
+/* --------------------------------------------------- harvard outline -- */
+
+.harvard-outline,
+.cite-the-record {
+  display: grid;
+  grid-template-columns: minmax(11rem, 16rem) minmax(0, 1fr);
+  overflow: hidden;
+  min-height: 18rem;
+  max-height: 32rem;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+}
+
+.harvard-outline__nav,
+.cite-the-record__nav {
+  overflow: auto;
+  border-right: 1px solid var(--nav-color-border);
+  background: var(--nav-color-surface-raised);
+}
+
+.harvard-outline__nav:focus-visible,
+.cite-the-record__nav:focus-visible {
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: calc(-1 * var(--nav-focus-offset));
+}
+
+.harvard-outline__item,
+.cite-the-record__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.35rem 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 0;
+  border-bottom: 1px solid var(--nav-color-border);
+  background: transparent;
+  color: var(--nav-color-text);
+  font: 400 13px/1.35 var(--nav-font-family);
+  text-align: left;
+  cursor: pointer;
+}
+
+.harvard-outline__item[data-depth='2'] {
+  padding-inline-start: 1.35rem;
+}
+
+.harvard-outline__item[data-depth='3'] {
+  padding-inline-start: 2rem;
+}
+
+.harvard-outline__item[data-depth='4'] {
+  padding-inline-start: 2.65rem;
+}
+
+.harvard-outline__item[data-depth='5'] {
+  padding-inline-start: 3.3rem;
+}
+
+.harvard-outline__item[data-depth='6'] {
+  padding-inline-start: 3.95rem;
+}
+
+.harvard-outline__item--current,
+.cite-the-record__item--current {
+  background: var(--nav-color-surface-subtle);
+  color: var(--nav-color-link);
+  font-weight: 700;
+}
+
+.harvard-outline__item:hover,
+.harvard-outline__item:focus-visible,
+.cite-the-record__item:hover,
+.cite-the-record__item:focus-visible {
+  background: var(--nav-color-surface-subtle);
+  outline: none;
+}
+
+.harvard-outline__item:focus-visible,
+.cite-the-record__item:focus-visible {
+  box-shadow: inset 0 0 0 var(--nav-focus-ring) var(--nav-color-focus);
+}
+
+.harvard-outline__marker {
+  font-weight: 700;
+}
+
+.harvard-outline__path,
+.cite-the-record__cite {
+  color: var(--nav-color-text-muted);
+  font-size: 11px;
+}
+
+.harvard-outline__item--current .harvard-outline__path,
+.cite-the-record__item--current .cite-the-record__cite {
+  color: var(--nav-color-link);
+}
+
+.cite-the-record__item {
+  grid-template-columns: 1fr;
+}
+
+.cite-the-record__preview {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.harvard-outline__doc,
+.cite-the-record__pane {
+  overflow: auto;
+  min-width: 0;
+  background: var(--nav-color-surface);
+}
+
+.harvard-outline__unit {
+  padding: 0.9rem 1.1rem 1.1rem;
+  border-left: 4px solid transparent;
+  scroll-margin-top: 8px;
+}
+
+.harvard-outline__unit--current {
+  border-left-color: var(--nav-color-primary);
+  background: var(--nav-color-surface-subtle);
+}
+
+.harvard-outline__heading {
+  margin: 0 0 0.5rem;
+  font-size: 15px;
+}
+
+.harvard-outline__unit p {
+  margin: 0 0 0.6rem;
+}
+
+.harvard-outline__empty,
+.cite-the-record__empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 1.25rem;
+  color: var(--nav-color-text-muted);
+}
+
+.cite-the-record__head {
+  padding: 0.9rem 1.1rem 0;
+}
+
+.cite-the-record__source {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cite-the-record__pin,
+.cite-the-record__speaker {
+  margin: 0.15rem 0 0;
+  color: var(--nav-color-text-muted);
+  font-size: 12.5px;
+}
+
+.cite-the-record__excerpt {
+  margin: 0.75rem 1.1rem 1.1rem;
+  padding: 0.85rem;
+  overflow: auto;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-sm);
+  background: var(--nav-color-surface-raised);
+  font: 12.5px/1.55 var(--nav-font-family);
+  white-space: pre-wrap;
+}
+
+.cite-the-record__excerpt mark {
+  background: var(--nav-color-notice-subtle);
+  color: var(--nav-color-on-notice-subtle);
+}
+
+.cite-the-record__miss {
+  display: block;
+  margin-top: 0.75rem;
+  color: var(--nav-color-on-warning-subtle);
+  font-size: 12px;
+}
+
+.record-cite {
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.record-cite__quote {
+  margin: 0;
+  padding: 0 0 0 0.75rem;
+  border-left: 4px solid var(--nav-color-primary);
+  color: var(--nav-color-text);
+}
+
+.record-cite__open {
+  margin-top: 0.4rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nav-color-link);
+  font: 700 12px var(--nav-font-family);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.record-cite__open:hover,
+.record-cite__open:focus-visible {
+  color: var(--nav-color-link-hover);
+  outline: var(--nav-focus-ring) solid var(--nav-color-focus);
+  outline-offset: 3px;
+}
+
 /* ------------------------------------------------------ session notice -- */
 
 .session-notice {
@@ -1170,6 +1387,17 @@ section[id] {
   }
   .status-strip {
     grid-template-columns: 1fr 1fr;
+  }
+  .harvard-outline,
+  .cite-the-record {
+    grid-template-columns: minmax(0, 1fr);
+    max-height: none;
+  }
+  .harvard-outline__nav,
+  .cite-the-record__nav {
+    border-right: 0;
+    border-bottom: 1px solid var(--nav-color-border);
+    max-height: 12rem;
   }
 }
 

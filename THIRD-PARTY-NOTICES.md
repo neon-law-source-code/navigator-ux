@@ -1,8 +1,8 @@
 # Third-party notices
 
-Navigator UX is licensed AGPL-3.0-only (see [LICENSE](./LICENSE)). That grant covers the work the Neon
-Law Foundation owns. It does not cover the third-party material listed here, which carries its own
-terms and its own copyright holders.
+Navigator UX is licensed BUSL-1.1 (see [LICENSE](./LICENSE) and [NOTICE](./NOTICE)). That grant covers
+the work Shook Law PLLC owns. It does not cover the third-party material listed here, which carries
+its own terms and its own copyright holders.
 
 There are two kinds of third-party material here, and the difference decides what has to travel.
 
@@ -17,13 +17,13 @@ code is in this repository or in `dist`, so none of their notices travel with wh
 are recorded anyway, because the question a reader has is what the package pulls in, and answering
 "look at the lockfile" is not an answer.
 
-The two MIT sources present no tension with the AGPL: MIT is permissive, so MIT-derived work can be
-distributed as part of an AGPL whole, and the notices below are what that costs. **The typeface is
+The two MIT sources present no tension with BUSL: MIT is permissive, so MIT-derived work can be
+distributed as part of a BUSL whole, and the notices below are what that costs. **The typeface is
 different.** The OFL requires the font software to be distributed entirely under the OFL and forbids
 releasing it under any other license, so the woff2 files under
-`src/assets/fonts/source-serif-4/` are **not** AGPL and the project's grant does not reach them. That
-is a scoping fact rather than a conflict — the OFL governs the font, the AGPL governs the code, and
-neither has anything to say about the other. Do not "simplify" this by declaring the whole tree AGPL.
+`src/assets/fonts/source-serif-4/` are **not** BUSL and the project's grant does not reach them. That
+is a scoping fact rather than a conflict — the OFL governs the font, BUSL governs the code, and
+neither has anything to say about the other. Do not "simplify" this by declaring the whole tree BUSL.
 
 ---
 
@@ -226,22 +226,22 @@ The d3 modules pull in further d3 packages transitively — `internmap`, `d3-dis
 them is ISC as well. Mike Bostock's d3 family is uniformly ISC, which is why this table stays short
 and why adding a fourth d3 module is not a licensing decision.
 
-**Both licenses are compatible with the AGPL, and one of them only just.** ISC is permissive and
-raises no question. Apache-2.0 is compatible with **GPLv3 and AGPLv3 in one direction only**:
-Apache-2.0 code may be included in an AGPLv3 work, and the FSF says so explicitly. It is *not*
-compatible with GPLv2, because of the patent-termination and indemnification clauses that GPLv2 has
-no room for.
+**Both licenses are compatible with BUSL and with the eventual AGPL-3.0-only conversion, and one of
+them only just.** ISC is permissive and raises no question. Apache-2.0 is compatible with **GPLv3 and
+AGPLv3 in one direction only**: Apache-2.0 code may be included in an AGPLv3 work, and the FSF says so
+explicitly. It is *not* compatible with GPLv2, because of the patent-termination and indemnification
+clauses that GPLv2 has no room for.
 
-That asymmetry is the thing worth remembering. This project is AGPL-3.0-only, so `pdfjs-dist` is
-fine today. If the license is ever moved to anything in the GPLv2 family, `PdfViewer` is the file
-that breaks first, and it will break as a legal problem rather than a build failure — nothing in CI
-will notice.
+That asymmetry is the thing worth remembering. This project converts to AGPL-3.0-only, so
+`pdfjs-dist` is fine today and remains fine on the Change Date. If the Change License is ever moved
+to anything in the GPLv2 family, `PdfViewer` is the file that breaks first, and it will break as a
+legal problem rather than a build failure — nothing in CI will notice.
 
 ## Not covered here
 
 **GORP Serif is not in this repository, and that is deliberate.** It is the recommended typeface for
 this library and the one Neon Law uses, but it is a commercial licence from TrashType, LLC and is not
-the Foundation's to redistribute. A public npm package puts its binaries in front of everyone who
+the Firm's to redistribute. A public package puts its binaries in front of everyone who
 installs the library, which no commercial webfont licence contemplates — so it is named first in
 `--nav-font-family` and shipped by nobody. A consumer who licenses it declares its `@font-face` and it
 wins with no component touched. See the typography section of the [README](./README.md).

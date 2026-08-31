@@ -1,0 +1,103 @@
+Navigator UX — NOTICE
+
+Copyright (C) 2026 Shook Law PLLC
+
+SPDX-License-Identifier: BUSL-1.1
+
+This program is source-available software, not open source.  You may read,
+copy, modify, create derivative works from, and redistribute it, and you may
+make any non-production use of it.  Production use requires a commercial
+licence from Shook Law PLLC.  Four years after a given version is published,
+that version converts to the GNU Affero General Public License, version 3 only,
+and the restriction ends for it permanently.
+
+This program is distributed WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT,
+or TITLE.  See LICENSE for the operative disclaimer.
+
+LICENSE holds that licence and nothing else — the Business Source License 1.1,
+its parameters block filled in and its terms otherwise unaltered, so every tool
+that reads a licence file recognises which one this is.  It is the instrument.
+What follows is the copyright holder's own account of how it applies to this
+work: nothing here widens the grant, nothing here narrows it, and nothing here
+is a second licence.
+
+WHO HOLDS THIS.  Copyright in this work belongs to Shook Law PLLC, the law firm
+that operates it under the NEON LAW mark.  The Firm is the Licensor named in
+LICENSE, and it is the sole Licensor: it is the only party that can license this
+work, grant a production exception, or set the parameters above.  No second
+organization holds a right to publish it.
+
+WHAT THE FOUR PARAMETERS SAY.  BUSL is a template, and the parameters in LICENSE
+are the whole of what makes it this project's licence rather than somebody
+else's.
+
+  Licensor is Shook Law PLLC.  Licensed Work is Navigator UX.
+
+  Additional Use Grant is `None`.  BUSL's base grant already covers
+  non-production use, and the Additional Use Grant is the slot for permitting
+  *limited production* use on top of it.  `None` therefore is not a restriction
+  added to the licence — it is the absence of an extra permission, and it means
+  every production use needs a commercial licence.
+
+  Change Date is four years from the date the Licensed Work is published.  It
+  applies per version, as BUSL's terms require: each release carries its own
+  four-year clock, so a version published today converts four years from today
+  whatever happens to later ones.
+
+  Change License is AGPL-3.0-only.  BUSL's Covenants of Licensor oblige the
+  Change License to be GPL-2.0-or-later or something compatible with a later
+  version of it.  AGPL-3.0 qualifies through GPL-3.0 § 13, which expressly
+  permits combining a GPL-3.0 work with an AGPL-3.0 work — so AGPL-3.0-only code
+  can be included in a program with GPL-3.0 code, and GPL-3.0 is a later version
+  of GPL-2.0.
+
+ONE LICENCE, OVER THE LIBRARY THE FIRM CAN LICENSE.  The React components, the
+token layer, the gallery that demonstrates them, and the scripts that gate the
+build are all BUSL-1.1.  One grant covers the tree, so there is nothing to look
+up per directory.
+
+WHAT "PRODUCTION USE" MEANS HERE.  BUSL does not define it, so this is the
+Firm's own reading and it is deliberately narrow.  Shipping these components in
+an application that delivers legal services to other people — a client portal,
+a matter surface, a filing pipeline someone relies on — is production use.
+Reading the source, building it, running the test suite, evaluating it,
+developing against it, and demonstrating the gallery are not.  If you are
+unsure which side of the line you are on, write to contact@neonlaw.org and ask
+before deploying rather than after.
+
+THE NETWORK CASE.  BUSL carries no network clause, and needs none: the
+deployment shape such a clause reaches — running a modified version as a service
+for other people — is production use, which BUSL permits only under a commercial
+licence.  When a version reaches its Change Date and converts to AGPL-3.0-only,
+§ 13 of that licence attaches to that version in full, obliging anyone who
+modifies it and runs it for remote users to offer those users the corresponding
+source.
+
+Already-published copies of this library under AGPL-3.0-only remain available
+under that licence to anyone who has them.  Relicensing is forward-only.
+
+TRADEMARKS.  The licence grants rights in copyright, not in trademarks.  BUSL
+says so itself — it grants no right in any trademark or logo of the Licensor —
+and this paragraph is the detail rather than an additional term.  NEON LAW is a
+registered trademark, U.S. Reg. No. 6,325,650, owned by Shook Law PLLC; that
+mark, the Neon Law wordmark, and the Neon Law logos are the Firm's.  That the
+Firm holds the copyright as well changes nothing about it: a copyright licence
+does not reach a mark, so no amount of permission in LICENSE lets you trade
+under this name.
+
+So within what the licence permits you may run, fork, and modify this software
+— but you may not present your deployment as Neon Law.  Nominative reference
+remains available to you: you may state, accurately, that your work is based on
+Navigator UX.
+
+COMMERCIAL LICENCES.  Production use needs one, and only Shook Law PLLC can
+grant it.  Write to contact@neonlaw.org.
+
+CONTRIBUTIONS.  A contribution assigns to Shook Law PLLC — all right, title,
+and interest in it, including every copyright in it, worldwide and for the full
+term.  Every contribution reaches you under BUSL-1.1 on the same terms as
+everything else here.
+
+NO LEGAL ADVICE.  This licence is not legal advice and creates no
+attorney-client relationship.

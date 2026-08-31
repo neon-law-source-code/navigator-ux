@@ -5,24 +5,27 @@ the [README](../README.md) is enough — this is the integration detail behind i
 
 ## The license comes with the dependency
 
-The library is **AGPL-3.0-only**, and that is the first thing a consuming application has to agree
-with rather than a footnote to the rest of this document. Importing a component makes your application
-a work based on it, so the AGPL's terms reach your application: distributing it, and under section 13
-merely allowing users to interact with it **over a network**, obliges you to offer those users the
-complete corresponding source of the application under the AGPL too. A login wall does not change
-that — a user behind one is still a user interacting over a network.
+The library is **BUSL-1.1**, and that is the first thing a consuming application has to agree with
+rather than a footnote to the rest of this document. Evaluating it, developing against it, and
+running the gallery or the tests is non-production use. Shipping these components in an application
+that delivers legal services to other people — a client portal, a matter surface, a filing pipeline
+someone relies on — is production use, and production use requires a commercial licence from Shook
+Law PLLC. Four years after a given version is published, that version converts to AGPL-3.0-only; until
+then, BUSL has no network clause because the deployment shape such a clause would reach is already
+production use.
 
 How you install it changes nothing here. A tarball URL, a registry range, and a git checkout are three
 delivery mechanisms for the same code, and none of them is a license boundary — the components end up
-compiled into your bundle either way. Nor does pinning help: a pinned URL fixes *which* AGPL-covered
-build you ship, not whether it is covered.
+compiled into your bundle either way. Nor does pinning help: a pinned URL fixes *which* version you
+ship, not whether production use of it needs a commercial licence.
 
-So decide this before you add the dependency, not after the first release. If the application cannot
-be AGPL, the copyright holder is the only party who can license the components on other terms — ask
-the Neon Law Foundation rather than reading a public download as permission. See
-[LICENSE](../LICENSE) for the verbatim text and the README's
-[License](../README.md#license) section for the copyright notice, the third-party scoping, and the
-trademark position.
+So decide this before you add the dependency, not after the first release. If the application needs
+production use, the copyright holder is the only party who can grant it — write to
+contact@neonlaw.org rather than reading a public download as permission. Already-published copies
+under AGPL-3.0-only remain available under that license to anyone who has them; relicensing is
+forward-only. See [LICENSE](../LICENSE) for the instrument, [NOTICE](../NOTICE) for the Firm's
+account of the grant, and the README's [License](../README.md#license) section for the copyright
+notice, the third-party scoping, and the trademark position.
 
 ## The dependency is always a released tarball
 
@@ -67,7 +70,7 @@ pnpm add github:neon-law-source-code/navigator-ux
 ```
 
 `dist` is gitignored and the manifest's `files` field ships `dist` and the notices, so a git install
-gives you a package containing `LICENSE`, `README.md`, `THIRD-PARTY-NOTICES.md`, and `package.json` —
+gives you a package containing `LICENSE`, `NOTICE`, `README.md`, `THIRD-PARTY-NOTICES.md`, and `package.json` —
 no `dist` and no `src`. There is no `prepare` script to build it on the way in. The install goes green
 and your build fails afterwards, pointing into `node_modules`:
 
