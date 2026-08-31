@@ -317,6 +317,18 @@ export {
 } from './components/AuthorityDialog'
 export { SourceThread, type SourceMessage, type SourceThreadProps } from './components/SourceThread'
 export {
+  HarvardOutlineViewer,
+  type HarvardOutlineSection,
+  type HarvardOutlineViewerProps,
+} from './components/HarvardOutline'
+export {
+  CiteTheRecord,
+  RecordCite,
+  type CiteTheRecordProps,
+  type RecordCitation,
+  type RecordCiteProps,
+} from './components/CiteTheRecord'
+export {
   Feed,
   type FeedAccent,
   type FeedPost,

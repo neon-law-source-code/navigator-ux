@@ -15,11 +15,13 @@ import {
   Breadcrumb,
   Card,
   CheckboxField,
+  CiteTheRecord,
   ConfirmDelete,
   DataTable,
   ExternalLink,
   Flash,
   FormCard,
+  HarvardOutlineViewer,
   Icon,
   ICON_NAMES,
   ImpersonationBanner,
@@ -50,6 +52,7 @@ import {
   Toast,
   type DataColumn,
 } from '../src/index'
+import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 
 /* ------------------------------------------------------------------ shell -- */
 
@@ -471,6 +474,20 @@ export function Gallery() {
           <FormCard onSubmit={(event) => event.preventDefault()}>
             <PeopleList legend="Who should receive it?" name="recipients" people={[]} />
           </FormCard>
+        </Section>
+
+        <Section
+          title="Harvard outline"
+          note="The rail is the document's own numbering — Roman, then letter, then Arabic — and it tracks the unit in view as the reader moves down. j/k and the arrow keys step when the navigator has focus. The specimen is an invented motion; the quotes open the record."
+        >
+          <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Sample motion outline" />
+        </Section>
+
+        <Section
+          title="Cite the record"
+          note="Every direct quote the brief already committed to. Selecting one marks those words in the excerpt they came from. A paraphrase does not light up — that is the point of the locator."
+        >
+          <CiteTheRecord citations={RECORD_CITATIONS} />
         </Section>
 
         <Section title="Navigation">

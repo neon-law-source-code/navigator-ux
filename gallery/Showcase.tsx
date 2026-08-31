@@ -10,6 +10,7 @@ import {
   Callout,
   CaseHead,
   CheckboxField,
+  CiteTheRecord,
   ClaimTable,
   type ClaimTableColumn,
   DatePicker,
@@ -21,6 +22,7 @@ import {
   FactCard,
   FactGrid,
   FormCard,
+  HarvardOutlineViewer,
   InputOTP,
   LegalDisclaimer,
   LinkButton,
@@ -35,9 +37,10 @@ import {
   TextareaField,
   TextField,
 } from '../src/index'
+import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 
 type Council = 'Client Council' | 'Legal Council'
-type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow'
+type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow' | 'outline'
 
 interface Persona {
   sign: string
@@ -106,6 +109,7 @@ const SAMPLE_PAGES: SamplePage[] = [
   { id: 'preservation-notice', title: 'Evidence preservation notice', summary: 'Turn a preservation request into a dated, reviewable record.', stage: 'Discovery', audience: 'Lawyer', kind: 'document', persona: 'Virgo · exacting filer', topics: ['evidence', 'drafting'] },
   { id: 'initial-disclosures', title: 'Initial disclosures tracker', summary: 'See what is known, missing, and ready for lawyer review.', stage: 'Discovery', audience: 'Shared', kind: 'queue', persona: 'Aquarius · knowledge counsel', topics: ['disclosures', 'status'] },
   { id: 'interrogatories', title: 'Interrogatory response workspace', summary: 'Organize answers, objections, and follow-up questions in one place.', stage: 'Discovery', audience: 'Lawyer', kind: 'review', persona: 'Gemini · appellate attorney', topics: ['discovery', 'answers'] },
+  { id: 'motion-outline', title: 'Motion outline review', summary: 'Walk a Harvard-outlined brief while citing each direct quote back to the record.', stage: 'Pretrial', audience: 'Lawyer', kind: 'outline', persona: 'Gemini · appellate attorney', topics: ['outline', 'record'] },
   { id: 'requests-production', title: 'Requests for production', summary: 'A client-friendly collection page for documents and custodians.', stage: 'Discovery', audience: 'Client', kind: 'form', persona: 'Pisces · overwhelmed client', topics: ['uploads', 'discovery'] },
   { id: 'meet-confer', title: 'Meet-and-confer log', summary: 'Record the issue, the proposal, and the next date without losing the thread.', stage: 'Discovery', audience: 'Lawyer', kind: 'timeline', persona: 'Libra · mediator', topics: ['correspondence', 'deadlines'] },
   { id: 'subpoena-packet', title: 'Subpoena packet review', summary: 'A staged review of authority, scope, service, and return materials.', stage: 'Discovery', audience: 'Lawyer', kind: 'workflow', persona: 'Capricorn · senior counsel', topics: ['subpoena', 'review'] },
@@ -161,8 +165,8 @@ function Home() {
     <>
       <CaseHead
         kicker="Navigator UX · GitHub Pages specimen"
-        title="Thirty pages for the legal work between question and answer."
-        docket="static build · 30 sample journeys · 24 council voices"
+        title="Thirty-one pages for the legal work between question and answer."
+        docket="static build · 31 sample journeys · 24 council voices"
         summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both."
       >
         <div className="showcase__hero-actions">
@@ -389,8 +393,41 @@ function PageWorkflow({ page }: { page: SamplePage }) {
   )
 }
 
+function PageOutline() {
+  return (
+    <>
+      <Callout tone="info">
+        The navigator on the left is the brief&rsquo;s own Harvard outline. As the
+        document scrolls, the current section stays marked. A direct quote opens
+        the matching span in the record; a paraphrase does not light up.
+      </Callout>
+      <Panel title="Brief" note="Invented motion · Vance v. Northwind is a fictional caption.">
+        <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Motion outline" />
+      </Panel>
+      <Panel title="Cite the record" note="Every quoted span the brief already committed to, located in the excerpt it came from.">
+        <CiteTheRecord citations={RECORD_CITATIONS} />
+      </Panel>
+    </>
+  )
+}
+
 function SamplePageView({ page }: { page: SamplePage }) {
-  const body = page.kind === 'form' ? <PageForm page={page} /> : page.kind === 'review' ? <PageReview page={page} /> : page.kind === 'timeline' ? <PageTimeline page={page} /> : page.kind === 'document' ? <PageDocument page={page} /> : page.kind === 'queue' ? <PageQueue page={page} /> : <PageWorkflow page={page} />
+  const body =
+    page.kind === 'form' ? (
+      <PageForm page={page} />
+    ) : page.kind === 'review' ? (
+      <PageReview page={page} />
+    ) : page.kind === 'timeline' ? (
+      <PageTimeline page={page} />
+    ) : page.kind === 'document' ? (
+      <PageDocument page={page} />
+    ) : page.kind === 'queue' ? (
+      <PageQueue page={page} />
+    ) : page.kind === 'outline' ? (
+      <PageOutline />
+    ) : (
+      <PageWorkflow page={page} />
+    )
   return (
     <>
       <div className="showcase__back"><LinkButton href={pageHref('home')}>← All sample pages</LinkButton></div>
