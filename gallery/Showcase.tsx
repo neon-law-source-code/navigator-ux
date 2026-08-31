@@ -39,7 +39,7 @@ import { PageCardArt, PageFigurePanel } from './page-figures'
 import { pageHref } from './routes'
 import { GalleryFrame } from './site-frame'
 
-type Council = 'Client Council' | 'Legal Council'
+type Council = 'Client Council' | 'Legal Council' | 'Engineering Council'
 type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow' | 'outline' | 'verify'
 
 interface Persona {
@@ -76,6 +76,18 @@ const QUEUE_COLUMNS: ClaimTableColumn<QueueRow>[] = [
 ]
 
 const PERSONAS: Persona[] = [
+  { sign: '♍ Virgo', council: 'Engineering Council', role: 'Engineering manager — chair', lens: 'Name the decision, hold every voice to paths and symbols, close with consensus and one next step.' },
+  { sign: '♈ Aries', council: 'Engineering Council', role: 'Incident commander', lens: 'Name the gap: what is missing, broken, or unstated.' },
+  { sign: '♉ Taurus', council: 'Engineering Council', role: 'Production engineer', lens: 'Demand the file path, the line, the user moment in prod.' },
+  { sign: '♊ Gemini', council: 'Engineering Council', role: 'API / integration engineer', lens: 'Notice the duality: one word, two meanings; one shape, two layers.' },
+  { sign: '♋ Cancer', council: 'Engineering Council', role: 'New hire / applicant-reader', lens: 'What does a first-time reader see first, and what confuses them?' },
+  { sign: '♌ Leo', council: 'Engineering Council', role: 'Tech lead / DevRel', lens: 'Find the one-sentence cadence the team will quote back.' },
+  { sign: '♎ Libra', council: 'Engineering Council', role: 'Release manager', lens: 'Weigh the scope: one PR or three? The smallest change that preserves the load-bearing property.' },
+  { sign: '♏ Scorpio', council: 'Engineering Council', role: 'Security / trust & safety engineer', lens: 'Cut to the core: the claim everything else rests on, and the assumption that silently breaks it.' },
+  { sign: '♐ Sagittarius', council: 'Engineering Council', role: 'Product manager', lens: 'Why this matters beyond the task, who it is for, and how it ties back to the mission.' },
+  { sign: '♑ Capricorn', council: 'Engineering Council', role: 'Graybeard / lawyer engineer', lens: 'What happens in two years, when the team has tripled? Convention over cleverness.' },
+  { sign: '♒ Aquarius', council: 'Engineering Council', role: 'Network / platform engineer', lens: 'Where else does this shape appear? Is the new code a special case of something already general?' },
+  { sign: '♓ Pisces', council: 'Engineering Council', role: 'Original author / migration engineer', lens: 'Honor what works. New layers add; they rarely replace.' },
   { sign: '♑ Capricorn', council: 'Legal Council', role: 'Managing partner / senior counsel', lens: 'Institutional memory, ethics, and durable commitments.' },
   { sign: '♏ Scorpio', council: 'Legal Council', role: 'Ethics and compliance counsel', lens: 'Conflicts, candor, fiduciary duty, and trust.' },
   { sign: '♈ Aries', council: 'Legal Council', role: 'Trial attorney', lens: 'Lead with the harm and the next decisive move.' },
@@ -144,7 +156,7 @@ function Home() {
       <CaseHead
         kicker="Navigator UX · GitHub Pages specimen"
         title="Thirty-two pages for the legal work between question and answer."
-        docket="static build · 32 sample journeys · 24 council voices · BUSL-1.1"
+        docket="static build · 32 sample journeys · 36 council voices · BUSL-1.1"
         summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both. The header on this page is the same header on every other page."
       >
         <div className="showcase__hero-actions">
@@ -160,13 +172,12 @@ function Home() {
 
       <Panel title="The page catalog" note="Each card opens an addressable static page; the URL is safe to bookmark or share.">
         <div className="showcase__page-grid">
-          {SAMPLE_PAGES.map((page, index) => (
+          {SAMPLE_PAGES.map((page) => (
             <a className="showcase__page-card" href={pageHref('page', page.id)} key={page.id}>
               <div className="showcase__page-card-art">
                 <PageCardArt pageId={page.id} />
               </div>
               <div className="showcase__page-card-topline">
-                <span className="showcase__index">{String(index + 1).padStart(2, '0')}</span>
                 <Badge tone={page.audience === 'Client' ? 'next' : page.audience === 'Lawyer' ? 'review' : 'source'}>{page.audience}</Badge>
               </div>
               <h3>{page.title}</h3>
@@ -187,16 +198,18 @@ function Home() {
 }
 
 function Councils() {
+  const engineering = PERSONAS.filter((persona) => persona.council === 'Engineering Council')
   const legal = PERSONAS.filter((persona) => persona.council === 'Legal Council')
   const client = PERSONAS.filter((persona) => persona.council === 'Client Council')
   return (
     <>
       <CaseHead
         kicker="The zodiac councils"
-        title="Twenty-four ways to notice what one pass misses."
-        docket="12 client voices · 12 lawyer voices"
-        summary="These are review lenses, not real agents or legal advice. The pages in this specimen are tagged with the voice whose question is most useful at that moment."
+        title="Thirty-six ways to notice what one pass misses."
+        docket="12 engineers · 12 lawyers · 12 clients"
+        summary="These are the same three benches as Neon Law Navigator: review lenses, not real agents or legal advice. The pages in this specimen are tagged with the voice whose question is most useful at that moment."
       />
+      <CouncilSection title="Engineering Council" note="Architecture, refactors, abstractions, PR sequencing, and doc clarity. Virgo chairs." personas={engineering} />
       <CouncilSection title="Legal Council" note="Before copy becomes a form, template, email, or engagement paragraph." personas={legal} />
       <CouncilSection title="Client Council" note="Before intake, onboarding, pricing, or a portal page asks a real person to stay." personas={client} />
     </>
