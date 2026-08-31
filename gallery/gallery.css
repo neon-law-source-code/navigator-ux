@@ -13,29 +13,6 @@
   width: min(100%, 76rem);
 }
 
-.gallery__bar {
-  position: sticky;
-  top: 0;
-  z-index: 9;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--nav-color-border);
-  background: var(--nav-color-surface-raised);
-  font-size: 0.875rem;
-}
-
-.gallery__bar-label {
-  font-weight: 700;
-}
-
-.gallery__bar-note {
-  color: var(--nav-color-text-muted);
-  margin-left: auto;
-}
-
 /* Each block gets a rule above it and a note under the heading, so the page
    reads as a list of components rather than a page that happens to use them. */
 .gallery__section {
@@ -79,8 +56,7 @@
 }
 
 /* Token swatches. The chip paints whatever the token resolves to right now, so
-   switching the brand layer above repaints the whole grid — which is the claim
-   the three-layer split makes, made visible. */
+   chips paint whatever the token resolves to right now. */
 .gallery__swatches {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));

@@ -6,9 +6,6 @@ import { Showcase } from './Showcase'
 // The library itself, from source. Editing a component re-renders this page.
 import '../src/styles/theme.css'
 import './gallery.css'
-// `?url` rather than a plain import: the brand layer has to be attachable and
-// detachable at runtime, which means a <link> we control, not a bundled rule.
-import brandExampleHref from './brand-example-tokens.css?url'
 
 import {
   Alert,
@@ -172,46 +169,12 @@ const NAV_LINKS = [
 /* ---------------------------------------------------------------- gallery -- */
 
 export function Gallery() {
-  const [brand, setBrand] = useState<'neon-law' | 'example'>('neon-law')
   const [confirming, setConfirming] = useState(false)
   const showcase = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('showcase')
   if (showcase) return <Showcase />
 
-  // Not a theme toggle — the color scheme follows the OS and has no control.
-  // This swaps the *brand* layer, which is the one thing a static page cannot
-  // demonstrate: the same components, re-toned, with no component touched.
-  //
-  // The library ships one identity, so the default is the shipped one. The
-  // example layer is the opt-in, and it is a sample rather than a second brand.
   return (
-    <>
-      {brand === 'example' ? <link rel="stylesheet" href={brandExampleHref} /> : null}
-
-      <GalleryFrame
-        tools={
-          <div className="gallery__bar">
-            <span className="gallery__bar-label">Brand layer</span>
-            <NavButton
-              variant={brand === 'neon-law' ? 'primary' : 'secondary'}
-              onClick={() => setBrand('neon-law')}
-              aria-pressed={brand === 'neon-law'}
-            >
-              Neon Law
-            </NavButton>
-            <NavButton
-              variant={brand === 'example' ? 'primary' : 'secondary'}
-              onClick={() => setBrand('example')}
-              aria-pressed={brand === 'example'}
-            >
-              Example layer
-            </NavButton>
-            <span className="gallery__bar-note">
-              Layer two is a stylesheet, not a fork — attaching one repaints every component below.
-              Color scheme follows your OS; there is no toggle, by design.
-            </span>
-          </div>
-        }
-      >
+    <GalleryFrame>
         <PageHeader
           title="Design system"
           summary="Every block below is the real component the pages use."
@@ -220,7 +183,7 @@ export function Gallery() {
 
         <Section
           title="Brand tokens"
-          note="The eight semantic tokens a brand layer redeclares. Switch the brand above and every chip repaints — no component changes."
+          note="The eight semantic tokens a brand layer redeclares. A consuming app overrides these at :root:root; this gallery ships the library identity only."
         >
           <Swatches tokens={BRAND_TOKENS} />
         </Section>
@@ -568,6 +531,5 @@ export function Gallery() {
 
         <ShadcnWaveTwo Section={Section} />
       </GalleryFrame>
-    </>
   )
 }

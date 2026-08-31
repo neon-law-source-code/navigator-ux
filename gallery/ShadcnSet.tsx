@@ -31,9 +31,7 @@ import {
  * Split out of `Gallery.tsx` because it is a distinct claim: everything here is
  * a *superset* of the Dioxus surface. Nothing here has a counterpart in the legacy static surface, so
  * none of it can be checked against a reference rendering the way the rest of
- * the gallery can. What it can be checked against is the token contract —
- * switch the brand at the top of the page and every one of these re-tones,
- * which is the test of whether they joined the system or just landed near it.
+ * the gallery can. What it can be checked against is the token contract.
  */
 
 interface SectionProps {
@@ -57,8 +55,7 @@ export function ShadcnSet({ Section }: { Section: ComponentType<SectionProps> })
           <>
             Everything below is shadcn/ui, rebuilt on the platform primitive that already carries
             its semantics and styled in the same tokens. No Tailwind, no Radix, no runtime
-            dependency. None of it has a counterpart in the legacy static surface — switch the brand at the
-            top of the page and it all re-tones anyway.
+            dependency. None of it has a counterpart in the legacy static surface.
           </>
         }
       >

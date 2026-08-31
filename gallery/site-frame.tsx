@@ -29,14 +29,7 @@ const BUSL_LEGAL = (
   </>
 )
 
-export function GalleryFrame({
-  children,
-  tools,
-}: {
-  children: ReactNode
-  /** Optional strip under the header — the brand-layer switch on the component page. */
-  tools?: ReactNode
-}) {
+export function GalleryFrame({ children }: { children: ReactNode }) {
   const { view, pageId } = readGalleryLocation()
   const onPages = view === 'home' || (view === 'page' && pageId !== 'verify-the-record')
 
@@ -60,7 +53,6 @@ export function GalleryFrame({
           { label: 'Source', href: 'https://github.com/neon-law-source-code/navigator-ux' },
         ]}
       />
-      {tools}
       <main className="public-shell__main">{children}</main>
       <SiteFooter
         links={[
