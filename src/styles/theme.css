@@ -96,10 +96,11 @@ textarea {
 }
 
 /* An anchor styled as a button is a button, not a link. `.nav-theme a` above
-   is more specific than the `.nav-btn--*` variants, so without these an
-   `<a class="nav-btn nav-btn--primary">` renders cyan-on-cyan — the link color
-   over the filled background, which fails contrast outright. The variants set
-   their own foreground; these re-assert it at matching specificity. */
+   is more specific than the `.nav-btn--*` and `.btn--*` variants, so without
+   these a filled primary renders cyan-on-cyan — the link color over the filled
+   background, which fails contrast outright and looks like an empty pill.
+   The variants set their own foreground; these re-assert it at matching
+   specificity. */
 .nav-theme a.nav-btn--primary,
 .nav-theme a.nav-btn--primary:hover {
   color: var(--nav-color-on-primary);
@@ -113,6 +114,24 @@ textarea {
 .nav-theme a.nav-btn--danger,
 .nav-theme a.nav-btn--danger:hover {
   color: var(--nav-color-on-danger-solid);
+}
+
+.nav-theme a.btn {
+  color: var(--nav-color-text);
+  text-decoration: none;
+}
+
+.nav-theme a.btn:hover,
+.nav-theme a.btn:focus-visible {
+  color: var(--nav-color-link);
+  text-decoration: none;
+}
+
+.nav-theme a.btn--primary,
+.nav-theme a.btn--primary:hover,
+.nav-theme a.btn--primary:focus-visible {
+  color: var(--nav-color-on-primary);
+  text-decoration: none;
 }
 
 /* Authenticated Navigator chrome. The route adapter supplies the visible
