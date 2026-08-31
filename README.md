@@ -7,8 +7,8 @@ no CVA, no icon package — every component that can be is built on the platform
 carries its semantics, and every color resolves through a CSS custom property you can override in one
 file.
 
-Source-available under the [Business Source License 1.1](./LICENSE) — read
-[License](#license) before you build a product on it.
+Source-available under the [Business Source License 1.1](./LICENSE). Production
+use defaults to Affero; read [License](#license) before you build a product on it.
 
 ## Install
 
@@ -366,24 +366,27 @@ SPDX-License-Identifier: BUSL-1.1
 
 Navigator UX is source-available under the **Business Source License 1.1**. You may read, copy,
 modify, create derivative works from, and redistribute it, and you may make any non-production use of
-it. Production use requires a commercial license from Shook Law PLLC. Four years after a given version
-is published, that version converts to **AGPL-3.0-only**, and the restriction ends for it permanently.
+it. Production use **defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship these
+components if you comply with Affero, including the network-use obligations. Production use that does
+not take Affero requires a commercial license from Shook Law PLLC. Four years after a given version
+is published, that version converts to **AGPL-3.0-only** for everyone, and the BUSL restriction ends
+for it permanently.
 
 [`LICENSE`](./LICENSE) is the instrument: BUSL-1.1 with its parameters filled in (`Licensor: Shook Law
-PLLC`, `Licensed Work: Navigator UX`, `Additional Use Grant: None`, `Change License: AGPL-3.0-only`)
-and nothing else in the file, so licence scanners name it. The copyright holder's account of how that
-grant applies — including what production use means for a component library — is in
-[`NOTICE`](./NOTICE).
+PLLC`, `Licensed Work: Navigator UX`, Additional Use Grant of production use under AGPL-3.0-only,
+`Change License: AGPL-3.0-only`) and nothing else in the file, so licence scanners name the
+instrument. The copyright holder's account of how that grant applies — including what production use
+means for a component library — is in [`NOTICE`](./NOTICE).
 
 **What that means for an application that imports this library.** Importing a component puts the
 library in your bundle. Evaluating it and developing against it is non-production use. Shipping it in
-an application that delivers legal services to other people is production use and needs a commercial
-license. How you installed the package changes nothing about this: a dependency boundary is not a
-license boundary. Already-published copies under AGPL-3.0-only remain available under that license to
-anyone who has them; relicensing is forward-only.
+an application that delivers legal services to other people is production use: take Affero, or obtain
+a commercial license. How you installed the package changes nothing about this: a dependency boundary
+is not a license boundary. Already-published copies under AGPL-3.0-only remain available under that
+license to anyone who has them; relicensing is forward-only.
 
-If you need production use, write to contact@neonlaw.org. The copyright holder is the only party who
-can grant it.
+If you need production use without Affero, write to contact@neonlaw.org. The copyright holder is the
+only party who can grant a commercial license. Affero remains available without asking.
 
 ### Third-party material
 
