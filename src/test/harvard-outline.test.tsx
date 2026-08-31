@@ -139,10 +139,16 @@ describe('HarvardOutlineViewer', () => {
       'facts',
     )
 
+    await user.keyboard(' ')
+    expect(document.querySelector('.harvard-outline__unit--current')).toHaveAttribute(
+      'data-harvard-id',
+      'agreement',
+    )
+
     await user.keyboard('k')
     expect(document.querySelector('.harvard-outline__unit--current')).toHaveAttribute(
       'data-harvard-id',
-      'intro',
+      'facts',
     )
   })
 
@@ -168,6 +174,40 @@ describe('HarvardOutlineViewer', () => {
     expect(document.querySelector('.harvard-outline__unit--current')).toHaveAttribute(
       'data-harvard-id',
       'facts',
+    )
+  })
+
+  it('ignores intersection entries that are not a unit', () => {
+    render(<HarvardOutlineViewer sections={SECTIONS} />)
+    act(() => {
+      ioCallback?.(
+        [
+          {
+            isIntersecting: false,
+            boundingClientRect: { top: 0 },
+            target: document.createElement('div'),
+          } as unknown as IntersectionObserverEntry,
+          {
+            isIntersecting: true,
+            boundingClientRect: { top: 8 },
+            target: document.createElement('div'),
+          } as unknown as IntersectionObserverEntry,
+        ],
+        {} as IntersectionObserver,
+      )
+    })
+    expect(document.querySelector('.harvard-outline__unit--current')).toHaveAttribute(
+      'data-harvard-id',
+      'intro',
+    )
+  })
+
+  it('resets the highlight when the outline is replaced', () => {
+    const { rerender } = render(<HarvardOutlineViewer sections={SECTIONS} />)
+    rerender(<HarvardOutlineViewer sections={[{ id: 'only', marker: 'I', title: 'Only' }]} />)
+    expect(document.querySelector('.harvard-outline__unit--current')).toHaveAttribute(
+      'data-harvard-id',
+      'only',
     )
   })
 
@@ -281,6 +321,16 @@ describe('CiteTheRecord', () => {
     screen.getByRole('navigation', { name: 'Cite the record' }).focus()
     await user.keyboard('{ArrowDown}')
     expect(screen.getByRole('button', { name: /Dep\. 18:4/ })).toHaveAttribute(
+      'aria-current',
+      'location',
+    )
+    await user.keyboard('k')
+    expect(screen.getByRole('button', { name: /R\. 14:6/ })).toHaveAttribute(
+      'aria-current',
+      'location',
+    )
+    await user.keyboard('{ArrowUp}')
+    expect(screen.getByRole('button', { name: /R\. 14:6/ })).toHaveAttribute(
       'aria-current',
       'location',
     )
