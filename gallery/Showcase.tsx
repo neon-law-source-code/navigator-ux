@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 
 import {
   Accordion,
@@ -25,8 +25,6 @@ import {
   InputOTP,
   LegalDisclaimer,
   LinkButton,
-  NavigatorFooter,
-  NavigatorNavbar,
   Panel,
   Progress,
   RadioGroup,
@@ -38,9 +36,11 @@ import {
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 import { PageCardArt, PageFigurePanel } from './page-figures'
+import { pageHref } from './routes'
+import { GalleryFrame } from './site-frame'
 
 type Council = 'Client Council' | 'Legal Council'
-type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow' | 'outline'
+type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow' | 'outline' | 'verify'
 
 interface Persona {
   sign: string
@@ -110,6 +110,7 @@ const SAMPLE_PAGES: SamplePage[] = [
   { id: 'initial-disclosures', title: 'Initial disclosures tracker', summary: 'See what is known, missing, and ready for lawyer review.', stage: 'Discovery', audience: 'Shared', kind: 'queue', persona: 'Aquarius · knowledge counsel', topics: ['disclosures', 'status'] },
   { id: 'interrogatories', title: 'Interrogatory response workspace', summary: 'Organize answers, objections, and follow-up questions in one place.', stage: 'Discovery', audience: 'Lawyer', kind: 'review', persona: 'Gemini · appellate attorney', topics: ['discovery', 'answers'] },
   { id: 'motion-outline', title: 'Motion outline review', summary: 'Walk a Harvard-outlined brief while citing each direct quote back to the record.', stage: 'Pretrial', audience: 'Lawyer', kind: 'outline', persona: 'Gemini · appellate attorney', topics: ['outline', 'record'] },
+  { id: 'verify-the-record', title: 'Verify the record', summary: 'Read the brief and the record side by side, then confirm each quoted span against the graph that holds them.', stage: 'Pretrial', audience: 'Lawyer', kind: 'verify', persona: 'Gemini · appellate attorney', topics: ['record', 'cite'] },
   { id: 'requests-production', title: 'Requests for production', summary: 'A client-friendly collection page for documents and custodians.', stage: 'Discovery', audience: 'Client', kind: 'form', persona: 'Pisces · overwhelmed client', topics: ['uploads', 'discovery'] },
   { id: 'meet-confer', title: 'Meet-and-confer log', summary: 'Record the issue, the proposal, and the next date without losing the thread.', stage: 'Discovery', audience: 'Lawyer', kind: 'timeline', persona: 'Libra · mediator', topics: ['correspondence', 'deadlines'] },
   { id: 'subpoena-packet', title: 'Subpoena packet review', summary: 'A staged review of authority, scope, service, and return materials.', stage: 'Discovery', audience: 'Lawyer', kind: 'workflow', persona: 'Capricorn · senior counsel', topics: ['subpoena', 'review'] },
@@ -136,47 +137,25 @@ const SAMPLE_PAGES: SamplePage[] = [
   { id: 'record-expungement', title: 'Record-clearing intake', summary: 'A private, nonjudgmental intake that makes the next step concrete.', stage: 'Post-conviction', audience: 'Client', kind: 'form', persona: 'Scorpio · privacy client', topics: ['privacy', 'referral'] },
 ]
 
-const pageHref = (view: 'home' | 'councils' | 'page', id?: string) =>
-  view === 'page' && id ? `?showcase=page&id=${id}` : `?showcase=${view}`
-
-function SiteChrome({ children }: { children: ReactNode }) {
-  return (
-    <div className="showcase__root nav-theme">
-      <NavigatorNavbar
-        brand="Navigator UX"
-        destinations={[
-          { label: 'Sample pages', href: pageHref('home'), current: true },
-          { label: 'Councils', href: pageHref('councils') },
-          { label: 'Library gallery', href: './' },
-        ]}
-      />
-      <div className="showcase__main">{children}</div>
-      <NavigatorFooter
-        legal="Static sample site · fictional data · not legal advice"
-        links={[{ label: 'View source on GitHub', href: 'https://github.com/neon-law-source-code/navigator-ux' }]}
-        release="Published from main"
-      />
-    </div>
-  )
-}
 
 function Home() {
   return (
     <>
       <CaseHead
         kicker="Navigator UX · GitHub Pages specimen"
-        title="Thirty-one pages for the legal work between question and answer."
-        docket="static build · 31 sample journeys · 24 council voices"
-        summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both."
+        title="Thirty-two pages for the legal work between question and answer."
+        docket="static build · 32 sample journeys · 24 council voices · BUSL-1.1"
+        summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both. The header on this page is the same header on every other page."
       >
         <div className="showcase__hero-actions">
           <LinkButton variant="primary" href={pageHref('page', 'new-matter')}>Open a sample page</LinkButton>
+          <LinkButton href={pageHref('page', 'verify-the-record')}>Verify the record</LinkButton>
           <LinkButton href={pageHref('councils')}>Meet the councils</LinkButton>
         </div>
       </CaseHead>
 
       <Callout tone="info">
-        This is a public specimen. The names, matters, deadlines, and documents are invented. The build is published by GitHub Actions from every push to <code>main</code>.
+        This is a public specimen. The names, matters, deadlines, and documents are invented. The library is licensed BUSL-1.1. The build is published by GitHub Actions from every push to <code>main</code>.
       </Callout>
 
       <Panel title="The page catalog" note="Each card opens an addressable static page; the URL is safe to bookmark or share.">
@@ -413,6 +392,68 @@ function PageOutline() {
   )
 }
 
+function PageVerify() {
+  return (
+    <>
+      <Callout tone="info">
+        Counsel reads the brief on the left and the record on the right. Selecting a
+        pin cite marks the quoted words in the excerpt they came from. A paraphrase
+        does not light up. The graph above is the same matter as a set of records.
+      </Callout>
+      <div className="showcase__verify">
+        <Panel title="The brief" note="Harvard outline · invented motion in Vance v. Northwind.">
+          <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Motion outline beside the record" />
+        </Panel>
+        <Panel title="The record" note="Every quoted span, located in the excerpt it came from.">
+          <CiteTheRecord citations={RECORD_CITATIONS} aria-label="Record beside the brief" />
+        </Panel>
+      </div>
+      <LegalDisclaimer>
+        This is a verification surface, not a filing. Nothing here asserts that a
+        citation is complete, and the caption is fictional.
+      </LegalDisclaimer>
+    </>
+  )
+}
+
+function LicensePage() {
+  return (
+    <>
+      <CaseHead
+        kicker="License"
+        title="Business Source License 1.1"
+        docket="SPDX-License-Identifier: BUSL-1.1 · Licensor: Shook Law PLLC"
+        summary="Navigator UX is source-available. You may read, copy, modify, and make non-production use of it. Production use defaults to AGPL-3.0-only. A commercial licence from Shook Law PLLC is the path that does not take Affero."
+      />
+      <Callout tone="info">
+        The instrument is the <code>LICENSE</code> file in the repository: MariaDB&rsquo;s BUSL 1.1
+        text with its parameters filled in and nothing else added. Commentary lives in
+        <code> NOTICE</code>. This page is a summary, not a substitute.
+      </Callout>
+      <DecisionGrid>
+        <Decision title="Non-production" kicker="Granted" tone="ready">
+          Read, copy, modify, redistribute, and any use that is not production.
+        </Decision>
+        <Decision title="Production" kicker="Additional Use Grant" tone="wait">
+          Production use is granted if you comply with AGPL-3.0-only. Production use that
+          does not take Affero needs a commercial licence from Shook Law PLLC.
+        </Decision>
+        <Decision title="Change date" kicker="Four years" tone="default">
+          Four years after a version is published, that version converts to AGPL-3.0-only for
+          everyone, and the BUSL restriction ends for it.
+        </Decision>
+      </DecisionGrid>
+      <Panel title="What BUSL does not cover">
+        <p>
+          The two shipped woff2 files are SIL Open Font License 1.1, not BUSL. The Neon Law
+          name and logos stay with Shook Law PLLC. Third-party notices travel in{' '}
+          <code>THIRD-PARTY-NOTICES.md</code>.
+        </p>
+      </Panel>
+    </>
+  )
+}
+
 function SamplePageView({ page }: { page: SamplePage }) {
   const body =
     page.kind === 'form' ? (
@@ -427,6 +468,8 @@ function SamplePageView({ page }: { page: SamplePage }) {
       <PageQueue page={page} />
     ) : page.kind === 'outline' ? (
       <PageOutline />
+    ) : page.kind === 'verify' ? (
+      <PageVerify />
     ) : (
       <PageWorkflow page={page} />
     )
@@ -448,22 +491,12 @@ function SamplePageView({ page }: { page: SamplePage }) {
   )
 }
 
-function LibraryFallback() {
-  return (
-    <div className="showcase__root nav-theme">
-      <NavigatorNavbar brand="Navigator UX" destinations={[{ label: 'Sample pages', href: pageHref('home') }]} />
-      <div className="showcase__main"><CaseHead kicker="Navigator UX" title="Open the sample pages" summary="The library gallery is at the root of this static site." /><LinkButton variant="primary" href={pageHref('home')}>Open sample catalog</LinkButton></div>
-      <NavigatorFooter legal="Static sample site" release="Published from main" />
-    </div>
-  )
-}
-
 export function Showcase() {
   const params = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
   const view = params.get('showcase')
   const page = SAMPLE_PAGES.find((candidate) => candidate.id === params.get('id'))
-  if (view === 'page' && page) return <SiteChrome><SamplePageView page={page} /></SiteChrome>
-  if (view === 'councils') return <SiteChrome><Councils /></SiteChrome>
-  if (view === 'home') return <SiteChrome><Home /></SiteChrome>
-  return <LibraryFallback />
+  if (view === 'license') return <GalleryFrame><LicensePage /></GalleryFrame>
+  if (view === 'page' && page) return <GalleryFrame><SamplePageView page={page} /></GalleryFrame>
+  if (view === 'councils') return <GalleryFrame><Councils /></GalleryFrame>
+  return <GalleryFrame><Home /></GalleryFrame>
 }

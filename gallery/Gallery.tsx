@@ -38,7 +38,6 @@ import {
   PricingCard,
   PricingGrid,
   Prose,
-  PublicShell,
   RadioGroup,
   RowActions,
   SelectField,
@@ -53,6 +52,7 @@ import {
   type DataColumn,
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
+import { GalleryFrame } from './site-frame'
 
 /* ------------------------------------------------------------------ shell -- */
 
@@ -187,52 +187,29 @@ export function Gallery() {
     <>
       {brand === 'example' ? <link rel="stylesheet" href={brandExampleHref} /> : null}
 
-      <div className="gallery__bar nav-theme">
-        <span className="gallery__bar-label">Brand layer</span>
-        <NavButton
-          variant={brand === 'neon-law' ? 'primary' : 'secondary'}
-          onClick={() => setBrand('neon-law')}
-          aria-pressed={brand === 'neon-law'}
-        >
-          Neon Law
-        </NavButton>
-        <NavButton
-          variant={brand === 'example' ? 'primary' : 'secondary'}
-          onClick={() => setBrand('example')}
-          aria-pressed={brand === 'example'}
-        >
-          Example layer
-        </NavButton>
-        <NavLinkButton variant="secondary" href="?showcase=home">
-          Sample pages
-        </NavLinkButton>
-        <span className="gallery__bar-note">
-          Layer two is a stylesheet, not a fork — attaching one repaints every component below.
-          Color scheme follows your OS; there is no toggle, by design.
-        </span>
-      </div>
-
-      <PublicShell
-        header={<SiteHeader brand="Neon Law" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />}
-        footer={
-          <SiteFooter
-            cta={{ label: 'Book a call', href: '#book' }}
-            phone={{ label: '(702) 555-0100', href: 'tel:+17025550100' }}
-            links={[
-              { label: 'Team', href: '#team' },
-              { label: 'Blog', href: '#blog' },
-              { label: 'Contact', href: '#contact' },
-            ]}
-            offices={[
-              { label: 'Nevada', address: '123 Main Street, Las Vegas, NV 89101' },
-              {
-                label: 'California',
-                address: '456 Market Street, San Francisco, CA 94105',
-                note: 'Admission pending.',
-              },
-            ]}
-            legal={<p>Navigator UX is source-available under BUSL-1.1; production use defaults to AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
-          />
+      <GalleryFrame
+        tools={
+          <div className="gallery__bar">
+            <span className="gallery__bar-label">Brand layer</span>
+            <NavButton
+              variant={brand === 'neon-law' ? 'primary' : 'secondary'}
+              onClick={() => setBrand('neon-law')}
+              aria-pressed={brand === 'neon-law'}
+            >
+              Neon Law
+            </NavButton>
+            <NavButton
+              variant={brand === 'example' ? 'primary' : 'secondary'}
+              onClick={() => setBrand('example')}
+              aria-pressed={brand === 'example'}
+            >
+              Example layer
+            </NavButton>
+            <span className="gallery__bar-note">
+              Layer two is a stylesheet, not a fork — attaching one repaints every component below.
+              Color scheme follows your OS; there is no toggle, by design.
+            </span>
+          </div>
         }
       >
         <PageHeader
@@ -527,6 +504,33 @@ export function Gallery() {
         </Section>
 
         <Section
+          title="Public chrome"
+          note="The live header of this site is the gallery's own destinations. The specimen below is the marketing header a consuming app would ship — framed so it does not take over the page."
+        >
+          <div className="gallery__frame">
+            <SiteHeader brand="Neon Law" links={NAV_LINKS} utility={[{ label: 'Sign in', href: '#signin' }]} />
+            <SiteFooter
+              cta={{ label: 'Book a call', href: '#book' }}
+              phone={{ label: '(702) 555-0100', href: 'tel:+17025550100' }}
+              links={[
+                { label: 'Team', href: '#team' },
+                { label: 'Blog', href: '#blog' },
+                { label: 'Contact', href: '#contact' },
+              ]}
+              offices={[
+                { label: 'Nevada', address: '123 Main Street, Las Vegas, NV 89101' },
+                {
+                  label: 'California',
+                  address: '456 Market Street, San Francisco, CA 94105',
+                  note: 'Admission pending.',
+                },
+              ]}
+              legal={<p>Navigator UX is source-available under BUSL-1.1; production use defaults to AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
+            />
+          </div>
+        </Section>
+
+        <Section
           title="Authenticated chrome"
           note="The same bar renders the client, staff, and admin forms — it takes its destinations and never learns what a role is."
         >
@@ -563,7 +567,7 @@ export function Gallery() {
         <ShadcnSet Section={Section} />
 
         <ShadcnWaveTwo Section={Section} />
-      </PublicShell>
+      </GalleryFrame>
     </>
   )
 }

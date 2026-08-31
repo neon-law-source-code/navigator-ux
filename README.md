@@ -37,8 +37,10 @@ this records and how to move between versions.
 
 ## Public gallery
 
-The component gallery and the thirty-page legal-work specimen are built as a static GitHub Pages
-site on every push to `main`:
+The component gallery and the thirty-two-page legal-work specimen are built as a static GitHub Pages
+site on every push to `main`. The same header and navigation run on every view, including the
+side-by-side [verify-the-record](https://neon-law-source-code.github.io/navigator-ux/?showcase=page&id=verify-the-record)
+page and the [BUSL license summary](https://neon-law-source-code.github.io/navigator-ux/?showcase=license).
 
 The sample site includes twelve Client Council voices, twelve Legal Council voices, and addressable
 pages covering discovery, enforcement, company formation, immigration forms, and planning. It is

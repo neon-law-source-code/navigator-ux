@@ -171,6 +171,23 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
       { source: 'counter', target: 'issue', kind: 'limits' },
     ],
   ),
+  'verify-the-record': web(
+    'How the brief meets the record',
+    'The motion, its quoted spans, and the underlying authority in one matter graph.',
+    [
+      { id: 'motion', label: 'Motion', kind: 'brief', fields: { posture: 'Summary judgment' } },
+      { id: 'issue', label: 'Cure notice', kind: 'issue', fields: { unit: 'I' } },
+      { id: 'rule', label: '§ 2.4(b)', kind: 'authority', fields: { unit: 'I.A' } },
+      { id: 'quote', label: 'thirty days', kind: 'record', fields: { cite: 'R. 42:12–14' } },
+      { id: 'counter', label: 'No notice', kind: 'record', fields: { cite: 'Dep. 18:4–9' } },
+    ],
+    [
+      { source: 'motion', target: 'issue', kind: 'argues' },
+      { source: 'issue', target: 'rule', kind: 'cites' },
+      { source: 'motion', target: 'quote', kind: 'quotes' },
+      { source: 'counter', target: 'issue', kind: 'limits' },
+    ],
+  ),
   'requests-production': scene(
     'What still has to be gathered',
     'A collection page is a pile with owners, not a filing. The lawyer still reviews before it leaves.',
