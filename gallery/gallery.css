@@ -173,6 +173,7 @@
 
 .showcase__hero-actions {
   margin-top: 1.25rem;
+  align-items: stretch;
 }
 
 .showcase__back {
