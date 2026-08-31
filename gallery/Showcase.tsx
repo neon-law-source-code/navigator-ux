@@ -110,7 +110,7 @@ const SAMPLE_PAGES: SamplePage[] = [
   { id: 'initial-disclosures', title: 'Initial disclosures tracker', summary: 'See what is known, missing, and ready for lawyer review.', stage: 'Discovery', audience: 'Shared', kind: 'queue', persona: 'Aquarius · knowledge counsel', topics: ['disclosures', 'status'] },
   { id: 'interrogatories', title: 'Interrogatory response workspace', summary: 'Organize answers, objections, and follow-up questions in one place.', stage: 'Discovery', audience: 'Lawyer', kind: 'review', persona: 'Gemini · appellate attorney', topics: ['discovery', 'answers'] },
   { id: 'motion-outline', title: 'Motion outline review', summary: 'Walk a Harvard-outlined brief while citing each direct quote back to the record.', stage: 'Pretrial', audience: 'Lawyer', kind: 'outline', persona: 'Gemini · appellate attorney', topics: ['outline', 'record'] },
-  { id: 'verify-the-record', title: 'Verify the record', summary: 'Read the brief and the record side by side, then confirm each quoted span against the graph that holds them.', stage: 'Pretrial', audience: 'Lawyer', kind: 'verify', persona: 'Gemini · appellate attorney', topics: ['record', 'cite'] },
+  { id: 'verify-the-record', title: 'Verify the record', summary: 'Read the brief and the record side by side, then confirm each quoted span in the excerpt it came from.', stage: 'Pretrial', audience: 'Lawyer', kind: 'verify', persona: 'Gemini · appellate attorney', topics: ['record', 'cite'] },
   { id: 'requests-production', title: 'Requests for production', summary: 'A client-friendly collection page for documents and custodians.', stage: 'Discovery', audience: 'Client', kind: 'form', persona: 'Pisces · overwhelmed client', topics: ['uploads', 'discovery'] },
   { id: 'meet-confer', title: 'Meet-and-confer log', summary: 'Record the issue, the proposal, and the next date without losing the thread.', stage: 'Discovery', audience: 'Lawyer', kind: 'timeline', persona: 'Libra · mediator', topics: ['correspondence', 'deadlines'] },
   { id: 'subpoena-packet', title: 'Subpoena packet review', summary: 'A staged review of authority, scope, service, and return materials.', stage: 'Discovery', audience: 'Lawyer', kind: 'workflow', persona: 'Capricorn · senior counsel', topics: ['subpoena', 'review'] },
@@ -398,7 +398,7 @@ function PageVerify() {
       <Callout tone="info">
         Counsel reads the brief on the left and the record on the right. Selecting a
         pin cite marks the quoted words in the excerpt they came from. A paraphrase
-        does not light up. The graph above is the same matter as a set of records.
+        does not light up.
       </Callout>
       <div className="showcase__verify">
         <Panel title="The brief" note="Harvard outline · invented motion in Vance v. Northwind.">
