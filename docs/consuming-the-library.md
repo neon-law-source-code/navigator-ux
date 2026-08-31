@@ -9,23 +9,24 @@ The library is **BUSL-1.1**, and that is the first thing a consuming application
 rather than a footnote to the rest of this document. Evaluating it, developing against it, and
 running the gallery or the tests is non-production use. Shipping these components in an application
 that delivers legal services to other people — a client portal, a matter surface, a filing pipeline
-someone relies on — is production use, and production use requires a commercial licence from Shook
-Law PLLC. Four years after a given version is published, that version converts to AGPL-3.0-only; until
-then, BUSL has no network clause because the deployment shape such a clause would reach is already
-production use.
+someone relies on — is production use. Production use **defaults to AGPL-3.0-only**: the Additional
+Use Grant lets you ship if you comply with Affero, including § 13. Production use that does not take
+Affero requires a commercial licence from Shook Law PLLC. Four years after a given version is
+published, that version converts to AGPL-3.0-only for everyone.
 
 How you install it changes nothing here. A tarball URL, a registry range, and a git checkout are three
 delivery mechanisms for the same code, and none of them is a license boundary — the components end up
 compiled into your bundle either way. Nor does pinning help: a pinned URL fixes *which* version you
-ship, not whether production use of it needs a commercial licence.
+ship, not which grant covers it.
 
-So decide this before you add the dependency, not after the first release. If the application needs
-production use, the copyright holder is the only party who can grant it — write to
-contact@neonlaw.org rather than reading a public download as permission. Already-published copies
-under AGPL-3.0-only remain available under that license to anyone who has them; relicensing is
-forward-only. See [LICENSE](../LICENSE) for the instrument, [NOTICE](../NOTICE) for the Firm's
-account of the grant, and the README's [License](../README.md#license) section for the copyright
-notice, the third-party scoping, and the trademark position.
+So decide this before you add the dependency, not after the first release. If the application can take
+Affero, that is the default and you do not need to ask. If it cannot, the copyright holder is the
+only party who can grant a commercial licence — write to contact@neonlaw.org rather than reading a
+public download as permission. Already-published copies under AGPL-3.0-only remain available under
+that license to anyone who has them; relicensing is forward-only. See [LICENSE](../LICENSE) for the
+instrument, [NOTICE](../NOTICE) for the Firm's account of the grant, and the README's
+[License](../README.md#license) section for the copyright notice, the third-party scoping, and the
+trademark position.
 
 ## The dependency is always a released tarball
 

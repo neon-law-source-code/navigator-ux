@@ -4,10 +4,11 @@ Source-available under the **Business Source License 1.1** — see [LICENSE](./L
 MariaDB instrument with its parameters filled in and nothing else in the file. GitHub and every
 scanner that reads a license file need that file to look like BUSL, so Firm commentary lives in
 [NOTICE](./NOTICE), not here and not as a preamble. Anyone may read, copy, modify, and make
-non-production use of this work. Shipping it in an application that delivers legal services is
-production use and needs a commercial licence from Shook Law PLLC. Four years after a version is
-published, that version converts to AGPL-3.0-only. Write for that audience: a comment that assumes
-the reader works here is a comment that will confuse most of the people who read it.
+non-production use of this work. Production use defaults to AGPL-3.0-only (the Additional Use
+Grant). Shipping it without taking Affero needs a commercial licence from Shook Law PLLC. Four years
+after a version is published, that version converts to AGPL-3.0-only for everyone. Write for that
+audience: a comment that assumes the reader works here is a comment that will confuse most of the
+people who read it.
 
 The license changed from dual MIT-or-Apache-2.0 to AGPL-3.0-only, then from AGPL-3.0-only to BUSL-1.1,
 at the copyright holder's direction. Relicensing is forward-only: already-published tarballs under
@@ -286,7 +287,8 @@ document.documentElement.style.setProperty('--nav-font-family', '"Source Serif 4
 
 **`LICENSE` is the license and nothing else, so the scoping prose moved.** It is the MariaDB BUSL 1.1
 text with the four parameters filled in (`Licensor: Shook Law PLLC`, `Licensed Work: Navigator UX`,
-`Additional Use Grant: None`, `Change License: AGPL-3.0-only`) and nothing added and nothing removed
+Additional Use Grant of production use under AGPL-3.0-only, `Change License: AGPL-3.0-only`) and
+nothing added and nothing removed
 — that is what makes it detectable as BUSL-1.1 by GitHub, npm, and every license scanner a consumer's
 legal review runs, and a prepended Firm header is exactly what breaks that. The copyright holder's
 account of the grant lives in `NOTICE`. The README's `## License` section, which ships in `files`

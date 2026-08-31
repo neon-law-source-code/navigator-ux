@@ -4,12 +4,14 @@ Copyright (C) 2026 Shook Law PLLC
 
 SPDX-License-Identifier: BUSL-1.1
 
-This program is source-available software, not open source.  You may read,
-copy, modify, create derivative works from, and redistribute it, and you may
-make any non-production use of it.  Production use requires a commercial
-licence from Shook Law PLLC.  Four years after a given version is published,
-that version converts to the GNU Affero General Public License, version 3 only,
-and the restriction ends for it permanently.
+This program is source-available software under the Business Source License
+1.1.  You may read, copy, modify, create derivative works from, and
+redistribute it, and you may make any non-production use of it.  Production
+use is granted if you comply with the GNU Affero General Public License,
+version 3 only — that is the default.  Production use that does not take
+Affero requires a commercial licence from Shook Law PLLC.  Four years after a
+given version is published, that version converts to AGPL-3.0-only for
+everyone, and the BUSL restriction ends for it permanently.
 
 This program is distributed WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT,
@@ -18,6 +20,11 @@ or TITLE.  See LICENSE for the operative disclaimer.
 LICENSE holds that licence and nothing else — the Business Source License 1.1,
 its parameters block filled in and its terms otherwise unaltered, so every tool
 that reads a licence file recognises which one this is.  It is the instrument.
+The line `License text copyright © 2017 MariaDB Corporation Ab` is copyright in
+that form: MariaDB wrote BUSL and requires the notice to travel with it.
+MariaDB is not the Licensor of this program and holds no copyright in it.
+Changing that line, or substituting the Firm's name there, would violate BUSL's
+covenant not to modify the licence except by filling in the four parameters.
 What follows is the copyright holder's own account of how it applies to this
 work: nothing here widens the grant, nothing here narrows it, and nothing here
 is a second licence.
@@ -34,11 +41,14 @@ else's.
 
   Licensor is Shook Law PLLC.  Licensed Work is Navigator UX.
 
-  Additional Use Grant is `None`.  BUSL's base grant already covers
-  non-production use, and the Additional Use Grant is the slot for permitting
-  *limited production* use on top of it.  `None` therefore is not a restriction
-  added to the licence — it is the absence of an extra permission, and it means
-  every production use needs a commercial licence.
+  Additional Use Grant is production use under AGPL-3.0-only.  BUSL's base
+  grant already covers non-production use; this parameter is the slot for
+  permitting *limited production* use on top of it.  The limit here is
+  Affero: if you ship these components in production, you comply with
+  AGPL-3.0-only — including § 13, so a modified version run for remote users
+  carries an offer of corresponding source — unless you hold a commercial
+  licence.  That is the default path, not a second licence file.  The
+  instrument remains BUSL-1.1; Affero is the condition on the extra grant.
 
   Change Date is four years from the date the Licensed Work is published.  It
   applies per version, as BUSL's terms require: each release carries its own
@@ -66,13 +76,13 @@ developing against it, and demonstrating the gallery are not.  If you are
 unsure which side of the line you are on, write to contact@neonlaw.org and ask
 before deploying rather than after.
 
-THE NETWORK CASE.  BUSL carries no network clause, and needs none: the
-deployment shape such a clause reaches — running a modified version as a service
-for other people — is production use, which BUSL permits only under a commercial
-licence.  When a version reaches its Change Date and converts to AGPL-3.0-only,
-§ 13 of that licence attaches to that version in full, obliging anyone who
-modifies it and runs it for remote users to offer those users the corresponding
-source.
+THE NETWORK CASE.  Anyone who takes the Additional Use Grant is already under
+AGPL-3.0-only, so § 13 attaches to that production use now: modify the library
+and run it for remote users, and you offer those users the corresponding
+source.  Anyone who does not take Affero needs a commercial licence for that
+same deployment.  When a version reaches its Change Date, the Change License
+converts that version to AGPL-3.0-only for everyone, commercial licence or
+not.
 
 Already-published copies of this library under AGPL-3.0-only remain available
 under that licence to anyone who has them.  Relicensing is forward-only.
@@ -91,8 +101,9 @@ So within what the licence permits you may run, fork, and modify this software
 remains available to you: you may state, accurately, that your work is based on
 Navigator UX.
 
-COMMERCIAL LICENCES.  Production use needs one, and only Shook Law PLLC can
-grant it.  Write to contact@neonlaw.org.
+COMMERCIAL LICENCES.  Production use that does not comply with AGPL-3.0-only
+needs one, and only Shook Law PLLC can grant it.  Write to
+contact@neonlaw.org.  Affero remains available without asking.
 
 CONTRIBUTIONS.  A contribution assigns to Shook Law PLLC — all right, title,
 and interest in it, including every copyright in it, worldwide and for the full
