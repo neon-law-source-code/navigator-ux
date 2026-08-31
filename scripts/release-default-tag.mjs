@@ -21,7 +21,6 @@ import {
   defaultTag,
   highestRelease,
   parseVersion,
-  stripTagPrefix,
 } from './release-semver.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
