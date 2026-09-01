@@ -14,8 +14,8 @@ The license changed from dual MIT-or-Apache-2.0 to AGPL-3.0-only, then from AGPL
 at the copyright holder's direction. Relicensing is forward-only: already-published tarballs under
 AGPL-3.0-only stay under that grant. The permissive files are gone rather than kept alongside:
 `LICENSE-MIT` and `LICENSE-APACHE` were deleted, so there is no second option to fall back on and no
-dual grant anywhere. Anything still offering a choice of license, or still naming the Neon Law
-Foundation as copyright holder, is stale and should be fixed.
+dual grant anywhere. Anything still offering a choice of license, or still naming the prior
+nonprofit copyright holder, is stale and should be fixed.
 
 The trademark is not licensed with the code. The Neon Law name and logos stay with Shook Law PLLC;
 the components do not.
@@ -237,8 +237,8 @@ This was GORP Serif until the last change before the first public release. Those
 binaries with `fontTools`, and stated nowhere in the repository, which is how it survived this long.
 Two problems, both live the moment the repository went public: `files: ["dist"]` plus the `@font-face`
 rules meant **the build shipped them and every consumer redistributed them too**, and the license file
-of the day granted everyone MIT-or-Apache rights over "this software" under a
-`Copyright (c) 2026 Neon Law Foundation` line, purporting to license files the holder does not
+of the day granted everyone MIT-or-Apache rights over "this software" under a copyright line naming
+the prior nonprofit entity, purporting to license files the holder does not
 own. The same trap exists under BUSL and under the eventual AGPL conversion — both are sweeping
 grants — so scope them, do not widen them. Commercial
 webfont licences are typically domain- or pageview-limited and forbid redistribution outright; a
