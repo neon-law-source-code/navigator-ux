@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ['v*']
   pull_request:
 
 # A superseded run on the same branch has nothing left to tell us.
@@ -171,10 +170,84 @@ jobs:
           fi
           printf '%s\n' "${result}"
 
+  # Decides whether this push to `main` is a release, by comparing
+  # package.json's version against every tag already on the remote — the same
+  # `scripts/release-default-tag.mjs --check-manifest` the cut-release
+  # preflight runs on a branch, now run again on the merged commit. An
+  # ordinary merge that carries no version bump answers `publishable=false`
+  # and the two jobs below are no-ops; a bump answers `publishable=true` and
+  # names the tag to cut.
+  #
+  # THE VERSION IS THE MANIFEST. There is no separate tag push to check it
+  # against, so the mismatch the old `release` job used to guard against
+  # (tagging v26.8.31 without bumping package.json) is unsatisfiable by
+  # construction rather than merely caught.
+  release-version:
+    name: is this push a release?
+    needs: [lint, verify]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      publishable: ${{ steps.check.outputs.publishable }}
+      tag: ${{ steps.check.outputs.tag }}
+      prerelease: ${{ steps.check.outputs.prerelease }}
+    steps:
+      # The script lists tags with `git ls-remote`, so history depth does not
+      # matter — the default shallow checkout is enough.
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: compare package.json against published tags
+        id: check
+        run: |
+          set -euo pipefail
+          version="$(node -p 'require("./package.json").version')"
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$(node scripts/release-is-prerelease.mjs)" >> "$GITHUB_OUTPUT"
+          if node scripts/release-default-tag.mjs --check-manifest; then
+              echo "publishable=true" >> "$GITHUB_OUTPUT"
+          else
+              echo "publishable=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Creates and pushes the tag `release-version` named, once the merge gate is
+  # green and the version is a genuine bump. A tag pushed with the run's own
+  # `GITHUB_TOKEN` does not start a second workflow run, so `release` below
+  # runs inside THIS run rather than waiting on one — one workflow, one trigger.
+  #
+  # NOT SIGNED. The human flow this replaces used `git tag -s`; a CI-created
+  # tag has no GPG key to sign with, and this repository deliberately holds no
+  # secrets to provision one. What's gained is that the tag can no longer
+  # disagree with the manifest it names; what's given up is a signature. An
+  # annotated (not lightweight) tag under the bot identity is the middle
+  # ground kept here.
+  release-tag:
+    name: cut the release tag
+    needs: [release-version]
+    if: needs.release-version.outputs.publishable == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: create and push the tag
+        env:
+          TAG: ${{ needs.release-version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git tag -a "${TAG}" -m "navigator-ux ${TAG}"
+          git push origin "${TAG}"
+
   # Cuts the release: builds, packs a tarball, and attaches it to the GitHub
-  # Release for the tag. The tarball is the distribution channel — consumers
-  # install from the release download URL, which needs no registry account and
-  # no `.npmrc`. See docs/consuming-the-library.md.
+  # Release for the tag `release-tag` just created. The tarball is the
+  # distribution channel — consumers install from the release download URL,
+  # which needs no registry account and no `.npmrc`. See
+  # docs/consuming-the-library.md.
   #
   # The tarball is what `pnpm pack` produces, so it carries `dist` and nothing
   # else `files` excludes. That distinction is the whole reason this job exists
@@ -184,9 +257,12 @@ jobs:
   # consumer's first import with "Cannot find module .../dist/index.js". The
   # install itself goes green, which is what makes it worth spending a job to
   # avoid.
+  #
+  # No explicit `if:` here — plain `needs:` already skips this job whenever
+  # any dependency (including `release-tag` answering "not a release") was
+  # skipped rather than successful, which is exactly the behavior wanted.
   release:
-    needs: [lint, verify]
-    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [lint, verify, release-version, release-tag]
     runs-on: ubuntu-latest
     permissions:
       # Creating the release and uploading the tarball to it both need write.
@@ -200,31 +276,6 @@ jobs:
         with:
           node-version: '22'
           cache: pnpm
-
-      # The tag names the version, but the manifest is what actually ships, and
-      # nothing else checks that the two agree: a tarball is named from whatever
-      # the manifest says regardless of the tag it was built from. Tagging
-      # v26.8.31 without bumping package.json would therefore attach yesterday's
-      # tarball to a release called v26.8.31. Bump the manifest, merge, then tag
-      # — in that order. The cadence is YY.M.D (see docs/releasing.md); the tag
-      # keeps the `v` prefix this job already matches.
-      #
-      # This runs before `install`, which is the slowest step here: a mismatch
-      # is a re-tag either way, so it should report in seconds.
-      - name: assert the tag matches package.json
-        env:
-          REF_NAME: ${{ github.ref_name }}
-        run: |
-          set -euo pipefail
-          manifest="$(node -p 'require("./package.json").version')"
-          tag="${REF_NAME#v}"
-          echo "tag:          ${tag}"
-          echo "package.json: ${manifest}"
-          if [ "${tag}" != "${manifest}" ]; then
-              echo "::error::tag ${REF_NAME} does not match package.json ${manifest}. Bump the manifest, merge, and re-tag."
-              exit 1
-          fi
-
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
@@ -234,8 +285,8 @@ jobs:
       # the contract and should be predictable from the tag alone.
       - name: pack the tarball
         env:
-          REF_NAME: ${{ github.ref_name }}
-        run: pnpm pack --out "navigator-ux-${REF_NAME}.tgz"
+          TAG: ${{ needs.release-version.outputs.tag }}
+        run: pnpm pack --out "navigator-ux-${TAG}.tgz"
 
       # Idempotent, so re-running a release job is a no-op rather than a
       # failure: `gh release create` refuses a tag that already has a release,
@@ -243,21 +294,30 @@ jobs:
       - name: create the release and attach the tarball
         env:
           GH_TOKEN: ${{ github.token }}
-          REF_NAME: ${{ github.ref_name }}
+          TAG: ${{ needs.release-version.outputs.tag }}
+          PRERELEASE: ${{ needs.release-version.outputs.prerelease }}
         run: |
           set -euo pipefail
           # Derive the API host from the run rather than letting `gh` default to
           # github.com, for the same reason the auto-merge job does.
           GH_HOST="${GITHUB_SERVER_URL#https://}"
           export GH_HOST
-          tarball="navigator-ux-${REF_NAME}.tgz"
-          if gh release view "${REF_NAME}" >/dev/null 2>&1; then
-              echo "release ${REF_NAME} exists; replacing the tarball."
-              gh release upload "${REF_NAME}" "${tarball}" --clobber
+          tarball="navigator-ux-${TAG}.tgz"
+          # A -hotfix.N version ranks below its matching ordinary release (see
+          # docs/releasing.md), so its GitHub Release must not present itself
+          # as "Latest release" either.
+          prerelease_flag=()
+          if [ "${PRERELEASE}" = "true" ]; then
+              prerelease_flag=(--prerelease)
+          fi
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+              echo "release ${TAG} exists; replacing the tarball."
+              gh release upload "${TAG}" "${tarball}" --clobber
           else
-              gh release create "${REF_NAME}" "${tarball}" \
-                  --title "${REF_NAME}" \
-                  --generate-notes
+              gh release create "${TAG}" "${tarball}" \
+                  --title "${TAG}" \
+                  --generate-notes \
+                  "${prerelease_flag[@]}"
           fi
 
   # The single required status check. It runs nothing itself: the jobs above do
