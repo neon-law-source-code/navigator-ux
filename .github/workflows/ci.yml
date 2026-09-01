@@ -3,7 +3,14 @@ name: CI
 on:
   push:
     branches: [main]
+  # Explicit `types:` because the release chain below needs `closed` added to
+  # the default set (opened, synchronize, reopened) — see `release-version`.
+  # `ready_for_review` is included too: `enable-automerge`'s `if` has checked
+  # for that action since it was added, but nothing ever fired the workflow on
+  # it, so marking a draft ready for review has never armed auto-merge on its
+  # own until now.
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, closed]
 
 # A superseded run on the same branch has nothing left to tell us.
 concurrency:
@@ -20,6 +27,10 @@ jobs:
   # Fast and dependency-light, so a style problem reports in seconds rather
   # than behind a full build.
   lint:
+    # Skip only a PR that closed WITHOUT merging — adding `closed` to the
+    # pull_request trigger above (for the release chain) would otherwise rerun
+    # the full suite against an abandoned branch for no reader.
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +59,8 @@ jobs:
       - run: pnpm check:contrast
 
   verify:
+    # Same skip as lint, and for the same reason.
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -170,10 +183,10 @@ jobs:
           fi
           printf '%s\n' "${result}"
 
-  # Decides whether this push to `main` is a release, by comparing
-  # package.json's version against every tag already on the remote — the same
+  # Decides whether main just gained a release, by comparing package.json's
+  # version against every tag already on the remote — the same
   # `scripts/release-default-tag.mjs --check-manifest` the cut-release
-  # preflight runs on a branch, now run again on the merged commit. An
+  # preflight runs on a branch, now run again on the commit that landed. An
   # ordinary merge that carries no version bump answers `publishable=false`
   # and the two jobs below are no-ops; a bump answers `publishable=true` and
   # names the tag to cut.
@@ -182,21 +195,43 @@ jobs:
   # against, so the mismatch the old `release` job used to guard against
   # (tagging v26.8.31 without bumping package.json) is unsatisfiable by
   # construction rather than merely caught.
+  #
+  # TWO WAYS TO FIRE, because one of them silently never does. A PR merged by
+  # this repo's own `enable-automerge` job is merged BY GITHUB_TOKEN — GitHub
+  # does not start a new workflow run for an event a `GITHUB_TOKEN` caused, to
+  # block recursive runs. #25 merged that way and proved it: the `push` this
+  # job used to trigger on never happened, no tag was cut, and nothing said
+  # so. `pull_request: closed` is a PR lifecycle event, not a token-attributed
+  # push, so it fires regardless of who performed the merge — it is the
+  # primary path here since nearly every merge in this repository is
+  # bot-armed. `push` stays as the fallback for the rare manually-merged
+  # commit, which genuinely does carry a human's push.
   release-version:
-    name: is this push a release?
+    name: did main just gain a release?
     needs: [lint, verify]
-    if: github.ref == 'refs/heads/main'
+    if: |
+      github.event_name == 'push' ||
+      (github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
     permissions:
       contents: read
     outputs:
+      # The commit that actually landed on main. NOT `github.sha` on a
+      # `pull_request` event — that resolves to the ephemeral
+      # `refs/pull/<n>/merge` preview ref, which can already be gone by the
+      # time `closed` fires. `merge_commit_sha` is the real one.
+      sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
       publishable: ${{ steps.check.outputs.publishable }}
       tag: ${{ steps.check.outputs.tag }}
       prerelease: ${{ steps.check.outputs.prerelease }}
     steps:
       # The script lists tags with `git ls-remote`, so history depth does not
-      # matter — the default shallow checkout is enough.
+      # matter — the default shallow checkout is enough. `ref:` matters more
+      # here than depth: without it, a `pull_request` checkout resolves the
+      # preview merge ref above, not the commit that landed.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -215,8 +250,9 @@ jobs:
 
   # Creates and pushes the tag `release-version` named, once the merge gate is
   # green and the version is a genuine bump. A tag pushed with the run's own
-  # `GITHUB_TOKEN` does not start a second workflow run, so `release` below
-  # runs inside THIS run rather than waiting on one — one workflow, one trigger.
+  # `GITHUB_TOKEN` does not start a second workflow run (the same rule that
+  # makes `release-version` need two triggers above), so `release` below runs
+  # inside THIS run rather than waiting on one.
   #
   # NOT SIGNED. The human flow this replaces used `git tag -s`; a CI-created
   # tag has no GPG key to sign with, and this repository deliberately holds no
@@ -231,13 +267,30 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # One lane shared with `release` (and with itself across overlapping
+    # runs): `push` and `pull_request: closed` can both fire for the same
+    # merge — a human clicking "Merge pull request" themselves produces a
+    # real push AND closes the PR — and the two events carry different
+    # `github.ref` values, so the workflow-level concurrency group above does
+    # not deduplicate them. Queuing rather than racing means the second run's
+    # own tag-exists check (below) sees the first run's tag and turns into a
+    # no-op instead of a `git push` conflict.
+    concurrency:
+      group: release-publish
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-version.outputs.sha }}
       - name: create and push the tag
         env:
           TAG: ${{ needs.release-version.outputs.tag }}
         run: |
           set -euo pipefail
+          if git ls-remote --exit-code --tags origin "${TAG}" >/dev/null 2>&1; then
+              echo "${TAG} already exists on origin; nothing to do."
+              exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git tag -a "${TAG}" -m "navigator-ux ${TAG}"
@@ -269,8 +322,14 @@ jobs:
       # Nothing here needs id-token: that was for npm build provenance, and
       # this project does not publish to a registry.
       contents: write
+    # Same lane as `release-tag` — see its comment.
+    concurrency:
+      group: release-publish
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-version.outputs.sha }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

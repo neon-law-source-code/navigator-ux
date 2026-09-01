@@ -4,14 +4,24 @@ The cadence matches [Neon Law Navigator](https://github.com/neon-law-source-code
 year, month, and day spelling, with no leading zeros. August 31, 2026 is `26.8.31`, not `26.08.31`. The
 [`cut-release`](../.agents/skills/cut-release/SKILL.md) skill is where the operator procedure lives.
 
-A release is a version bump landed through a PR. There is one way to publish: merge a bump to `main`. `ci.yml`'s
-`release-version` job then reads `package.json`'s version and compares it against every tag already published; when
-it is newer, `release-tag` creates and pushes `v${version}` and `release` cuts the tarball behind it, all in the same
-run. An ordinary merge that carries no bump answers "not a release" in seconds and nothing downstream runs.
+A release is a version bump landed through a PR. There is one decision that publishes it: merging the bump to
+`main`. `ci.yml`'s `release-version` job then reads `package.json`'s version and compares it against every tag
+already published; when it is newer, `release-tag` creates and pushes `v${version}` and `release` cuts the tarball
+behind it, all in the same run. An ordinary merge that carries no bump answers "not a release" in seconds and nothing
+downstream runs.
 
-There is deliberately no second trigger. A hand-pushed tag was the publish path until the version became the trigger;
-keeping both would mean keeping a way for the tag and the manifest to disagree, which is exactly the failure this
-design removes by construction rather than by asserting it in CI.
+There is deliberately no hand-pushed tag as a second way to publish — keeping one would mean keeping a way for the
+tag and the manifest to disagree, which is exactly the failure this design removes by construction rather than by
+asserting it in CI.
+
+**`release-version` does have two *triggers*, though, and that is not the same thing as a second way to publish —
+both name the identical decision, off the identical commit.** Nearly every merge here lands through
+`enable-automerge`'s bot-armed auto-merge, and GitHub does not start a new workflow run for a `push` an Actions
+`GITHUB_TOKEN` caused — the anti-recursion rule. A `push`-only trigger silently never fires for a bot-merged PR: `v26.9.1`
+sat on `main` unreleased for exactly this reason before the `pull_request: closed` (with `merged == true`) trigger was
+added. That event is a PR lifecycle event rather than a token-attributed push, so it fires regardless of who performed
+the merge, and it is the trigger that actually does the work in this repository. `push` stays only for the rare
+commit that reaches `main` some other way.
 
 **`YY.M.D` is a convention, not a rule.** npm parses `package.json`'s `version` as semver, so a name that departs from
 the calendar publishes just as well, provided it is newer than every version already published. What the date buys is
