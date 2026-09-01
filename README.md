@@ -330,22 +330,16 @@ The cadence is the same as Neon Law Navigator: **`YY.M.D`**, year, month, and da
 leading zeros (`26.8.31`, not `26.08.31`). `/cut-release` is the operator procedure; the detail lives in
 [docs/releasing.md](./docs/releasing.md).
 
-CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump the
-version in `package.json`, merge, then tag:
-
-```bash
-git tag -s v26.8.31 -m "navigator-ux 26.8.31"
-git push origin v26.8.31
-```
-
-The tag and `package.json` have to agree (`v26.8.31` ↔ `26.8.31`). CI asserts it before anything else
-runs and fails the release if they differ, because nothing else would catch the mismatch: the tarball
-is named from the manifest regardless of the tag it was built from, so tagging `v26.8.31` without
-bumping would attach yesterday's tarball to a release called `v26.8.31`.
+There is one way to publish: bump the version in `package.json` and merge to `main`. CI reads the
+manifest, and when the version is newer than every tag already published, tags it and cuts the
+release itself — there is no tag to push by hand, and so no way for a tag and the manifest to
+disagree. An ordinary merge that carries no bump ships nothing.
 
 The release job then builds, runs `pnpm pack`, and attaches the tarball to the GitHub Release for the
-tag. That tarball is the distribution channel; the filename is pinned rather than derived, because
-consumers paste the URL into a manifest by hand.
+tag it just created. That tarball is the distribution channel; the filename is pinned rather than
+derived, because consumers paste the URL into a manifest by hand. The tag is created under the
+`github-actions[bot]` identity and is not signed — see [docs/releasing.md](./docs/releasing.md#tag-provenance)
+for that trade-off.
 
 **Nothing is published to npmjs.com.** The GitHub Release tarball is the only channel — there is no
 registry publish step in CI, no package under the `@neon-law-source-code` scope, and no token that

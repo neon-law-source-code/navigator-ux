@@ -5,8 +5,9 @@
 #   preflight.sh [remote]
 #
 # IT TAKES NO VERSION. The version is whatever package.json says: cut-release
-# wrote it, this script checks it, and ci.yml checks the tag against it again
-# when the `v*` tag is pushed. One value, read in those places, named in one.
+# wrote it, this script checks it, and ci.yml's release-version job checks it
+# again against the published tags once the bump merges. One value, read in
+# those places, named in one.
 #
 # Read-only and safely repeatable. It writes nothing, so a failed run costs a
 # rerun.
@@ -39,4 +40,4 @@ pnpm check
 echo
 echo "preflight passed."
 echo
-echo "Merging main does not publish. After the bump merges, tag v\$(node -p 'require(\"./package.json\").version') and push it."
+echo "Merging this bump to main publishes it: CI tags v\$(node -p 'require(\"./package.json\").version') and cuts the release automatically."

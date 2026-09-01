@@ -4,8 +4,14 @@ The cadence matches [Neon Law Navigator](https://github.com/neon-law-source-code
 year, month, and day spelling, with no leading zeros. August 31, 2026 is `26.8.31`, not `26.08.31`. The
 [`cut-release`](../.agents/skills/cut-release/SKILL.md) skill is where the operator procedure lives.
 
-A release is a version bump landed through a PR. Merging `main` does **not** publish. CI cuts the tarball on a `v*`
-tag, and nothing else: bump `package.json`, merge, then tag `v${version}` so the tag and the manifest agree.
+A release is a version bump landed through a PR. There is one way to publish: merge a bump to `main`. `ci.yml`'s
+`release-version` job then reads `package.json`'s version and compares it against every tag already published; when
+it is newer, `release-tag` creates and pushes `v${version}` and `release` cuts the tarball behind it, all in the same
+run. An ordinary merge that carries no bump answers "not a release" in seconds and nothing downstream runs.
+
+There is deliberately no second trigger. A hand-pushed tag was the publish path until the version became the trigger;
+keeping both would mean keeping a way for the tag and the manifest to disagree, which is exactly the failure this
+design removes by construction rather than by asserting it in CI.
 
 **`YY.M.D` is a convention, not a rule.** npm parses `package.json`'s `version` as semver, so a name that departs from
 the calendar publishes just as well, provided it is newer than every version already published. What the date buys is
@@ -39,8 +45,9 @@ Three facts still hold, because they are semver's:
 - **No build metadata.** `+` is refused rather than depending on whose comparator ignores it.
 
 The GitHub tag keeps the `v` prefix this repository already uses (`v26.8.31`). `package.json` does not: its version is
-the bare `26.8.31`. The release job strips the `v` and asserts the remainder equals the manifest. The tarball filename
-is `navigator-ux-<tag>.tgz`, so a consumer URL looks like:
+the bare `26.8.31`. `release-version` reads the manifest and names the tag from it directly, so there is no separate
+value to assert against — the two cannot disagree. The tarball filename is `navigator-ux-<tag>.tgz`, so a consumer URL
+looks like:
 
 ```text
 https://github.com/neon-law-source-code/navigator-ux/releases/download/v26.8.31/navigator-ux-v26.8.31.tgz
@@ -60,8 +67,18 @@ normal version:
 After `26.8.22` is published, the next hotfix is `26.8.23-hotfix.1`, not `26.8.22-hotfix.1`. `N` in `-hotfix.N` is an
 unpadded nonnegative integer and it is the operator's to choose: a uniqueness-and-ordering discriminator, never an hour.
 
-A GitHub Release whose version has a prerelease identifier should be flagged `--prerelease` so it does not present
-itself as the latest download.
+A GitHub Release whose version has a prerelease identifier is flagged `--prerelease` so it does not present itself as
+the latest download. `ci.yml` reads this off `scripts/release-is-prerelease.mjs` — the same `parseVersion` the ordering
+check above uses — so a hotfix bump gets it automatically; nothing about the release commit or PR title decides it.
+
+## Tag provenance
+
+The tag is created by `release-tag` under the `github-actions[bot]` identity, not signed. The manual flow this
+replaced used `git tag -s`; CI has no GPG key to sign with; and this repository deliberately holds no secrets to
+provision one (see the "Publishing" section of `CLAUDE.md`). What the automation buys instead is a stronger
+guarantee than a signature gives: the tag cannot exist without matching the manifest of the commit it names, because
+`release-version` derives it from that manifest rather than checking two independently-supplied values against each
+other.
 
 ## Gate
 
