@@ -5,8 +5,9 @@
  * Copyright (C) 2026 Shook Law PLLC.
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Source-available under the Business Source License 1.1. Production use
- * defaults to AGPL-3.0-only (the Additional Use Grant). Production use that
+ * Source-available under the Business Source License 1.1. The Additional Use
+ * Grant defines production use by reliance rather than by where the software
+ * runs, then grants it under AGPL-3.0-only by default. Production use that
  * does not take Affero requires a commercial licence from Shook Law PLLC.
  * Four years after a version is published, that version converts to
  * AGPL-3.0-only for everyone. See LICENSE and NOTICE. Third-party material

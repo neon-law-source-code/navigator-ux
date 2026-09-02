@@ -374,24 +374,33 @@ SPDX-License-Identifier: BUSL-1.1
 
 Navigator UX is source-available under the **Business Source License 1.1**. You may read, copy,
 modify, create derivative works from, and redistribute it, and you may make any non-production use of
-it. Production use **defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship these
-components if you comply with Affero, including the network-use obligations. Production use that does
-not take Affero requires a commercial license from Shook Law PLLC. Four years after a given version
-is published, that version converts to **AGPL-3.0-only** for everyone, and the BUSL restriction ends
-for it permanently.
+it. **What counts as production use is defined in `LICENSE` itself**, in the Additional Use Grant,
+and the test is reliance rather than where the software runs — evaluating, developing against,
+testing, and demonstrating these components is free wherever it happens, the cloud included, while
+shipping them in something somebody relies on is production use wherever it happens. Marketing a
+product or service to customers that relies on them is production use too. Production use then
+**defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship these components if you comply
+with Affero, including the network-use obligations. Production use that does not take Affero requires
+a commercial license from Shook Law PLLC. Four years after a given version is published, that version
+converts to **AGPL-3.0-only** for everyone, and the BUSL restriction ends for it permanently.
+
+That opening definition is shared word-for-word with [`navigator`](https://github.com/neon-law-source-code/navigator)
+and the [Homebrew tap](https://github.com/neon-law-source-code/homebrew-navigator), so a legal review
+that has cleared one of the three has cleared all three.
 
 [`LICENSE`](./LICENSE) is the instrument: BUSL-1.1 with its parameters filled in (`Licensor: Shook Law
-PLLC`, `Licensed Work: Navigator UX`, Additional Use Grant of production use under AGPL-3.0-only,
-`Change License: AGPL-3.0-only`) and nothing else in the file, so licence scanners name the
+PLLC`, `Licensed Work: Navigator UX`, an Additional Use Grant that defines production use by reliance
+and then grants it under AGPL-3.0-only, `Change License: AGPL-3.0-only`) and nothing else in the file,
+so licence scanners name the
 instrument. MariaDB's copyright line in that file is copyright in the BUSL form, not in this package
 — the Licensor and the copyright in Navigator UX are Shook Law PLLC. The copyright holder's account
 of how that grant applies — including what production use means for a component library — is in
 [`NOTICE`](./NOTICE).
 
 **What that means for an application that imports this library.** Importing a component puts the
-library in your bundle. Evaluating it and developing against it is non-production use. Shipping it in
-an application that delivers legal services to other people is production use: take Affero, or obtain
-a commercial license. How you installed the package changes nothing about this: a dependency boundary
+library in your bundle. Evaluating it and developing against it is non-production use, wherever you
+run it. Shipping it in an application that somebody relies on is production use: take Affero, or
+obtain a commercial license. How you installed the package changes nothing about this: a dependency boundary
 is not a license boundary. Already-published copies under AGPL-3.0-only remain available under that
 license to anyone who has them; relicensing is forward-only.
 
