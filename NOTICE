@@ -6,11 +6,14 @@ SPDX-License-Identifier: BUSL-1.1
 
 This program is source-available software under the Business Source License
 1.1.  You may read, copy, modify, create derivative works from, and
-redistribute it, and you may make any non-production use of it.  Production
-use is granted if you comply with the GNU Affero General Public License,
-version 3 only — that is the default.  Production use that does not take
-Affero requires a commercial licence from Shook Law PLLC.  Four years after a
-given version is published, that version converts to AGPL-3.0-only for
+redistribute it, and you may make any non-production use of it.  LICENSE also
+pins, by grant, what you may run without buying anything: these components,
+anywhere including the cloud, to evaluate, develop against, test, or
+demonstrate them, for so long as nothing relies on the result.  Beyond that,
+production use is granted if you comply with the GNU Affero General Public
+License, version 3 only — that is the default.  Production use that does not
+take Affero requires a commercial licence from Shook Law PLLC.  Four years
+after a given version is published, that version converts to AGPL-3.0-only for
 everyone, and the BUSL restriction ends for it permanently.
 
 This program is distributed WITHOUT ANY WARRANTY; without even the implied
@@ -41,14 +44,25 @@ else's.
 
   Licensor is Shook Law PLLC.  Licensed Work is Navigator UX.
 
-  Additional Use Grant is production use under AGPL-3.0-only.  BUSL's base
-  grant already covers non-production use; this parameter is the slot for
-  permitting *limited production* use on top of it.  The limit here is
-  Affero: if you ship these components in production, you comply with
-  AGPL-3.0-only — including § 13, so a modified version run for remote users
-  carries an offer of corresponding source — unless you hold a commercial
-  licence.  That is the default path, not a second licence file.  The
-  instrument remains BUSL-1.1; Affero is the condition on the extra grant.
+  Additional Use Grant does two separable jobs here.  Its first paragraph is
+  shared word-for-word with Navigator and the Homebrew tap: it grants
+  operation of these components anywhere, the cloud included, to evaluate,
+  develop against, test, or demonstrate them, for so long as nothing relies on
+  the result.  The test is reliance rather than where the software runs.  It
+  is written as a grant and not as a definition of "production use", because
+  BUSL's second Covenant of Licensor permits an Additional Use Grant only
+  where it "does not impose any additional restriction on the right granted in
+  this License", and a clause defining an undefined term against the licensee
+  would risk being exactly that.
+
+  Its second paragraph is this package's own, and it is unchanged in
+  substance: Affero is the limit on the extra grant.  If you ship these
+  components in production, you comply with AGPL-3.0-only — including § 13, so
+  a modified version run for remote users carries an offer of corresponding
+  source — unless you hold a commercial licence.  That is the default path,
+  not a second licence file.  The instrument remains BUSL-1.1.  So the shared
+  paragraph grants the uses nobody relies on, and this one grants production
+  use on Affero's terms.
 
   Change Date is four years from the date the Licensed Work is published.  It
   applies per version, as BUSL's terms require: each release carries its own
@@ -67,14 +81,22 @@ token layer, the gallery that demonstrates them, and the scripts that gate the
 build are all BUSL-1.1.  One grant covers the tree, so there is nothing to look
 up per directory.
 
-WHAT "PRODUCTION USE" MEANS HERE.  BUSL does not define it, so this is the
-Firm's own reading and it is deliberately narrow.  Shipping these components in
-an application that delivers legal services to other people — a client portal,
-a matter surface, a filing pipeline someone relies on — is production use.
-Reading the source, building it, running the test suite, evaluating it,
-developing against it, and demonstrating the gallery are not.  If you are
-unsure which side of the line you are on, write to contact@neonlaw.org and ask
-before deploying rather than after.
+WHAT "PRODUCTION USE" MEANS HERE.  BUSL does not define it, and neither does
+LICENSE — for the covenant reason above.  LICENSE pins the other side instead,
+by grant: you may run these components to evaluate, develop against, test, or
+demonstrate them, wherever you like, for so long as nothing relies on the
+result.  A cloud preview build is no more production use than a local one.
+
+Outside that, this is the Firm's reading rather than a term.  Shipping these
+components in an application that anybody relies on — a client portal, a
+matter surface, a filing pipeline — is production use, and so is marketing to
+customers a product or service that relies on them.  Reading the source,
+building it, running the test suite, evaluating it, developing against it, and
+demonstrating the gallery are not.  Either way the Affero path above is open
+to you, and it is the default.
+
+If you are unsure which side of the line you are on, write to
+contact@neonlaw.org and ask before deploying rather than after.
 
 THE NETWORK CASE.  Anyone who takes the Additional Use Grant is already under
 AGPL-3.0-only, so § 13 attaches to that production use now: modify the library
