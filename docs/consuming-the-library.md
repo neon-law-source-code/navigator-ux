@@ -7,12 +7,19 @@ the [README](../README.md) is enough — this is the integration detail behind i
 
 The library is **BUSL-1.1**, and that is the first thing a consuming application has to agree with
 rather than a footnote to the rest of this document. Evaluating it, developing against it, and
-running the gallery or the tests is non-production use. Shipping these components in an application
-that delivers legal services to other people — a client portal, a matter surface, a filing pipeline
-someone relies on — is production use. Production use **defaults to AGPL-3.0-only**: the Additional
-Use Grant lets you ship if you comply with Affero, including § 13. Production use that does not take
-Affero requires a commercial licence from Shook Law PLLC. Four years after a given version is
-published, that version converts to AGPL-3.0-only for everyone.
+running the gallery or the tests is non-production use — and stays non-production wherever you run
+it, because the test is whether anybody relies on the thing rather than where it is deployed. A
+cloud preview build is no more production use than a local one. Shipping these components in an
+application that somebody relies on — a client portal, a matter surface, a filing pipeline — is
+production use, and so is marketing to customers a product or service that relies on them.
+Production use **defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship if you comply
+with Affero, including § 13. Production use that does not take Affero requires a commercial licence
+from Shook Law PLLC. Four years after a given version is published, that version converts to
+AGPL-3.0-only for everyone.
+
+**The definition is in [`LICENSE`](../LICENSE) rather than in prose.** Its Additional Use Grant
+opens with a paragraph shared word-for-word with `navigator` and the Homebrew tap, so a legal review
+that has cleared one of the three has cleared all three.
 
 How you install it changes nothing here. A tarball URL, a registry range, and a git checkout are three
 delivery mechanisms for the same code, and none of them is a license boundary — the components end up
