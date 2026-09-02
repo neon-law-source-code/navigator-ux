@@ -17,9 +17,11 @@ with Affero, including § 13. Production use that does not take Affero requires 
 from Shook Law PLLC. Four years after a given version is published, that version converts to
 AGPL-3.0-only for everyone.
 
-**The definition is in [`LICENSE`](../LICENSE) rather than in prose.** Its Additional Use Grant
-opens with a paragraph shared word-for-word with `navigator` and the Homebrew tap, so a legal review
-that has cleared one of the three has cleared all three.
+**The free zone is pinned in [`LICENSE`](../LICENSE) rather than in prose.** Its Additional Use
+Grant opens with a paragraph shared word-for-word with `navigator` and the Homebrew tap — you may
+run these components anywhere to evaluate, develop against, test, or demonstrate them, for so long
+as nothing relies on the result — so a legal review that has cleared one of the three has cleared
+all three.
 
 How you install it changes nothing here. A tarball URL, a registry range, and a git checkout are three
 delivery mechanisms for the same code, and none of them is a license boundary — the components end up

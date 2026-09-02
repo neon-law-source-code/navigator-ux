@@ -330,16 +330,22 @@ The cadence is the same as Neon Law Navigator: **`YY.M.D`**, year, month, and da
 leading zeros (`26.8.31`, not `26.08.31`). `/cut-release` is the operator procedure; the detail lives in
 [docs/releasing.md](./docs/releasing.md).
 
-There is one way to publish: bump the version in `package.json` and merge to `main`. CI reads the
-manifest, and when the version is newer than every tag already published, tags it and cuts the
-release itself — there is no tag to push by hand, and so no way for a tag and the manifest to
-disagree. An ordinary merge that carries no bump ships nothing.
+CI releases on a `v*` tag and on nothing else, so a merge to `main` ships nothing on its own. Bump the
+version in `package.json`, merge, then tag:
+
+```bash
+git tag -s v26.8.31 -m "navigator-ux 26.8.31"
+git push origin v26.8.31
+```
+
+The tag and `package.json` have to agree (`v26.8.31` ↔ `26.8.31`). CI asserts it before anything else
+runs and fails the release if they differ, because nothing else would catch the mismatch: the tarball
+is named from the manifest regardless of the tag it was built from, so tagging `v26.8.31` without
+bumping would attach yesterday's tarball to a release called `v26.8.31`.
 
 The release job then builds, runs `pnpm pack`, and attaches the tarball to the GitHub Release for the
-tag it just created. That tarball is the distribution channel; the filename is pinned rather than
-derived, because consumers paste the URL into a manifest by hand. The tag is created under the
-`github-actions[bot]` identity and is not signed — see [docs/releasing.md](./docs/releasing.md#tag-provenance)
-for that trade-off.
+tag. That tarball is the distribution channel; the filename is pinned rather than derived, because
+consumers paste the URL into a manifest by hand.
 
 **Nothing is published to npmjs.com.** The GitHub Release tarball is the only channel — there is no
 registry publish step in CI, no package under the `@neon-law-source-code` scope, and no token that
@@ -368,11 +374,14 @@ SPDX-License-Identifier: BUSL-1.1
 
 Navigator UX is source-available under the **Business Source License 1.1**. You may read, copy,
 modify, create derivative works from, and redistribute it, and you may make any non-production use of
-it. **What counts as production use is defined in `LICENSE` itself**, in the Additional Use Grant,
-and the test is reliance rather than where the software runs — evaluating, developing against,
-testing, and demonstrating these components is free wherever it happens, the cloud included, while
-shipping them in something somebody relies on is production use wherever it happens. Marketing a
-product or service to customers that relies on them is production use too. Production use then
+it. **What you may run without a commercial licence is pinned in `LICENSE` itself**, in the
+Additional Use Grant: these components, anywhere including the cloud, to evaluate, develop against,
+test, or demonstrate them, for so long as nothing relies on the result. The test is reliance rather
+than where the software runs, so a cloud preview build is no more production use than a local one.
+Shipping them in something somebody relies on, and marketing to customers a product or service that
+relies on them, is the Firm's reading of production use — set out in [`NOTICE`](./NOTICE), which
+binds nobody, because BUSL's second covenant permits only a grant that adds permission in that slot.
+Production use then
 **defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship these components if you comply
 with Affero, including the network-use obligations. Production use that does not take Affero requires
 a commercial license from Shook Law PLLC. Four years after a given version is published, that version
@@ -383,8 +392,8 @@ and the [Homebrew tap](https://github.com/neon-law-source-code/homebrew-navigato
 that has cleared one of the three has cleared all three.
 
 [`LICENSE`](./LICENSE) is the instrument: BUSL-1.1 with its parameters filled in (`Licensor: Shook Law
-PLLC`, `Licensed Work: Navigator UX`, an Additional Use Grant that defines production use by reliance
-and then grants it under AGPL-3.0-only, `Change License: AGPL-3.0-only`) and nothing else in the file,
+PLLC`, `Licensed Work: Navigator UX`, an Additional Use Grant that pins the free use by reliance and
+then grants production use under AGPL-3.0-only, `Change License: AGPL-3.0-only`) and nothing else in the file,
 so licence scanners name the
 instrument. MariaDB's copyright line in that file is copyright in the BUSL form, not in this package
 — the Licensor and the copyright in Navigator UX are Shook Law PLLC. The copyright holder's account

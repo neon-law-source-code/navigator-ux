@@ -4,10 +4,11 @@ Source-available under the **Business Source License 1.1** — see [LICENSE](./L
 MariaDB instrument with its parameters filled in and nothing else in the file. GitHub and every
 scanner that reads a license file need that file to look like BUSL, so Firm commentary lives in
 [NOTICE](./NOTICE), not here and not as a preamble. Anyone may read, copy, modify, and make
-non-production use of this work. What counts as production use is defined in the Additional Use
-Grant itself — the test is reliance, not where the software runs — and that opening paragraph is
-shared word-for-word with `navigator` and the Homebrew tap. Production use then defaults to
-AGPL-3.0-only. Shipping it without taking Affero needs a commercial licence from Shook Law PLLC.
+non-production use of this work. The Additional Use Grant pins what you may run without buying
+anything — these components, anywhere, to evaluate, develop against, test, or demonstrate them, for
+so long as nothing relies on the result — and that opening paragraph is shared word-for-word with
+`navigator` and the Homebrew tap. The test is reliance, not where the software runs. Production use
+then defaults to AGPL-3.0-only. Shipping it without taking Affero needs a commercial licence from Shook Law PLLC.
 Four years after a version is published, that version converts to AGPL-3.0-only for everyone. Write for that
 audience: a comment that assumes the reader works here is a comment that will confuse most of the
 people who read it.
@@ -16,8 +17,8 @@ The license changed from dual MIT-or-Apache-2.0 to AGPL-3.0-only, then from AGPL
 at the copyright holder's direction. Relicensing is forward-only: already-published tarballs under
 AGPL-3.0-only stay under that grant. The permissive files are gone rather than kept alongside:
 `LICENSE-MIT` and `LICENSE-APACHE` were deleted, so there is no second option to fall back on and no
-dual grant anywhere. Anything still offering a choice of license, or still naming the prior
-nonprofit copyright holder, is stale and should be fixed.
+dual grant anywhere. Anything still offering a choice of license, or still naming the Neon Law
+Foundation as copyright holder, is stale and should be fixed.
 
 The trademark is not licensed with the code. The Neon Law name and logos stay with Shook Law PLLC;
 the components do not.
@@ -239,8 +240,8 @@ This was GORP Serif until the last change before the first public release. Those
 binaries with `fontTools`, and stated nowhere in the repository, which is how it survived this long.
 Two problems, both live the moment the repository went public: `files: ["dist"]` plus the `@font-face`
 rules meant **the build shipped them and every consumer redistributed them too**, and the license file
-of the day granted everyone MIT-or-Apache rights over "this software" under a copyright line naming
-the prior nonprofit entity, purporting to license files the holder does not
+of the day granted everyone MIT-or-Apache rights over "this software" under a
+`Copyright (c) 2026 Neon Law Foundation` line, purporting to license files the holder does not
 own. The same trap exists under BUSL and under the eventual AGPL conversion — both are sweeping
 grants — so scope them, do not widen them. Commercial
 webfont licences are typically domain- or pageview-limited and forbid redistribution outright; a
@@ -290,7 +291,7 @@ document.documentElement.style.setProperty('--nav-font-family', '"Source Serif 4
 
 **`LICENSE` is the license and nothing else, so the scoping prose moved.** It is the MariaDB BUSL 1.1
 text with the four parameters filled in (`Licensor: Shook Law PLLC`, `Licensed Work: Navigator UX`,
-an Additional Use Grant that defines production use by reliance and then grants it under
+an Additional Use Grant that pins the free use by reliance and then grants production use under
 AGPL-3.0-only, `Change License: AGPL-3.0-only`) and nothing added and nothing removed
 — that is what makes it detectable as BUSL-1.1 by GitHub, npm, and every license scanner a consumer's
 legal review runs, and a prepended Firm header is exactly what breaks that. The copyright holder's
