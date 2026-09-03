@@ -495,7 +495,7 @@ export function Gallery() {
                   note: 'Admission pending.',
                 },
               ]}
-              legal={<p>Navigator UX is licensed Apache-2.0. This page is a specimen, not legal advice.</p>}
+              legal={<p>This page is a specimen, not legal advice.</p>}
             />
           </div>
         </Section>
