@@ -296,7 +296,7 @@ export function AuthorityDialog({
               </div>
             ) : null}
             <div className="authority-dialog__links">
-              <LinkButton variant="primary" target="_blank" rel="noopener" href={authority.pdf}>
+              <LinkButton variant="primary" target="_blank" rel="noopener noreferrer" href={authority.pdf}>
                 Open full PDF
               </LinkButton>
               {authority.docx ? <LinkButton href={authority.docx}>Westlaw DOCX</LinkButton> : null}

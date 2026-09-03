@@ -15,27 +15,43 @@ import { Icon } from './Icon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'danger'
 
-function buttonClasses(variant: ButtonVariant | undefined, extra?: string) {
-  return ['nav-btn', variant ? `nav-btn--${variant}` : null, extra].filter(Boolean).join(' ')
-}
+/** `md` is the button the dense pages were drawn around; `lg` is the 44px target for a page where the button is the point. */
+export type ButtonSize = 'md' | 'lg'
 
-export interface NavButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonShape {
   variant?: ButtonVariant
+  size?: ButtonSize
+  /** Full width — the sign-in card's one button, a stepper action on a phone. */
+  block?: boolean
 }
 
-export function NavButton({ variant, className, type = 'button', ...rest }: NavButtonProps) {
+function buttonClasses({ variant, size, block }: ButtonShape, extra?: string) {
+  return [
+    'nav-btn',
+    variant ? `nav-btn--${variant}` : null,
+    size === 'lg' ? 'nav-btn--lg' : null,
+    block ? 'nav-btn--block' : null,
+    extra,
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
+export interface NavButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, ButtonShape {}
+
+export function NavButton({ variant, size, block, className, type = 'button', ...rest }: NavButtonProps) {
   // Default to `type="button"`. An untyped <button> inside a <form> submits it,
   // which turns every incidental control into an accidental save.
-  return <button type={type} className={buttonClasses(variant, className)} {...rest} />
+  return (
+    <button type={type} className={buttonClasses({ variant, size, block }, className)} {...rest} />
+  )
 }
 
-export interface NavLinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  variant?: ButtonVariant
-}
+export interface NavLinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement>, ButtonShape {}
 
 /** An anchor that looks like a button. Still a link: it navigates. */
-export function NavLinkButton({ variant, className, ...rest }: NavLinkButtonProps) {
-  return <a className={buttonClasses(variant, className)} {...rest} />
+export function NavLinkButton({ variant, size, block, className, ...rest }: NavLinkButtonProps) {
+  return <a className={buttonClasses({ variant, size, block }, className)} {...rest} />
 }
 
 /* ------------------------------------------------------------------ Badge -- */

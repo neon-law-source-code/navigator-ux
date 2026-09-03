@@ -1,6 +1,6 @@
 # Gateway integration
 
-Copyright (C) 2026 Shook Law PLLC. SPDX-License-Identifier: BUSL-1.1
+Copyright 2026 Shook Law PLLC. SPDX-License-Identifier: Apache-2.0
 
 `SessionProvider` does no authentication of its own — it reads an already-verified session from an
 endpoint and renders. This document records the server-side contract behind that endpoint as Neon Law

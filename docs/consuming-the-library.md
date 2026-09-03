@@ -5,37 +5,12 @@ the [README](../README.md) is enough — this is the integration detail behind i
 
 ## The license comes with the dependency
 
-The library is **BUSL-1.1**, and that is the first thing a consuming application has to agree with
-rather than a footnote to the rest of this document. Evaluating it, developing against it, and
-running the gallery or the tests is non-production use — and stays non-production wherever you run
-it, because the test is whether anybody relies on the thing rather than where it is deployed. A
-cloud preview build is no more production use than a local one. Shipping these components in an
-application that somebody relies on — a client portal, a matter surface, a filing pipeline — is
-production use, and so is marketing to customers a product or service that relies on them.
-Production use **defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship if you comply
-with Affero, including § 13. Production use that does not take Affero requires a commercial licence
-from Shook Law PLLC. Four years after a given version is published, that version converts to
-AGPL-3.0-only for everyone.
-
-**The free zone is pinned in [`LICENSE`](../LICENSE) rather than in prose.** Its Additional Use
-Grant opens with a paragraph shared word-for-word with `navigator` and the Homebrew tap — you may
-run these components anywhere to evaluate, develop against, test, or demonstrate them, for so long
-as nothing relies on the result — so a legal review that has cleared one of the three has cleared
-all three.
-
-How you install it changes nothing here. A tarball URL, a registry range, and a git checkout are three
-delivery mechanisms for the same code, and none of them is a license boundary — the components end up
-compiled into your bundle either way. Nor does pinning help: a pinned URL fixes *which* version you
-ship, not which grant covers it.
-
-So decide this before you add the dependency, not after the first release. If the application can take
-Affero, that is the default and you do not need to ask. If it cannot, the copyright holder is the
-only party who can grant a commercial licence — write to contact@neonlaw.org rather than reading a
-public download as permission. Already-published copies under AGPL-3.0-only remain available under
-that license to anyone who has them; relicensing is forward-only. See [LICENSE](../LICENSE) for the
-instrument, [NOTICE](../NOTICE) for the Firm's account of the grant, and the README's
-[License](../README.md#license) section for the copyright notice, the third-party scoping, and the
-trademark position.
+The library is **Apache-2.0**. Ship it in anything — a client portal, a matter surface, a filing
+pipeline — with the notices intact: Apache §4 asks the license text, the `NOTICE` contents, and the
+attribution to travel, and `files` in `package.json` puts all three in the tarball. The bundled
+typeface stays under the SIL OFL, and the runtime dependencies are externalized so your installer
+places each with its own license; the README's [License](../README.md#license) section has the
+scoping. Copies published under earlier terms stay under those terms.
 
 ## The dependency is always a released tarball
 

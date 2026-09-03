@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from 'react'
+import { ExternalLink } from './Navigation'
 
 /*
  * Page chrome: the public header and footer, the public shell, the
@@ -15,6 +16,24 @@ export interface ChromeLink {
   href: string
   /** The reader's current page. */
   current?: boolean
+  /** Leaves the site: a new tab, `rel="noopener noreferrer"`, and the outward glyph. */
+  external?: boolean
+}
+
+function ChromeAnchor({ link, className }: { link: ChromeLink; className?: string }) {
+  const current = link.current ? 'page' : undefined
+  if (link.external) {
+    return (
+      <ExternalLink href={link.href} className={className} aria-current={current}>
+        {link.label}
+      </ExternalLink>
+    )
+  }
+  return (
+    <a className={className} href={link.href} aria-current={current}>
+      {link.label}
+    </a>
+  )
 }
 
 /**
@@ -92,15 +111,12 @@ export function SiteHeader({
           <ul className="site-header__links">
             {links.map((link, index) => (
               <li key={linkKey(link, index)}>
-                <a
+                <ChromeAnchor
+                  link={link}
                   className={
                     link.current ? 'site-header__link site-header__link--active' : 'site-header__link'
                   }
-                  href={link.href}
-                  aria-current={link.current ? 'page' : undefined}
-                >
-                  {link.label}
-                </a>
+                />
               </li>
             ))}
           </ul>
@@ -110,15 +126,12 @@ export function SiteHeader({
           <ul className="site-header__utility">
             {utility.map((link, index) => (
               <li key={linkKey(link, index)}>
-                <a
+                <ChromeAnchor
+                  link={link}
                   className={
                     link.current ? 'site-header__link site-header__link--active' : 'site-header__link'
                   }
-                  href={link.href}
-                  aria-current={link.current ? 'page' : undefined}
-                >
-                  {link.label}
-                </a>
+                />
               </li>
             ))}
           </ul>
@@ -172,14 +185,7 @@ export function SiteFooter({
         {links.length > 0 ? (
           <nav className="site-footer__nav" aria-label="Footer">
             {links.map((link, index) => (
-              <a
-                key={linkKey(link, index)}
-                className="site-footer__nav-link"
-                href={link.href}
-                aria-current={link.current ? 'page' : undefined}
-              >
-                {link.label}
-              </a>
+              <ChromeAnchor key={linkKey(link, index)} link={link} className="site-footer__nav-link" />
             ))}
           </nav>
         ) : null}
@@ -336,9 +342,7 @@ export function NavigatorFooter({ legal, links = NO_LINKS, release }: NavigatorF
       {links.length > 0 ? (
         <nav className="navigator-footer__links" aria-label="Footer">
           {links.map((link, index) => (
-            <a key={linkKey(link, index)} href={link.href}>
-              {link.label}
-            </a>
+            <ChromeAnchor key={linkKey(link, index)} link={link} />
           ))}
         </nav>
       ) : null}

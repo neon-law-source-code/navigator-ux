@@ -7,8 +7,7 @@ no CVA, no icon package — every component that can be is built on the platform
 carries its semantics, and every color resolves through a CSS custom property you can override in one
 file.
 
-Source-available under the [Business Source License 1.1](./LICENSE). Production
-use defaults to Affero; read [License](#license) before you build a product on it.
+Licensed under the [Apache License 2.0](./LICENSE).
 
 ## Install
 
@@ -42,7 +41,7 @@ this records and how to move between versions.
 The component gallery and the thirty-two-page legal-work specimen are built as a static GitHub Pages
 site on every push to `main`. The same header and navigation run on every view, including the
 side-by-side [verify-the-record](https://neon-law-source-code.github.io/navigator-ux/?showcase=page&id=verify-the-record)
-page and the [BUSL license summary](https://neon-law-source-code.github.io/navigator-ux/?showcase=license).
+page.
 
 The sample site includes twelve Client Council voices, twelve Legal Council voices, and addressable
 pages covering discovery, enforcement, company formation, immigration forms, and planning. It is
@@ -179,6 +178,7 @@ The shadcn-derived set:
 | Controls | `Switch`, `ToggleGroup`, `Combobox` |
 | Overlays | `Dialog`, `Sheet`, `Popover`, `DropdownMenu`, `Tooltip` |
 | Notifications | `Toaster`, `useToasts` |
+| Focus | `Stage`, `Hero`, `ChoiceGroup`, `Stepper`, `StepList` |
 
 Each is shadcn/ui's component — its semantics, its ARIA, its keyboard contract — rebuilt on the
 platform primitive that already carries them and styled in the same `--nav-*` vocabulary. That is not
@@ -207,6 +207,31 @@ The matter surfaces, on the same tokens:
 | Review | `Decision`, `DecisionGrid`, `DraftCard`, `AuthorityList`, `AuthorityDialog`, `HarvardOutlineViewer` |
 | Record | `SourceThread`, `CiteTheRecord`, `RecordCite`, `ClaimTable`, `FactGrid`, `DownloadGrid`, `ActionList`, `Record`, `StatusStrip` |
 | Platform | `ThemeProvider`/`useTheme`, `SessionProvider`/`useSession` |
+
+### The page that shows one thing
+
+Everything above sits in a 72rem column beside other things. `Stage`, `Hero`, `ChoiceGroup`,
+`Stepper`, and `StepList` are for a page with one thing on it — a sign-in, one intake question, a
+decision — after shadcn's login and onboarding blocks: a card no wider than it needs, centered in the
+viewport, with more space around it than inside it.
+
+```tsx
+<Stage width="md" header={<b>Northwind Legal</b>} footer={<p>Nothing here is legal advice.</p>}>
+  <Stepper
+    label="Intake progress"
+    finishType="submit"
+    steps={[
+      { id: 'need', title: 'What do you need?', children: <ChoiceGroup legend="What do you need?" legendHidden name="need" choices={NEEDS} /> },
+      { id: 'you', title: 'How do we reach you?', children: <TextField label="Email" name="email" /> },
+    ]}
+  />
+</Stage>
+```
+
+They read a spacing scale, `--nav-space-1` through `--nav-space-24` on a 0.25rem step, and three
+measures a brand layer can move: `--nav-measure-sm` (24rem), `-md` (36rem), `-lg` (48rem). A stage
+claims `100svh`; set `--nav-stage-min-height` to fit one under a fixed header. `NavButton` and
+`NavLinkButton` take `size="lg"` and `block` for the same pages.
 
 ## The three contracts
 
@@ -358,81 +383,30 @@ Issues and pull requests are welcome. Two things worth knowing before you open o
 
 - **Run `pnpm check`.** It is exactly what CI runs, and the gates are cheap to trip — a named color
   in a component or a `font-weight: 600` will fail the build.
-- **Contributions assign to Shook Law PLLC** and reach the tree under BUSL-1.1, matching the rest of
-  the work. See [NOTICE](./NOTICE).
+- **Contributions are Apache-2.0**, like the rest of the work. §5 of the license covers it, so there is
+  no separate agreement to sign.
 
 The conventions that are not obvious from the code — and the reasons behind them — are in
 [CLAUDE.md](./CLAUDE.md). It is written for coding agents and is just as useful to people.
 
 ## License
 
-Copyright (C) 2026 Shook Law PLLC.
+Copyright 2026 Shook Law PLLC. Licensed under the [Apache License, Version 2.0](./LICENSE) —
+`SPDX-License-Identifier: Apache-2.0`.
 
-```
-SPDX-License-Identifier: BUSL-1.1
-```
+These are components, not the core of Navigator, so they carry a permissive license: use them in
+anything, a product included, with the license text and [`NOTICE`](./NOTICE) travelling along.
+`LICENSE` is the Apache text and nothing else, so license scanners name it; the copyright line is in
+`NOTICE`. Versions published before this change shipped as dual MIT-or-Apache-2.0, then
+AGPL-3.0-only, then BUSL-1.1, and each stays under the terms it shipped with.
 
-Navigator UX is source-available under the **Business Source License 1.1**. You may read, copy,
-modify, create derivative works from, and redistribute it, and you may make any non-production use of
-it. **What you may run without a commercial licence is pinned in `LICENSE` itself**, in the
-Additional Use Grant: these components, anywhere including the cloud, to evaluate, develop against,
-test, or demonstrate them, for so long as nothing relies on the result. The test is reliance rather
-than where the software runs, so a cloud preview build is no more production use than a local one.
-Shipping them in something somebody relies on, and marketing to customers a product or service that
-relies on them, is the Firm's reading of production use — set out in [`NOTICE`](./NOTICE), which
-binds nobody, because BUSL's second covenant permits only a grant that adds permission in that slot.
-Production use then
-**defaults to AGPL-3.0-only**: the Additional Use Grant lets you ship these components if you comply
-with Affero, including the network-use obligations. Production use that does not take Affero requires
-a commercial license from Shook Law PLLC. Four years after a given version is published, that version
-converts to **AGPL-3.0-only** for everyone, and the BUSL restriction ends for it permanently.
-
-That opening definition is shared word-for-word with [`navigator`](https://github.com/neon-law-source-code/navigator)
-and the [Homebrew tap](https://github.com/neon-law-source-code/homebrew-navigator), so a legal review
-that has cleared one of the three has cleared all three.
-
-[`LICENSE`](./LICENSE) is the instrument: BUSL-1.1 with its parameters filled in (`Licensor: Shook Law
-PLLC`, `Licensed Work: Navigator UX`, an Additional Use Grant that pins the free use by reliance and
-then grants production use under AGPL-3.0-only, `Change License: AGPL-3.0-only`) and nothing else in the file,
-so licence scanners name the
-instrument. MariaDB's copyright line in that file is copyright in the BUSL form, not in this package
-— the Licensor and the copyright in Navigator UX are Shook Law PLLC. The copyright holder's account
-of how that grant applies — including what production use means for a component library — is in
-[`NOTICE`](./NOTICE).
-
-**What that means for an application that imports this library.** Importing a component puts the
-library in your bundle. Evaluating it and developing against it is non-production use, wherever you
-run it. Shipping it in an application that somebody relies on is production use: take Affero, or
-obtain a commercial license. How you installed the package changes nothing about this: a dependency boundary
-is not a license boundary. Already-published copies under AGPL-3.0-only remain available under that
-license to anyone who has them; relicensing is forward-only.
-
-If you need production use without Affero, write to contact@neonlaw.org. The copyright holder is the
-only party who can grant a commercial license. Affero remains available without asking.
+The recommended typeface is not part of this license. GORP Serif is a commercial face from
+[TrashType](https://trashtype.com/); you need your own license for it, and it is not in this
+repository or the package. What ships is Source Serif 4 — see [Typography](#typography).
 
 ### Third-party material
 
-The grant above covers the work Shook Law PLLC owns. It does not reach the third-party material
-shipped alongside it, which carries its own copyright and its own terms — the bundled typeface under
-the SIL Open Font License 1.1, and two MIT-licensed sources. Those are listed, with the notices their
-licenses require, in [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md), which is published with this
-file and with the package. Where those terms and BUSL differ, the third-party terms govern that
-material.
-
-**The runtime dependencies are a separate matter, and lighter.** `d3-array`, `d3-scale`, `d3-shape`
-and `d3-force` are ISC; `pdfjs-dist` is Apache-2.0. None of them is bundled — the build externalizes
-every one, so what you install from this package contains import statements rather than copies, and
-your own installer places each dependency with its own license file. They are listed in the notices
-file for completeness rather than obligation. Both licenses sit comfortably inside BUSL and inside
-the eventual AGPL-3.0-only conversion; Apache-2.0 does so with AGPLv3 in one direction only, which the
-notices file explains.
-
-The font is worth stating separately: the OFL requires the font software to stay under the OFL and
-forbids relicensing it, so **the two woff2 files are not BUSL** and BUSL does not purport to cover
-them. Nothing here licenses anything the Firm does not own.
-
-### Trademarks
-
-The license covers the code. It does not grant rights in the Neon Law name, logos, or other
-trademarks. Fork the library freely; do not imply the Firm endorses your fork.
-
+The bundled typeface stays under the SIL Open Font License 1.1, two sources are MIT, the world
+outline is Natural Earth, and the runtime dependencies are externalized rather than bundled. Each is
+listed with its notice in [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md), which also records what
+the project's license does not reach.

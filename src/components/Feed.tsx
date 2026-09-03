@@ -79,7 +79,7 @@ function FeedCard({ post }: { post: FeedPost }) {
               className="feed-source-link"
               href={source.href}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               {source.label} ↗
             </a>

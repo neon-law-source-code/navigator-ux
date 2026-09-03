@@ -51,6 +51,17 @@ const CITATIONS: RecordCitation[] = [
 ]
 
 describe('locateQuote', () => {
+  it('matches across a line break in the record, and only whitespace is forgiven', () => {
+    const excerpt = 'Q. And the notice?\nA. We gave them thirty\n   days to cure, in writing.'
+    const wrapped = locateQuote(excerpt, 'thirty days to cure')
+    expect(wrapped.found).toBe(true)
+    expect(wrapped.match).toBe('thirty\n   days to cure')
+    expect(wrapped.before + wrapped.match + wrapped.after).toBe(excerpt)
+    expect(locateQuote(excerpt, 'thirty days to cure.').found).toBe(false)
+    expect(locateQuote('a (b) c', '(b) c').found).toBe(true)
+    expect(locateQuote('body', '   ').found).toBe(false)
+  })
+
   it('splits an excerpt around a contiguous quote', () => {
     expect(locateQuote('alpha thirty days to cure omega', 'thirty days to cure')).toEqual({
       before: 'alpha ',
