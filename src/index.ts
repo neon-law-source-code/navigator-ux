@@ -2,17 +2,12 @@
  * @neon-law-source-code/navigator-ux — a React component library for legal
  * work, on the Neon Law teal.
  *
- * Copyright (C) 2026 Shook Law PLLC.
- * SPDX-License-Identifier: BUSL-1.1
+ * Copyright 2026 Shook Law PLLC
+ * SPDX-License-Identifier: Apache-2.0
  *
- * Source-available under the Business Source License 1.1. The Additional Use
- * Grant lets you run these components anywhere to evaluate, develop against,
- * test, or demonstrate them, for so long as nothing relies on the result, and
- * then grants production use under AGPL-3.0-only by default. Production use
- * that does not take Affero requires a commercial licence from Shook Law PLLC.
- * Four years after a version is published, that version converts to
- * AGPL-3.0-only for everyone. See LICENSE and NOTICE. Third-party material
- * shipped alongside it keeps its own terms — see THIRD-PARTY-NOTICES.md.
+ * Licensed under the Apache License, Version 2.0. See LICENSE and NOTICE.
+ * Third-party material shipped alongside it keeps its own terms — see
+ * THIRD-PARTY-NOTICES.md.
  */
 
 // The base stylesheet: fonts, the token contract, and every component rule.
@@ -60,6 +55,7 @@ export {
   NavLinkButton,
   type BreadcrumbItem,
   type BreadcrumbProps,
+  type ButtonSize,
   type ButtonVariant,
   type ExternalLinkProps,
   type NavButtonProps,
@@ -218,6 +214,21 @@ export {
   type ItemProps,
   type ScrollAreaProps,
 } from './components/Layouts'
+export {
+  ChoiceGroup,
+  Hero,
+  Stage,
+  StepList,
+  Stepper,
+  type Choice,
+  type ChoiceGroupProps,
+  type HeroProps,
+  type StageProps,
+  type StageWidth,
+  type Step,
+  type StepListProps,
+  type StepperProps,
+} from './components/Focus'
 export {
   Calendar,
   DatePicker,

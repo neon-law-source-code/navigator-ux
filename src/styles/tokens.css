@@ -232,6 +232,40 @@
      that competes with the data is worse than no gridline. */
   --nav-chart-grid: #dceaed;
 
+  /* ----------------------------------------------------------- the space --
+   *
+   * A spacing scale on a 0.25rem step — shadcn's, which is Tailwind's — so a
+   * gap chosen in one component is a gap another component could have chosen.
+   * The rest of the stylesheet predates the scale and writes its rems out; the
+   * focus set (`Stage`, `Hero`, `ChoiceGroup`, `Stepper`) is the first to read
+   * it, and anything new should. Steps 5, 7, 9, 10 and so on are left out on
+   * purpose: a scale with every value is not a scale.
+   *
+   * None of these is a color, so `check:contrast` has nothing to measure here. */
+  --nav-space-1: 0.25rem;
+  --nav-space-2: 0.5rem;
+  --nav-space-3: 0.75rem;
+  --nav-space-4: 1rem;
+  --nav-space-6: 1.5rem;
+  --nav-space-8: 2rem;
+  --nav-space-12: 3rem;
+  --nav-space-16: 4rem;
+  --nav-space-24: 6rem;
+
+  /* Widths for a page that shows one thing. The names say what fits: a card —
+     a sign-in, one question — a form, a reading column. `Stage` reads them, and
+     a brand layer that wants a wider column moves them here rather than in a
+     component. */
+  --nav-measure-sm: 24rem;
+  --nav-measure-md: 36rem;
+  --nav-measure-lg: 48rem;
+
+  /* The height a filling `Stage` claims. `svh` rather than `vh`: on a phone,
+     `100vh` includes the strip under the browser's own toolbar, so a centered
+     card sits low and a footer hides behind the bar. An app that puts a stage
+     under a fixed header subtracts the header here, in its brand layer. */
+  --nav-stage-min-height: 100svh;
+
   --nav-radius: 0.5rem;
   --nav-radius-sm: 0.375rem;
   --nav-radius-lg: 1rem;

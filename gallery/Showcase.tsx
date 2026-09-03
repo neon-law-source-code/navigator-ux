@@ -122,7 +122,7 @@ const SAMPLE_PAGES: SamplePage[] = [
   { id: 'initial-disclosures', title: 'Initial disclosures tracker', summary: 'See what is known, missing, and ready for lawyer review.', stage: 'Discovery', audience: 'Shared', kind: 'queue', persona: 'Aquarius · knowledge counsel', topics: ['disclosures', 'status'] },
   { id: 'interrogatories', title: 'Interrogatory response workspace', summary: 'Organize answers, objections, and follow-up questions in one place.', stage: 'Discovery', audience: 'Lawyer', kind: 'review', persona: 'Gemini · appellate attorney', topics: ['discovery', 'answers'] },
   { id: 'motion-outline', title: 'Motion outline review', summary: 'Walk a Harvard-outlined brief while citing each direct quote back to the record.', stage: 'Pretrial', audience: 'Lawyer', kind: 'outline', persona: 'Gemini · appellate attorney', topics: ['outline', 'record'] },
-  { id: 'verify-the-record', title: 'Verify the record', summary: 'Read the brief and the record side by side, then confirm each quoted span in the excerpt it came from.', stage: 'Pretrial', audience: 'Lawyer', kind: 'verify', persona: 'Gemini · appellate attorney', topics: ['record', 'cite'] },
+  { id: 'verify-the-record', title: 'Verify the record', summary: 'Every source in the matter becomes one notation; read the brief beside the record and confirm each quoted span literally, in the excerpt it came from.', stage: 'Pretrial', audience: 'Lawyer', kind: 'verify', persona: 'Gemini · appellate attorney', topics: ['record', 'cite'] },
   { id: 'requests-production', title: 'Requests for production', summary: 'A client-friendly collection page for documents and custodians.', stage: 'Discovery', audience: 'Client', kind: 'form', persona: 'Pisces · overwhelmed client', topics: ['uploads', 'discovery'] },
   { id: 'meet-confer', title: 'Meet-and-confer log', summary: 'Record the issue, the proposal, and the next date without losing the thread.', stage: 'Discovery', audience: 'Lawyer', kind: 'timeline', persona: 'Libra · mediator', topics: ['correspondence', 'deadlines'] },
   { id: 'subpoena-packet', title: 'Subpoena packet review', summary: 'A staged review of authority, scope, service, and return materials.', stage: 'Discovery', audience: 'Lawyer', kind: 'workflow', persona: 'Capricorn · senior counsel', topics: ['subpoena', 'review'] },
@@ -156,7 +156,7 @@ function Home() {
       <CaseHead
         kicker="Navigator UX · GitHub Pages specimen"
         title="Thirty-two pages for the legal work between question and answer."
-        docket="static build · 32 sample journeys · 36 council voices · BUSL-1.1"
+        docket="static build · 32 sample journeys · 36 council voices · Apache-2.0"
         summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both. The header on this page is the same header on every other page."
       >
         <div className="showcase__hero-actions">
@@ -167,7 +167,7 @@ function Home() {
       </CaseHead>
 
       <Callout tone="info">
-        This is a public specimen. The names, matters, deadlines, and documents are invented. The library is licensed BUSL-1.1. The build is published by GitHub Actions from every push to <code>main</code>.
+        This is a public specimen. The names, matters, deadlines, and documents are invented. The library is licensed Apache-2.0. The build is published by GitHub Actions from every push to <code>main</code>.
       </Callout>
 
       <Panel title="The page catalog" note="Each card opens an addressable static page; the URL is safe to bookmark or share.">
@@ -222,9 +222,9 @@ function CouncilSection({ title, note, personas }: { title: Council; note: strin
       <div className="showcase__persona-grid">
         {personas.map((persona) => (
           <article className="showcase__persona" key={`${persona.council}-${persona.sign}`}>
-            <Avatar name={persona.sign} initials={persona.sign.slice(0, 2)} size="md" />
+            <Avatar name={persona.sign} initials={persona.sign.slice(0, 1)} size="md" />
             <div>
-              <h3>{persona.sign}</h3>
+              <h3>{persona.sign.slice(2)}</h3>
               <p className="showcase__persona-role">{persona.role}</p>
               <p>{persona.lens}</p>
             </div>
@@ -409,60 +409,34 @@ function PageVerify() {
   return (
     <>
       <Callout tone="info">
-        Counsel reads the brief on the left and the record on the right. Selecting a
-        pin cite marks the quoted words in the excerpt they came from. A paraphrase
-        does not light up.
+        Everything in a matter is translated into one notation before anyone cites it — pleadings,
+        opposing counsel&rsquo;s emails, PDFs from the court, deposition transcripts. Each becomes a
+        Markdown body under a YAML front matter that names the source, the date, and the pin cites.
+        Counsel reads the brief on the left and the record on the right; selecting a pin cite marks
+        the quoted words in the excerpt they came from.
       </Callout>
       <div className="showcase__verify">
         <Panel title="The brief" note="Harvard outline · invented motion in Vance v. Northwind.">
           <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Motion outline beside the record" />
         </Panel>
-        <Panel title="The record" note="Every quoted span, located in the excerpt it came from.">
+        <Panel title="The record" note="Every quoted span, located in the notation excerpt it came from.">
           <CiteTheRecord citations={RECORD_CITATIONS} aria-label="Record beside the brief" />
         </Panel>
       </div>
+      <Panel title="The match is literal">
+        <p>
+          The quoted span becomes a regular expression whose only tolerance is whitespace: a line
+          break in the record and a space in the brief are the same character, so a quote that wraps
+          across lines still matches, and nothing else does. A paraphrase does not light up. A quote
+          one word off does not light up. A cite that matches was copied, not remembered — that
+          exactness is the whole function, and the notation is what makes it possible to run the
+          same check against a pleading, an email, and a transcript.
+        </p>
+      </Panel>
       <LegalDisclaimer>
         This is a verification surface, not a filing. Nothing here asserts that a
         citation is complete, and the caption is fictional.
       </LegalDisclaimer>
-    </>
-  )
-}
-
-function LicensePage() {
-  return (
-    <>
-      <CaseHead
-        kicker="License"
-        title="Business Source License 1.1"
-        docket="SPDX-License-Identifier: BUSL-1.1 · Licensor: Shook Law PLLC"
-        summary="Navigator UX is source-available. You may read, copy, modify, and make non-production use of it. Production use defaults to AGPL-3.0-only. A commercial licence from Shook Law PLLC is the path that does not take Affero."
-      />
-      <Callout tone="info">
-        The instrument is the <code>LICENSE</code> file in the repository: MariaDB&rsquo;s BUSL 1.1
-        text with its parameters filled in and nothing else added. Commentary lives in
-        <code> NOTICE</code>. This page is a summary, not a substitute.
-      </Callout>
-      <DecisionGrid>
-        <Decision title="Non-production" kicker="Granted" tone="ready">
-          Read, copy, modify, redistribute, and any use that is not production.
-        </Decision>
-        <Decision title="Production" kicker="Additional Use Grant" tone="wait">
-          Production use is granted if you comply with AGPL-3.0-only. Production use that
-          does not take Affero needs a commercial licence from Shook Law PLLC.
-        </Decision>
-        <Decision title="Change date" kicker="Four years" tone="default">
-          Four years after a version is published, that version converts to AGPL-3.0-only for
-          everyone, and the BUSL restriction ends for it.
-        </Decision>
-      </DecisionGrid>
-      <Panel title="What BUSL does not cover">
-        <p>
-          The two shipped woff2 files are SIL Open Font License 1.1, not BUSL. The Neon Law
-          name and logos stay with Shook Law PLLC. Third-party notices travel in{' '}
-          <code>THIRD-PARTY-NOTICES.md</code>.
-        </p>
-      </Panel>
     </>
   )
 }
@@ -508,7 +482,6 @@ export function Showcase() {
   const params = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
   const view = params.get('showcase')
   const page = SAMPLE_PAGES.find((candidate) => candidate.id === params.get('id'))
-  if (view === 'license') return <GalleryFrame><LicensePage /></GalleryFrame>
   if (view === 'page' && page) return <GalleryFrame><SamplePageView page={page} /></GalleryFrame>
   if (view === 'councils') return <GalleryFrame><Councils /></GalleryFrame>
   return <GalleryFrame><Home /></GalleryFrame>

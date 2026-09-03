@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { ShadcnSet } from './ShadcnSet'
 import { ShadcnWaveTwo } from './ShadcnWaveTwo'
+import { FocusSet } from './FocusSet'
 import { Showcase } from './Showcase'
 
 // The library itself, from source. Editing a component re-renders this page.
@@ -50,6 +51,9 @@ import {
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 import { GalleryFrame } from './site-frame'
+import { ComponentPages, SectionGroup } from './component-nav'
+import { useSection } from './sections'
+import { readComponentId } from './routes'
 
 /* ------------------------------------------------------------------ shell -- */
 
@@ -62,8 +66,10 @@ function Section({
   note?: ReactNode
   children: ReactNode
 }) {
+  const { id, shown } = useSection(title)
+  if (!shown) return null
   return (
-    <section className="gallery__section" id={title.toLowerCase().replace(/\W+/g, '-')}>
+    <section className="gallery__section" id={id}>
       <h2>{title}</h2>
       {note ? <p className="gallery__note">{note}</p> : null}
       {children}
@@ -177,9 +183,10 @@ export function Gallery() {
     <GalleryFrame>
         <PageHeader
           title="Design system"
-          summary="Every block below is the real component the pages use."
+          summary="Every block is the real component the pages use. One per page; the rest are a click away."
           actions={<NavLinkButton variant="primary" href="#book">Book a call</NavLinkButton>}
         />
+      <ComponentPages selected={readComponentId()}>
 
         <Section
           title="Brand tokens"
@@ -488,7 +495,7 @@ export function Gallery() {
                   note: 'Admission pending.',
                 },
               ]}
-              legal={<p>Navigator UX is source-available under BUSL-1.1; production use defaults to AGPL-3.0-only. This page is a specimen, not legal advice.</p>}
+              legal={<p>Navigator UX is licensed Apache-2.0. This page is a specimen, not legal advice.</p>}
             />
           </div>
         </Section>
@@ -527,9 +534,18 @@ export function Gallery() {
         </Section>
 
         {/* Everything past here is beyond the Dioxus surface — see the file. */}
-        <ShadcnSet Section={Section} />
+        <SectionGroup name="shadcn set">
+          <ShadcnSet Section={Section} />
+        </SectionGroup>
 
-        <ShadcnWaveTwo Section={Section} />
+        <SectionGroup name="Second wave">
+          <ShadcnWaveTwo Section={Section} />
+        </SectionGroup>
+
+        <SectionGroup name="One thing at a time">
+          <FocusSet Section={Section} />
+        </SectionGroup>
+      </ComponentPages>
       </GalleryFrame>
   )
 }

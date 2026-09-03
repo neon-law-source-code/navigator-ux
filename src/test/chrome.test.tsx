@@ -272,3 +272,24 @@ describe('PageHeader', () => {
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
   })
 })
+
+describe('ChromeLink external', () => {
+  it('opens in a new tab with the OWASP rel pair and the outward glyph, in every chrome', () => {
+    render(
+      <>
+        <SiteHeader brand="Northwind" utility={[{ label: 'Source', href: 'https://example.com/src', external: true }]} />
+        <SiteFooter links={[{ label: 'Docs', href: 'https://example.com/docs', external: true }, { label: 'Home', href: '/' }]} />
+        <NavigatorFooter links={[{ label: 'Status', href: 'https://example.com/status', external: true }]} />
+      </>,
+    )
+    for (const name of [/Source/, /Docs/, /Status/]) {
+      const link = screen.getByRole('link', { name })
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+      expect(link.querySelector('svg')).not.toBeNull()
+    }
+    const home = screen.getByRole('link', { name: 'Home' })
+    expect(home).not.toHaveAttribute('target')
+    expect(home).not.toHaveAttribute('rel')
+  })
+})

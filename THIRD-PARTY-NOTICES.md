@@ -1,7 +1,7 @@
 # Third-party notices
 
-Navigator UX is licensed BUSL-1.1 (see [LICENSE](./LICENSE) and [NOTICE](./NOTICE)). That grant covers
-the work Shook Law PLLC owns. It does not cover the third-party material listed here, which carries
+Navigator UX is licensed Apache-2.0 (see [LICENSE](./LICENSE) and [NOTICE](./NOTICE)). That license
+covers the work Shook Law PLLC owns. It does not cover the third-party material listed here, which carries
 its own terms and its own copyright holders.
 
 There are two kinds of third-party material here, and the difference decides what has to travel.
@@ -18,13 +18,11 @@ code is in this repository or in `dist`, so none of their notices travel with wh
 are recorded anyway, because the question a reader has is what the package pulls in, and answering
 "look at the lockfile" is not an answer.
 
-The two MIT sources present no tension with BUSL: MIT is permissive, so MIT-derived work can be
-distributed as part of a BUSL whole, and the notices below are what that costs. **The typeface is
-different.** The OFL requires the font software to be distributed entirely under the OFL and forbids
-releasing it under any other license, so the woff2 files under
-`src/assets/fonts/source-serif-4/` are **not** BUSL and the project's grant does not reach them. That
-is a scoping fact rather than a conflict — the OFL governs the font, BUSL governs the code, and
-neither has anything to say about the other. Do not "simplify" this by declaring the whole tree BUSL.
+The two MIT sources sit inside an Apache-2.0 whole without tension; the notices below are what
+that costs. **The typeface is different.** The OFL requires the font software to be distributed
+entirely under the OFL and forbids releasing it under any other license, so the woff2 files under
+`src/assets/fonts/source-serif-4/` are **not** Apache-2.0 and the project's license does not reach
+them. Do not "simplify" this by declaring the whole tree Apache-2.0.
 
 ---
 
@@ -215,8 +213,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 - Topology encoding: Copyright 2013-2019 Michael Bostock, ISC (same grant as the d3 modules).
 
 The file is vendored so `WorldMap` never fetches an outline. A remote atlas would fail
-`check:bundle` and would be a supply-chain dependency nobody reviewed. The project's BUSL grant
-does not purport to relicense the Natural Earth geometry.
+`check:bundle` and would be a supply-chain dependency nobody reviewed. The project's license does not purport to relicense the Natural Earth geometry.
 
 ```
 Copyright 2013-2019 Michael Bostock
@@ -258,16 +255,10 @@ The d3 modules pull in further d3 packages transitively — `internmap`, `d3-dis
 them is ISC as well. Mike Bostock's d3 family is uniformly ISC, which is why this table stays short
 and why adding another d3 module is not a licensing decision.
 
-**Both licenses are compatible with BUSL and with the eventual AGPL-3.0-only conversion, and one of
-them only just.** ISC is permissive and raises no question. Apache-2.0 is compatible with **GPLv3 and
-AGPLv3 in one direction only**: Apache-2.0 code may be included in an AGPLv3 work, and the FSF says so
-explicitly. It is *not* compatible with GPLv2, because of the patent-termination and indemnification
-clauses that GPLv2 has no room for.
-
-That asymmetry is the thing worth remembering. This project converts to AGPL-3.0-only, so
-`pdfjs-dist` is fine today and remains fine on the Change Date. If the Change License is ever moved
-to anything in the GPLv2 family, `PdfViewer` is the file that breaks first, and it will break as a
-legal problem rather than a build failure — nothing in CI will notice.
+ISC and Apache-2.0 both sit inside an Apache-2.0 whole without question, so nothing here constrains
+the project's license. It was not always so simple: under the copyleft licenses this project carried
+before, Apache-2.0 code could enter an AGPLv3 work but not a GPLv2 one, and nothing in CI would have
+noticed. If the license ever moves again, this table is the list to re-verify.
 
 ## Not covered here
 

@@ -4,7 +4,7 @@
  * warnings, and they already live in the library.
  */
 
-export type GalleryView = 'components' | 'home' | 'councils' | 'page' | 'license'
+export type GalleryView = 'components' | 'home' | 'councils' | 'page'
 
 export function pageHref(view: Exclude<GalleryView, 'components'>, id?: string) {
   if (view === 'page' && id) return `?showcase=page&id=${id}`
@@ -12,15 +12,22 @@ export function pageHref(view: Exclude<GalleryView, 'components'>, id?: string) 
 }
 
 export const COMPONENTS_HREF = './'
-export const LICENSE_HREF = pageHref('license')
-export const VERIFY_HREF = pageHref('page', 'verify-the-record')
+
+/** One component's own page. The first one is the components landing itself. */
+export function componentHref(id: string) {
+  return id === 'brand-tokens' ? COMPONENTS_HREF : `?component=${id}`
+}
+
+export function readComponentId(): string {
+  if (typeof window === 'undefined') return 'brand-tokens'
+  return new URLSearchParams(window.location.search).get('component') ?? 'brand-tokens'
+}
 
 export function readGalleryLocation(): { view: GalleryView; pageId: string | null } {
   if (typeof window === 'undefined') return { view: 'components', pageId: null }
   const params = new URLSearchParams(window.location.search)
   const showcase = params.get('showcase')
   const pageId = params.get('id')
-  if (showcase === 'license') return { view: 'license', pageId: null }
   if (showcase === 'councils') return { view: 'councils', pageId: null }
   if (showcase === 'page') return { view: 'page', pageId }
   if (showcase === 'home') return { view: 'home', pageId: null }
