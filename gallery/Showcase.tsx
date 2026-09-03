@@ -36,11 +36,21 @@ import {
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 import { PageCardArt, PageFigurePanel } from './page-figures'
+import { PitchToPleadingsJourney } from './pitch-to-pleadings'
 import { pageHref } from './routes'
 import { GalleryFrame } from './site-frame'
 
 type Council = 'Client Council' | 'Legal Council' | 'Engineering Council'
-type PageKind = 'form' | 'review' | 'timeline' | 'document' | 'queue' | 'workflow' | 'outline' | 'verify'
+type PageKind =
+  | 'form'
+  | 'review'
+  | 'timeline'
+  | 'document'
+  | 'queue'
+  | 'workflow'
+  | 'outline'
+  | 'verify'
+  | 'journey'
 
 interface Persona {
   sign: string
@@ -115,6 +125,16 @@ const PERSONAS: Persona[] = [
 ]
 
 const SAMPLE_PAGES: SamplePage[] = [
+  {
+    id: 'pitch-to-pleadings',
+    title: 'Pitch to pleadings',
+    summary: 'The same matter from first inquiry to a filed complaint, one Stepper, two densities.',
+    stage: 'Intake through pleadings',
+    audience: 'Shared',
+    kind: 'journey',
+    persona: 'Capricorn · senior counsel',
+    topics: ['pitch', 'pleadings', 'PDF'],
+  },
   { id: 'new-matter', title: 'New matter intake', summary: 'A calm first step for a person or organization asking for help.', stage: 'Discovery', audience: 'Client', kind: 'form', persona: 'Libra · threshold client', topics: ['intake', 'privacy'] },
   { id: 'conflict-check', title: 'Conflict check questionnaire', summary: 'Collect the people, entities, and relationships counsel must screen.', stage: 'Discovery', audience: 'Shared', kind: 'form', persona: 'Scorpio · ethics counsel', topics: ['conflicts', 'people'] },
   { id: 'case-strategy', title: 'Case strategy brief', summary: 'A lawyer-facing decision surface for posture, exposure, and next action.', stage: 'Discovery', audience: 'Lawyer', kind: 'review', persona: 'Aries · trial attorney', topics: ['strategy', 'review'] },
@@ -156,7 +176,7 @@ function Home() {
       <CaseHead
         kicker="Navigator UX · GitHub Pages specimen"
         title="Thirty-two pages for the legal work between question and answer."
-        docket="static build · 32 sample journeys · 36 council voices · Apache-2.0"
+        docket="static build · 33 sample journeys · 36 council voices"
         summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both. The header on this page is the same header on every other page."
       >
         <div className="showcase__hero-actions">
@@ -167,7 +187,7 @@ function Home() {
       </CaseHead>
 
       <Callout tone="info">
-        This is a public specimen. The names, matters, deadlines, and documents are invented. The library is licensed Apache-2.0. The build is published by GitHub Actions from every push to <code>main</code>.
+        This is a public specimen. The names, matters, deadlines, and documents are invented. The build is published by GitHub Actions from every push to <code>main</code>.
       </Callout>
 
       <Panel title="The page catalog" note="Each card opens an addressable static page; the URL is safe to bookmark or share.">
@@ -457,6 +477,8 @@ function SamplePageView({ page }: { page: SamplePage }) {
       <PageOutline />
     ) : page.kind === 'verify' ? (
       <PageVerify />
+    ) : page.kind === 'journey' ? (
+      <PitchToPleadingsJourney />
     ) : (
       <PageWorkflow page={page} />
     )
