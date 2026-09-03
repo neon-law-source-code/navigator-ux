@@ -95,6 +95,11 @@ function scene(title: string, note: string, name: SceneName): SceneFigure {
 }
 
 const PAGE_FIGURES: Record<string, PageFigure> = {
+  'pitch-to-pleadings': scene(
+    'One matter, two densities',
+    'The focus set carries the pitch; the same NavigatorShell chrome carries the filed complaint.',
+    'journey',
+  ),
   'new-matter': scene(
     'How a first request moves',
     'A person arrives with a question. The page holds the facts until a lawyer can act on them.',

@@ -11,15 +11,7 @@ import { COMPONENTS_HREF, pageHref, readGalleryLocation } from './routes'
  * losing the map.
  */
 
-const LEGAL = (
-  <>
-    <p>
-      Navigator UX is licensed Apache-2.0. The typeface stays under the SIL Open Font License 1.1.
-      This site is a specimen with invented data, not legal advice.
-    </p>
-    <p>© 2026 Shook Law PLLC.</p>
-  </>
-)
+const LEGAL = <p>© 2026 Shook Law PLLC.</p>
 
 export function GalleryFrame({ children }: { children: ReactNode }) {
   const { view, pageId } = readGalleryLocation()
