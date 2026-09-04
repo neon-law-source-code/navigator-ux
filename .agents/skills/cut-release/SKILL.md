@@ -21,8 +21,9 @@ The cadence is the same as Neon Law Navigator: **`YY.M.D`** (year, month, day in
   next hotfix is `26.8.23-hotfix.1`, not `26.8.22-hotfix.1`. See
   [`docs/releasing.md`](../../../docs/releasing.md#why-a-hotfix-prerelease-ranks-below-its-date).
 - Write the version into `package.json` (`version` is the bare `YY.M.D`, no `v`). Make the smallest version-only
-  commit, run `.agents/skills/cut-release/scripts/preflight.sh`, and create the PR against `main` — not a draft PR,
-  since merging is what publishes and a draft can't be merged.
+  commit, run `.agents/skills/cut-release/scripts/preflight.sh`, and `gh pr create --base main`. The PR must open
+  ready for review, never `--draft`: merging is what publishes, and a draft can't be merged. If one opened as a
+  draft, `gh pr ready` it immediately.
 - Stop when that PR merges. Report its URL. The merge itself is what publishes: CI tags `v${version}`
   (`v26.8.31` for `26.8.31`) and cuts the release automatically. Do not watch the release workflow unless asked.
 - Do not deploy, mutate production, or copy production coordinates into the branch, PR, or release notes.
