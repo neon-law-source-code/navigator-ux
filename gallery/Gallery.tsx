@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { ShadcnSet } from './ShadcnSet'
 import { ShadcnWaveTwo } from './ShadcnWaveTwo'
 import { FocusSet } from './FocusSet'
+import { ChatSet } from './ChatSet'
 import { Showcase } from './Showcase'
 
 // The library itself, from source. Editing a component re-renders this page.
@@ -544,6 +545,10 @@ export function Gallery() {
 
         <SectionGroup name="One thing at a time">
           <FocusSet Section={Section} />
+        </SectionGroup>
+
+        <SectionGroup name="Copilot">
+          <ChatSet Section={Section} />
         </SectionGroup>
       </ComponentPages>
       </GalleryFrame>
