@@ -39,6 +39,9 @@ const TOKEN_LAYER = new Set(['src/styles/tokens.css', 'gallery/brand-example-tok
 /** Tests assert on color strings; that is not shipping a color. */
 const isTest = (rel) => rel.startsWith('src/test/')
 
+/** Generated from the OpenAPI snapshot — not component source. */
+const isGenerated = (rel) => rel === 'src/api/schema.d.ts'
+
 const PATTERNS = [
   { name: 'hex color', re: /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g },
   { name: 'rgb()/rgba()', re: /\brgba?\s*\(/g },
@@ -105,7 +108,7 @@ for await (const file of walkAll(ROOTS)) {
   if (!['.ts', '.tsx', '.css'].includes(ext)) continue
 
   const rel = relative(pkg, file).split('\\').join('/')
-  if (TOKEN_LAYER.has(rel) || isTest(rel)) continue
+  if (TOKEN_LAYER.has(rel) || isTest(rel) || isGenerated(rel)) continue
 
   scanned += 1
   const raw = await readFile(file, 'utf8')

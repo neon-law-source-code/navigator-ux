@@ -15,13 +15,15 @@ licence, or a change date is stale.
 ## Layout
 
 **The repository is the package.** `src/` is at the root, `package.json` at the root *is*
-`@neon-law-source-code/navigator-ux`, and there is no workspace and no `packages/` directory.
+`@neon-law-source-code/navigator-ux`, and there is no `packages/` directory. `pnpm-workspace.yaml`
+exists only so Cypress may run its install script — pnpm 11 keeps that allowlist there — and does
+not declare a workspace.
 
 | Path | What |
 | --- | --- |
 | `src/` | The library. `src/index.ts` is the published entry and is re-exports only. |
 | `gallery/` | The specimen page. A dev server, never published. |
-| `scripts/` | The four gates and the font-emit step. Each resolves its root as `scripts/..`. |
+| `scripts/` | The check scripts (tokens, type, contrast, api, bundle) and the font-emit step. Each resolves its root as `scripts/..`. |
 | `docs/` | Prose that does not belong in the README. |
 
 This was a pnpm workspace with a single package under `packages/ux` until shortly before the first
@@ -43,16 +45,19 @@ Everything runs from the repository root, because there is nowhere else.
 
 ```bash
 pnpm install
-pnpm check              # lint + four gates + build + typecheck + bundle gate + coverage
+pnpm check              # lint + five gates + build + typecheck + bundle gate + coverage
 pnpm gallery            # every component on one page at :5174, from src
 pnpm dev                # build --watch, for a linked consumer
 pnpm lint               # oxlint
 pnpm check:tokens       # no literal color outside the token layer (source)
 pnpm check:type         # two font weights, and no literal corner radius (source)
 pnpm check:contrast     # every palette pairing clears its WCAG floor (source)
+pnpm check:api          # generated types match the pinned OpenAPI snapshot
+pnpm generate:api       # refresh src/api/schema.d.ts from spec/openapi.json
 pnpm check:bundle       # no off-origin reference in the built bundle (needs dist)
 pnpm test               # vitest, once
 pnpm test:coverage      # coverage report + threshold gate
+pnpm test:e2e           # Cypress against the fake OpenAPI backend (not in check)
 ```
 
 `check` is what CI runs. Build precedes typecheck. That order is not load-bearing
@@ -367,16 +372,19 @@ lawyer reading one needs to quote from it and cite a page, so a canvas-only view
 The text layer is what makes the document selectable, findable by the browser's own find, and
 copyable into a brief without retyping.
 
-**Four gates run in CI, and all of them are cheap to break.** `pnpm check:tokens` fails on any
+**Five gates run in CI, and all of them are cheap to break.** `pnpm check:tokens` fails on any
 literal color outside the token layer — including a *named* color, which is why `FeedAccent` is
 `'brand' | 'link' | 'danger' | …` and not `'blue' | 'red' | …`. `pnpm check:type` fails on a font
 weight that is not 400 or 700, and on a corner radius that is neither a `--nav-radius-*` token nor
 geometry (`999px`, `50%`, `0`). `pnpm check:contrast` recomputes every pairing in `tokens.css` and
-fails any that drops under its WCAG floor. `pnpm check:bundle` fails on any off-origin reference in
-`dist`; it runs after the build because that is where a remote URL would appear.
+fails any that drops under its WCAG floor. `pnpm check:api` fails if `src/api/schema.d.ts` is stale
+against `spec/openapi.json`, or if a path in that snapshot leaves `/app/api`. `pnpm check:bundle`
+fails on any off-origin reference in `dist`; it runs after the build because that is where a remote
+URL would appear.
 
-The first three are source-level and dependency-free, so they run in the `lint` job and report in
-seconds rather than behind a full build.
+The first four are source-level, so they run in the `lint` job and report in seconds rather than
+behind a full build. `check:api` needs `openapi-typescript` (a devDependency) to regenerate and
+diff; it does not fetch the live origin.
 
 `check:tokens` blanks numeric character references before it scans. `&#8249;` is a left angle quote
 and `&#8722;` a minus sign — both routine in a control that draws its own chevrons — and the hex

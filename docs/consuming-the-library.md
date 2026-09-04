@@ -153,6 +153,16 @@ app asks for it, which is the property worth paying for.
 The fast loop survives as the local `link:` override above: a deliberate, temporary act rather than
 the permanent state of the dependency graph.
 
+## Calling `/app/api`
+
+`apiFetch` is the typed caller for the Navigator JSON API. It only accepts path templates from the
+pinned OpenAPI snapshot, always uses `credentials: 'same-origin'`, and rejects an absolute URL at
+runtime. Point the portal's `/app/api` at the gateway (or a same-origin proxy); do not pass
+`https://www.neonlaw.com` into the client or into `dist`. Components still take props — fetch in
+the app, then render.
+
+Refresh types with `pnpm generate:api` after replacing `spec/openapi.json`.
+
 ## What never enters a consumer
 
 Binary files — PDFs, exhibits, workbooks. They belong behind an authorization check, not in git,

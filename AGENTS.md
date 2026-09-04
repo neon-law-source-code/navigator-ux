@@ -17,9 +17,10 @@ already on the VM.
   `pnpm gallery` (serves <http://localhost:5174>, `strictPort` so it fails rather than moving ports).
   It imports components from `src`, so edits show up without a build. Run it as a persistent
   background/tmux process (it is a long-running foreground server).
-- `pnpm check` runs the exact CI suite: `lint` + four source gates (`check:tokens`, `check:type`,
-  `check:contrast`) + `build` + `typecheck` + `check:bundle` + `test:coverage`. It takes well under a
-  minute here. Standard scripts are in `package.json`; the gates are explained in `README.md` and
+- `pnpm check` runs the exact verify suite: `lint` + five source gates (`check:tokens`, `check:type`,
+  `check:contrast`, `check:api`) + `build` + `typecheck` + `check:bundle` + `test:coverage`. It takes
+  well under a minute here. `pnpm test:e2e` is a separate CI job (Cypress + the fake OpenAPI
+  backend). Standard scripts are in `package.json`; the gates are explained in `README.md` and
   `CLAUDE.md`.
 - Coverage is a hard gate at 90% (statements/lines/functions/branches) — see `vite.config.ts`.
 - `check:bundle` reads the built `dist/`, so it only passes after `build` has run in the same

@@ -1,0 +1,5865 @@
+{
+  "components": {
+    "schemas": {
+      "AddClauseRequest": {
+        "example": {
+          "body": "The parties agree to binding arbitration in Clark County, Nevada."
+        },
+        "properties": {
+          "body": {
+            "description": "The clause markdown. Required and non-blank (trimmed).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "type": "object"
+      },
+      "AddClauseResponse": {
+        "properties": {
+          "clause_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "clause_id"
+        ],
+        "type": "object"
+      },
+      "AddParticipantRequest": {
+        "example": {
+          "person_id": "0199a1f0-0000-7000-8000-000000000003"
+        },
+        "properties": {
+          "person_id": {
+            "description": "An existing person to add to the matter. Their participation is derived from `persons.role` and is not an input.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "person_id"
+        ],
+        "type": "object"
+      },
+      "AddReviewCommentRequest": {
+        "example": {
+          "anchor_end": 148,
+          "anchor_start": 120,
+          "body": "Can we cap this at fees paid?",
+          "quoted_text": "the indemnification clause"
+        },
+        "properties": {
+          "anchor_end": {
+            "description": "ProseMirror end position; must be greater than anchor_start.",
+            "type": "integer"
+          },
+          "anchor_start": {
+            "description": "ProseMirror start position of the covered range.",
+            "type": "integer"
+          },
+          "body": {
+            "description": "The comment text. Required and non-blank (trimmed).",
+            "type": "string"
+          },
+          "quoted_text": {
+            "description": "The document text the range covered (trimmed).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "anchor_start",
+          "anchor_end",
+          "quoted_text",
+          "body"
+        ],
+        "type": "object"
+      },
+      "AddReviewCommentResponse": {
+        "properties": {
+          "comment_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "communication_id": {
+            "description": "The comment's row in the matter's unified conversation log.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "comment_id",
+          "communication_id"
+        ],
+        "type": "object"
+      },
+      "AnswerStepRequest": {
+        "example": {
+          "question_code": "client_full_name",
+          "value": "Ada Lovelace"
+        },
+        "properties": {
+          "question_code": {
+            "description": "The step being answered. Must match the code the questionnaire is currently asking (trimmed); an out-of-order code is rejected with 409.",
+            "type": "string"
+          },
+          "reference_id": {
+            "description": "For a record/reference question, the id of the picked row; `value` stays its display name. Omit for a free-typed answer.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "value": {
+            "description": "The answer value, verbatim (not trimmed \u2014 a value may carry meaningful whitespace).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question_code",
+          "value"
+        ],
+        "type": "object"
+      },
+      "ApiError": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "ContractReviewResponse": {
+        "properties": {
+          "review_id": {
+            "description": "The created contract review (deviation analysis attached; matter parked at lawyer_review).",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "review_id"
+        ],
+        "type": "object"
+      },
+      "CreateEntityRequest": {
+        "example": {
+          "entity_type_id": "0199a1f0-0000-7000-8000-000000000001",
+          "jurisdiction_id": "0199a1f0-0000-7000-8000-000000000002",
+          "name": "Example Holdings LLC"
+        },
+        "properties": {
+          "entity_type_id": {
+            "description": "An existing `/app/api/entity-types` row.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "jurisdiction_id": {
+            "description": "An existing `/app/api/jurisdictions` row.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "Trimmed on the way in; must not be blank.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "entity_type_id",
+          "jurisdiction_id"
+        ],
+        "type": "object"
+      },
+      "CreateNotationRequest": {
+        "example": {
+          "client_email": "client@example.com",
+          "template_code": "retainer"
+        },
+        "properties": {
+          "client_email": {
+            "description": "The client the notation is bound to. Resolved by email; a `client`-role Person is created on first sight and attached to the matter. Trimmed; must not be blank.",
+            "format": "email",
+            "type": "string"
+          },
+          "template_code": {
+            "description": "The template code to open. Read from the matter's git repo first, then the bundled firm catalog. Trimmed; must not be blank.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "template_code",
+          "client_email"
+        ],
+        "type": "object"
+      },
+      "CreateNotationResponse": {
+        "properties": {
+          "notation_id": {
+            "description": "The opened notation. Drive its questionnaire next.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "notation_id"
+        ],
+        "type": "object"
+      },
+      "CreatePersonRequest": {
+        "example": {
+          "email": "libra@example.com",
+          "family_name": "Example",
+          "given_name": "Libra",
+          "name": "Libra Example",
+          "role": "client"
+        },
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "family_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "given_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "middle_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "notion_user_id": {
+            "description": "Stable Notion workspace user ID. Stored as an external identity; never a token, credential, or permission.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PersonRole"
+              }
+            ],
+            "description": "Defaults to `client` when omitted or blank; non-empty invalid values are rejected."
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ],
+        "type": "object"
+      },
+      "DeletionRequestResponse": {
+        "properties": {
+          "already_pending": {
+            "description": "True when a pending request already existed (the ask was a no-op).",
+            "type": "boolean"
+          },
+          "request_id": {
+            "description": "The pending expunge request.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "already_pending"
+        ],
+        "type": "object"
+      },
+      "Entity": {
+        "properties": {
+          "entity_type_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inserted_at": {
+            "type": "string"
+          },
+          "jurisdiction_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "entity_type_id",
+          "jurisdiction_id",
+          "inserted_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "EntityType": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inserted_at": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "inserted_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "Jurisdiction": {
+        "properties": {
+          "code": {
+            "description": "Short code, e.g. `NV`, `CA`, `US`.",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inserted_at": {
+            "type": "string"
+          },
+          "jurisdiction_type": {
+            "description": "`state` (US state or DC) or `country` (federal sovereign).",
+            "enum": [
+              "state",
+              "country"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "code",
+          "jurisdiction_type",
+          "inserted_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "MoveClauseRequest": {
+        "example": {
+          "direction": "up"
+        },
+        "properties": {
+          "direction": {
+            "description": "`up` moves the clause earlier in render order; anything else moves it later.",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction"
+        ],
+        "type": "object"
+      },
+      "NotationLifecycleResponse": {
+        "properties": {
+          "notation_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "description": "The notation's workflow state after the transition (e.g. `generate_pdf__retainer_pdf`).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "notation_id",
+          "state"
+        ],
+        "type": "object"
+      },
+      "NotationQuestion": {
+        "properties": {
+          "answer_type": {
+            "description": "How to collect the value (e.g. text, choice, record).",
+            "type": "string"
+          },
+          "choices": {
+            "description": "The allowed answers for a choice question; empty otherwise.",
+            "items": {
+              "$ref": "#/components/schemas/QuestionChoice"
+            },
+            "type": "array"
+          },
+          "code": {
+            "description": "POST this back as `question_code` to answer this step.",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "prompt",
+          "answer_type",
+          "choices"
+        ],
+        "type": "object"
+      },
+      "NotationSignatureResponse": {
+        "properties": {
+          "notation_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "signature_request_id": {
+            "description": "The provider's request id; the inbound completion webhook correlates it back to this notation.",
+            "type": "string"
+          },
+          "state": {
+            "description": "The notation's workflow state after dispatch (e.g. `sent_for_signature__pending`).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "notation_id",
+          "state",
+          "signature_request_id"
+        ],
+        "type": "object"
+      },
+      "NotationStep": {
+        "description": "Where the questionnaire is after recording the answer \u2014 discriminated by `status`.",
+        "oneOf": [
+          {
+            "properties": {
+              "question": {
+                "$ref": "#/components/schemas/NotationQuestion"
+              },
+              "status": {
+                "enum": [
+                  "needs_answer"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "question"
+            ],
+            "type": "object"
+          },
+          {
+            "properties": {
+              "status": {
+                "description": "The questionnaire reached END; nothing more to answer.",
+                "enum": [
+                  "complete"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "OpenMatterRequest": {
+        "example": {
+          "attestation": true,
+          "client_id": "0199a1f0-0000-7000-8000-000000000001",
+          "code": "acme-llc-formation",
+          "description": "Delaware LLC formation.",
+          "entity_id": "0199a1f0-0000-7000-8000-000000000002",
+          "name": "Acme LLC \u2014 Formation"
+        },
+        "properties": {
+          "attestation": {
+            "description": "The opening attorney's conflict attestation. Must be true; a missing attestation is refused. The attester is the authenticated session's person \u2014 never taken from this body.",
+            "type": "boolean"
+          },
+          "client_id": {
+            "description": "The client of record \u2014 a pre-existing `client`-role person, never a firm attorney.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "code": {
+            "description": "The matter's code, stored exactly as given \u2014 lowercase letters, digits, and single hyphens, starting and ending with a letter or digit, at most 80 characters. Required. A code is chosen once at matter-open and never changes; a code already in use by another matter is refused with 409.",
+            "type": "string"
+          },
+          "description": {
+            "description": "The matter's scope narrative.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entity_id": {
+            "description": "The pre-existing entity the matter opens against.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "The matter's display name.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "code",
+          "client_id",
+          "entity_id",
+          "attestation"
+        ],
+        "type": "object"
+      },
+      "Participation": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inserted_at": {
+            "type": "string"
+          },
+          "participation": {
+            "type": "string"
+          },
+          "person_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "project_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "person_id",
+          "project_id",
+          "participation",
+          "inserted_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "Person": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "family_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "given_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inserted_at": {
+            "type": "string"
+          },
+          "middle_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "oidc_subject": {
+            "description": "OIDC `sub` claim once the row is linked.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "profile_image_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "$ref": "#/components/schemas/PersonRole"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "xero_contact_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "inserted_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "PersonRole": {
+        "description": "System-wide authorization tier stored in `persons.role`; Lawyer is a person licensed to practice law and authorized for Navigator legal work, while Owner/Admin are organization-level operators and Clerk is a supervised non-lawyer.",
+        "enum": [
+          "owner",
+          "admin",
+          "lawyer",
+          "clerk",
+          "client"
+        ],
+        "type": "string"
+      },
+      "Project": {
+        "properties": {
+          "brand": {
+            "description": "Which house brand's storefront this matter was opened through \u2014 `neon` or `delete-your-data` today. Written by the server from the resolved request host at matter-open; never accepted from a client-submitted field.",
+            "type": "string"
+          },
+          "closed_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "code": {
+            "description": "Stable slug, e.g. `acme-llc-formation`.",
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entity_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "git_initialized_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inserted_at": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "description": "`open`, `closed`, or `archived`.",
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "status",
+          "brand",
+          "entity_id",
+          "inserted_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "QuestionChoice": {
+        "properties": {
+          "label": {
+            "description": "Human-readable label for the choice.",
+            "type": "string"
+          },
+          "value": {
+            "description": "Send this as `value` when picking the choice.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "label"
+        ],
+        "type": "object"
+      },
+      "SeedReport": {
+        "properties": {
+          "created": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "records": {
+            "items": {
+              "properties": {
+                "action": {
+                  "enum": [
+                    "new",
+                    "unchanged",
+                    "changed"
+                  ],
+                  "type": "string"
+                },
+                "changed_fields": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "key": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key",
+                "action"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "unchanged": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updated": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "model",
+          "created",
+          "updated",
+          "unchanged",
+          "records"
+        ],
+        "type": "object"
+      },
+      "SeedRequest": {
+        "properties": {
+          "dry_run": {
+            "default": false,
+            "description": "Return the reconciliation plan without writing.",
+            "type": "boolean"
+          },
+          "model": {
+            "description": "Supported singular glossary term, currently `person` or `entity`.",
+            "type": "string"
+          },
+          "overwrite": {
+            "default": false,
+            "type": "boolean"
+          },
+          "yaml": {
+            "description": "Seed YAML with `lookup_fields` and `records`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model",
+          "yaml"
+        ],
+        "type": "object"
+      },
+      "SendIntakeResponse": {
+        "properties": {
+          "notation_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "recipient": {
+            "description": "The client address the intake link was dispatched to.",
+            "format": "email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "notation_id",
+          "recipient"
+        ],
+        "type": "object"
+      },
+      "TransitionProjectRequest": {
+        "description": "The one field `POST /app/api/projects/{id}/lifecycle` accepts.",
+        "example": {
+          "transition": "close"
+        },
+        "properties": {
+          "transition": {
+            "description": "Which lifecycle move to make. `close` and `archive` stamp `closed_at` if it is not already stamped (preserving an existing stamp rather than restarting the retention window); `reopen` clears it. `archive` is terminal \u2014 every transition off it besides a repeated `archive` is refused.",
+            "enum": [
+              "close",
+              "reopen",
+              "archive"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "transition"
+        ],
+        "type": "object"
+      },
+      "UpdateEntityRequest": {
+        "example": {
+          "entity_type_id": "0199a1f0-0000-7000-8000-000000000001",
+          "jurisdiction_id": "0199a1f0-0000-7000-8000-000000000002",
+          "name": "Example Holdings LLC"
+        },
+        "properties": {
+          "entity_type_id": {
+            "description": "An existing `/app/api/entity-types` row.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "jurisdiction_id": {
+            "description": "An existing `/app/api/jurisdictions` row.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "description": "Full replacement; must not be blank. Immutable for the firm anchor row.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "entity_type_id",
+          "jurisdiction_id"
+        ],
+        "type": "object"
+      },
+      "UpdateParticipantRequest": {
+        "example": {
+          "person_id": "0199a1f0-0000-7000-8000-000000000003"
+        },
+        "properties": {
+          "person_id": {
+            "description": "The person the row should name (may differ from the current one). The participation is re-derived from that person's `persons.role`.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "person_id"
+        ],
+        "type": "object"
+      },
+      "UpdatePersonRequest": {
+        "example": {
+          "email": "libra@example.com",
+          "name": "Libra Example",
+          "role": "lawyer"
+        },
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "family_name": {
+            "description": "Omit to leave unchanged; send null or a blank string to clear.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "given_name": {
+            "description": "Omit to leave unchanged; send null or a blank string to clear.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "middle_name": {
+            "description": "Omit to leave unchanged; send null or a blank string to clear.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "notion_user_id": {
+            "description": "Omit to leave unchanged; send null or a blank string to clear the stable Notion external identity.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PersonRole"
+              }
+            ],
+            "description": "Blank/absent preserves the current role; honored only for Owner/Admin callers up to their own authority, and the bootstrap Owner is always `owner`."
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ],
+        "type": "object"
+      },
+      "UpdateProjectRequest": {
+        "additionalProperties": false,
+        "description": "A patch. Every field is optional: send only what you want to change. Absent \u2014 or an explicit JSON `null` \u2014 leaves a column exactly as it was; an empty string clears it. No column is ever blanked out because the body did not mention it, so a caller that knows about three fields cannot erase the other five. Any field not listed here \u2014 `status` and `closed_at` included \u2014 is rejected with `400` rather than silently ignored; move a matter's lifecycle through `POST /app/api/projects/{id}/lifecycle` instead.",
+        "example": {
+          "repository_url": "forge.example/an-organization/acme"
+        },
+        "properties": {
+          "description": {
+            "description": "Omit to leave unchanged; a blank string clears it. A JSON `null` is accepted but treated as omission; send \"\" to clear.",
+            "type": "string"
+          },
+          "entity_id": {
+            "description": "Omit to leave the matter's entity unchanged; a value moves it. `projects.entity_id` is NOT NULL, so there is no clear operation \u2014 a JSON `null` is accepted but treated as omission (leaves the entity unchanged), never as a clear.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "external_slack_channel_url": {
+            "description": "The Slack channel shared with the client. Omit to leave unchanged; a blank string clears it.",
+            "type": "string"
+          },
+          "internal_slack_channel_url": {
+            "description": "The lawyer-only Slack channel. Omit to leave unchanged; a blank string clears it.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Omit to leave unchanged. The one field with no clear operation: a blank name is rejected rather than applied, because a matter with no name is not a state a patch may produce.",
+            "type": "string"
+          },
+          "private_notion_page_url": {
+            "description": "The firm-only Notion page. Omit to leave unchanged; a blank string clears it.",
+            "type": "string"
+          },
+          "repository_url": {
+            "description": "The matter's source repository, as a whole URL on any forge. Omit to leave unchanged; a blank string clears it. A value must be an http(s) URL naming a host and a path, with no embedded credential.",
+            "type": "string"
+          },
+          "shared_notion_page_url": {
+            "description": "The Notion page shared with the client. Omit to leave unchanged; a blank string clears it.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ValidateRequest": {
+        "example": {
+          "contents": "---\nkind: trust\ntitle: Trust\ncode: trust\nrespondent_type: entity\nconfidential: false\nquestionnaire:\n BEGIN:\n _: END\n END: {}\nworkflow:\n BEGIN:\n next: lawyer_review\n lawyer_review:\n next: END\n END: {}\n---\n\nBody.\n",
+          "path": "trust.md"
+        },
+        "properties": {
+          "contents": {
+            "description": "Raw markdown body, including any YAML frontmatter.",
+            "type": "string"
+          },
+          "markdown_only": {
+            "description": "Lint with `navigator_markdown_only_rules` instead of the default Neon Law Navigator notation set.",
+            "type": "boolean"
+          },
+          "path": {
+            "description": "Pretend filename so rules that key off the path (e.g. N103 snake_case) have something to read. Defaults to `template.md`.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contents"
+        ],
+        "type": "object"
+      },
+      "ValidateResponse": {
+        "example": {
+          "clean": true,
+          "path": "trust.md",
+          "violations": [
+            {
+              "code": "N112",
+              "line": 9,
+              "message": "workflow step `lawyer_review` is allowed but its automation is not built yet (from state `lawyer_review`)"
+            }
+          ]
+        },
+        "properties": {
+          "clean": {
+            "type": "boolean"
+          },
+          "path": {
+            "type": "string"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationViolation"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "clean",
+          "violations"
+        ],
+        "type": "object"
+      },
+      "ValidationViolation": {
+        "properties": {
+          "code": {
+            "description": "Rule code, e.g. `S101`, `N101`.",
+            "type": "string"
+          },
+          "line": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "line",
+          "message"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "description": "OIDC bearer token. In production the token is validated against the configured IdP (Google Identity); in KIND the workspace's Rauthy instance signs RS256 JWTs. A browser-initiated alternative \u2014 the `navigator_session` cookie set by `/auth/login` \u2014 is documented as the `sessionCookie` scheme. Authorization is then delegated to the Open Embedded Rego policy: the policy compiled into Navigator lets any authenticated session call the `/app/api/*` GET listings, and restricts the write commands (people create/update/delete and welcome, entity create/update/delete, project open/update/delete) and the stateless `/app/api/templates/validate` linter to `lawyer` and `admin`.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "sessionCookie": {
+        "description": "Opaque session cookie set by the OAuth Authorization Code + PKCE flow at `/auth/login`. The same cookie gates the `/app/*` surface.",
+        "in": "cookie",
+        "name": "navigator_session",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "name": "Neon Law",
+      "url": "www.neonlaw.com"
+    },
+    "description": "JSON listings and commands for the Neon Law Navigator domain tables, plus a stateless markdown notation validator. The surface itself lives under `/app/api`, and every endpoint requires OIDC authentication \u2014 either a browser session cookie issued by the OAuth flow at `/auth/login`, or a JWT bearer token. This document and the Swagger UI that renders it (at `/app/api` and its shorter alias `/api`) are public: reading the reference needs no session, only calling an operation it describes does. The MCP endpoint at `/mcp` (JSON-RPC, Google OAuth bearer) is documented separately.",
+    "title": "Neon Law Navigator API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/app/api/contract-reviews/{id}": {
+      "get": {
+        "description": "One inbound-contract review, scoped to its matter. Authorization: lawyer or admin, and the caller must participate in the review's matter (out-of-scope \u2192 404).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The contract review"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such review, or out of scope"
+          }
+        },
+        "summary": "Get one inbound-contract review"
+      }
+    },
+    "/app/api/contract-reviews/{id}/approve": {
+      "post": {
+        "description": "Assembles the review memo from the signed-off findings and risk summary, files it into the matter, and drives the workflow to completion \u2014 the REST mirror of the review surface, converging on the same command. `204 No Content` on success. Authorization: lawyer or admin, and the caller must participate in the matter. Not at the review gate is `409`; approving before every finding has an accept/reject decision is `422`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The memo was delivered and the review approved"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such review, or out of scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The review is not at the approval gate"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not every finding has been acted on"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The memo could not be delivered"
+          }
+        },
+        "summary": "Approve a contract review and deliver the memo"
+      }
+    },
+    "/app/api/contract-reviews/{id}/findings/{idx}": {
+      "post": {
+        "description": "Saves the attorney's edits and accept/reject decision on one finding of an inbound contract review, recording the decision to the immutable audit trail \u2014 the REST mirror of the review surface, converging on the same command. `204 No Content` on success. Authorization: lawyer or admin, and the caller must participate in the review's matter (out-of-scope \u2192 404). A closed review is `409`; an out-of-range finding index is `404`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "idx",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "accept": {
+                    "description": "Accept (true) or reject (false) the finding for delivery",
+                    "type": "boolean"
+                  },
+                  "attorney_note": {
+                    "type": "string"
+                  },
+                  "severity": {
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ],
+                    "type": "string"
+                  },
+                  "suggested_redline": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "accept"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The decision was recorded"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such review/finding, or out of scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The review is closed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The decision could not be saved"
+          }
+        },
+        "summary": "Save an attorney's decision on a review finding"
+      }
+    },
+    "/app/api/contract-reviews/{id}/reject": {
+      "post": {
+        "description": "Rejects an inbound contract review without producing a memo \u2014 the REST mirror of the review surface, converging on the same command. `204 No Content` on success. Authorization: lawyer or admin, and the caller must participate in the matter. Not at the review gate is `409`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The review was rejected"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such review, or out of scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The review is not at the reject gate"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The review could not be rejected"
+          }
+        },
+        "summary": "Reject a contract review without a memo"
+      }
+    },
+    "/app/api/contract-reviews/{id}/summary": {
+      "post": {
+        "description": "Edits the risk summary of an inbound contract review \u2014 the REST mirror of the review surface, converging on the same command. `204 No Content` on success. Authorization: lawyer or admin, and the caller must participate in the review's matter (out-of-scope \u2192 404).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "risk_summary": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "risk_summary"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The summary was saved"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such review, or out of scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The summary could not be saved"
+          }
+        },
+        "summary": "Edit a contract review's risk summary"
+      }
+    },
+    "/app/api/documents/{id}/deletion-requests": {
+      "post": {
+        "description": "A matter participant (typically the client) asks for a document to be deleted. This only records a `pending` request \u2014 a lawyer/admin must later authorize the actual expunge; nothing is deleted here. Client-writable like the review surface: any authenticated caller is admitted, then the door enforces **client-lens** matter scope (the caller must participate in the document's matter through the client side), so a firm-side-only lawyer or a non-participant receives 404. Idempotent: a second ask while one is already pending returns the existing request (`200`); a fresh request is `201`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletionRequestResponse"
+                }
+              }
+            },
+            "description": "A pending deletion request already existed (idempotent)"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletionRequestResponse"
+                }
+              }
+            },
+            "description": "A fresh pending deletion request was recorded"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated, but the session has no linked person to attribute the request to"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such document, or it is outside the caller's scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The request could not be recorded (database error)"
+          }
+        },
+        "summary": "Request a document's deletion"
+      }
+    },
+    "/app/api/entities": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Entity"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Entity list"
+          }
+        },
+        "summary": "List all entities",
+        "x-mcp-tool": "aida_list_entities"
+      },
+      "post": {
+        "description": "Creates one Entity row from a name, an entity type, and a jurisdiction. The name is required and trimmed; the type and jurisdiction must reference existing rows. Entity names are deliberately not unique \u2014 namesakes are real \u2014 with one exception: the firm's own anchor Entity (`NAVIGATOR_BOOTSTRAP_COMPANY`, falling back to the shipped firm) cannot be duplicated and returns 409. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEntityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            },
+            "description": "Created entity"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed: a blank name, or an entity type or jurisdiction that references no existing row"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The firm anchor entity already exists"
+          }
+        },
+        "summary": "Create an entity"
+      }
+    },
+    "/app/api/entities/{id}": {
+      "delete": {
+        "description": "Removes one Entity row and returns it. The firm's own anchor Entity (`NAVIGATOR_BOOTSTRAP_COMPANY`, falling back to the shipped firm) is undeletable and returns 409 \u2014 `store::seed` re-creates that row by exact name on every boot, so removing it would never stick. An Entity other rows still reference (a matter, say) is also refused with 409, carrying the database's own detail naming the referencing table. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            },
+            "description": "The deleted entity"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No entity with that id"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The firm anchor is protected, or other rows still reference this entity"
+          }
+        },
+        "summary": "Delete an entity"
+      },
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            },
+            "description": "Entity"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get one entity by id"
+      },
+      "patch": {
+        "description": "Replaces the name, entity type, and jurisdiction of one Entity row. The name is required and the type and jurisdiction must reference existing rows. The firm's own anchor Entity (`NAVIGATOR_BOOTSTRAP_COMPANY`, falling back to the shipped firm) has an immutable name \u2014 its type and jurisdiction remain editable \u2014 and renaming any other Entity *into* the anchor's name is refused; both return 409. The name is compared byte for byte, so a case or whitespace variant of the anchor's name counts as a rename. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEntityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entity"
+                }
+              }
+            },
+            "description": "Updated entity"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed \u2014 a blank name, or an entity type or jurisdiction naming no existing row"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No entity with that id"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The firm anchor's name is immutable, or the rename would duplicate it"
+          }
+        },
+        "summary": "Update an entity"
+      }
+    },
+    "/app/api/entity-types": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EntityType"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "EntityType list"
+          }
+        },
+        "summary": "List all entity types"
+      }
+    },
+    "/app/api/expunge-requests": {
+      "get": {
+        "description": "The pending client document-deletion requests awaiting firm review. Authorization: lawyer or admin.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The pending requests"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The queue could not be read"
+          }
+        },
+        "summary": "List the pending document-deletion queue"
+      }
+    },
+    "/app/api/expunge-requests/{id}/authorize": {
+      "post": {
+        "description": "An admin authorizes a pending client expunge request: runs the governed expunge on the requested document and marks the request authorized, linked to its audit record \u2014 the REST mirror of the lawyer queue's authorize control, converging on the same command. `204 No Content` on success. Authorization: admin-tier only (`owner`/`admin`); `lawyer`, `clerk`, and `client` are rejected. A request already resolved is `409`; an unknown request or a vanished document is `404`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The document was expunged and the request authorized"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not admin-tier"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such request, or its document is gone"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The request has already been resolved"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The expunge could not be authorized"
+          }
+        },
+        "summary": "Authorize a client document-deletion request (admin)"
+      }
+    },
+    "/app/api/expunge-requests/{id}/deny": {
+      "post": {
+        "description": "A lawyer or admin denies a pending client expunge request without deleting anything \u2014 the REST mirror of the lawyer queue's deny control, converging on the same command. `204 No Content` on success. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; `client` and non-lawyer `clerk` are rejected. An unknown or already-resolved request is `404`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The request was denied"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such pending request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The request could not be denied"
+          }
+        },
+        "summary": "Deny a client document-deletion request"
+      }
+    },
+    "/app/api/jurisdictions": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Jurisdiction"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Jurisdiction list"
+          }
+        },
+        "summary": "List all jurisdictions",
+        "x-mcp-tool": "aida_list_jurisdictions"
+      }
+    },
+    "/app/api/notations/{id}": {
+      "get": {
+        "description": "One notation, scoped by its matter. Authorization: any authenticated session; a notation whose matter the caller does not participate in returns a non-disclosing 404 (Owner/Admin see all).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The notation"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or out of scope"
+          }
+        },
+        "summary": "Get one notation"
+      }
+    },
+    "/app/api/notations/{id}/answers": {
+      "post": {
+        "description": "Records an answer to the step the notation's questionnaire is currently asking, attributed to the acting lawyer (the notation's bound Person stays the respondent). The questionnaire advances one step at a time: `question_code` must match the step being asked \u2014 an out-of-order answer is rejected with `409 question_mismatch` carrying the expected code. Returns where the questionnaire is next: another question to collect, or `complete`. This is the machine/lawyer surface; the client-facing self-serve intake (the magic-link walk) is a separate flow, not this REST path. Authorization: the caller's `persons.role` must be `lawyer` or `admin` (anonymous, `client`, and non-lawyer `clerk` callers are rejected), and the caller must additionally participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404, never disclosing it (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerStepRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotationStep"
+                }
+              }
+            },
+            "description": "The questionnaire's next step (a question, or complete)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or it is outside the caller's scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The answer names a different step than the one being asked, or the questionnaire is already complete"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The question is not answerable through this door (not client-facing, or not flagged for re-collection)"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The answer could not be recorded (runtime or database error)"
+          }
+        },
+        "summary": "Answer a notation's current questionnaire step",
+        "x-mcp-tool": "aida_answer_notation"
+      }
+    },
+    "/app/api/notations/{id}/approval": {
+      "post": {
+        "description": "The attorney approves a notation parked at `lawyer_review`: re-assembles the reviewed document (template + custom clauses, or a filled government AcroForm) and fires the `approved` transition so the worker renders and persists its PDF, parking at the generate-PDF step. The deliberate signature dispatch is a separate door. Idempotent: if the PDF is already rendered (a prior approve, or a clean machine-only intake that walked straight through), approving again is a no-op that reports the current state. Returns the notation's workflow state after the action. Same command the lawyer review screen drives. Authorization: the caller's `persons.role` must be lawyer `lawyer` or `admin` (anonymous, `client`, and non-lawyer `clerk` callers are rejected), and the caller must additionally participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404 (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotationLifecycleResponse"
+                }
+              }
+            },
+            "description": "The notation's workflow state after approval"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or it is outside the caller's scope"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "A government form could not be prepared (missing blank, pin mismatch, or mis-mapped field)"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The approval could not be recorded (runtime, storage, or database error)"
+          }
+        },
+        "summary": "Approve a notation parked at lawyer_review"
+      }
+    },
+    "/app/api/notations/{id}/clauses": {
+      "post": {
+        "description": "Appends one firm-authored clause to a notation's document; the clause is spliced into the assembled body at render time (after the template, in append order). Same store command the lawyer clause form drives. Authorization: the caller's `persons.role` must be `lawyer` or `admin` (anonymous, `client`, and non-lawyer `clerk` callers are rejected), and the caller must additionally participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404 (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddClauseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddClauseResponse"
+                }
+              }
+            },
+            "description": "The appended clause"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed \u2014 the clause body is blank"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or it is outside the caller's scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The clause could not be appended (database error)"
+          }
+        },
+        "summary": "Append a custom clause to a notation's document"
+      }
+    },
+    "/app/api/notations/{id}/clauses/{clause_id}": {
+      "delete": {
+        "description": "Deletes one clause from a notation's document. Lawyer-tier only and matter-scoped; the clause must belong to the notation in the path. `204 No Content` on success.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clause_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The clause was removed"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such clause on that notation, or the notation is out of scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The clause could not be removed (database error)"
+          }
+        },
+        "summary": "Remove a notation clause"
+      },
+      "patch": {
+        "description": "Replaces one clause's body. Lawyer-tier only and matter-scoped; the clause must belong to the notation in the path (else 404), and a blank body is rejected (400). Same store command the lawyer clause form drives.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clause_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddClauseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddClauseResponse"
+                }
+              }
+            },
+            "description": "The edited clause"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed \u2014 the clause body is blank"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such clause on that notation, or the notation is out of scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The clause could not be edited (database error)"
+          }
+        },
+        "summary": "Edit a notation clause"
+      }
+    },
+    "/app/api/notations/{id}/clauses/{clause_id}/move": {
+      "post": {
+        "description": "Swaps a clause with its neighbour in render order (`direction: up|down`; a move at the ends is an idempotent no-op). Lawyer-tier only and matter-scoped; the clause must belong to the notation in the path. `204 No Content`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "clause_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveClauseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The clause order was updated (or unchanged at an end)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such clause on that notation, or the notation is out of scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The clause could not be reordered (database error)"
+          }
+        },
+        "summary": "Reorder a notation clause"
+      }
+    },
+    "/app/api/notations/{id}/intake": {
+      "post": {
+        "description": "Sends the notation's bound client the secure magic link that backs their self-serve intake walk, ensuring the client participates in the matter first. Email delivery is best-effort \u2014 a send failure is logged, not surfaced, since the link is idempotent and can be re-sent \u2014 so `200` reports the link was dispatched to the returned recipient. Same command the lawyer form drives. Authorization: the caller's `persons.role` must be `lawyer` or `admin` (anonymous, `client`, and non-lawyer `clerk` callers are rejected), and the caller must additionally participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404, never disclosing it (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendIntakeResponse"
+                }
+              }
+            },
+            "description": "The intake link was dispatched"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or it is outside the caller's scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The notation has no client to send an intake link to"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The intake could not be dispatched (database error)"
+          }
+        },
+        "summary": "Email a notation's client their self-serve intake link"
+      }
+    },
+    "/app/api/notations/{id}/reask": {
+      "post": {
+        "description": "Resubmits a notation parked at re-collection: every flagged question must carry a non-empty re-collected value in `answers` (keyed by bare question code), each is written and the `intake_resubmitted` transition fires \u2014 the REST mirror of the lawyer reask control, converging on the same command. `204 No Content` on success. Authorization: the caller's `persons.role` must be `lawyer` or `admin`, and the caller must participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404 (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "answers": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Re-collected values keyed by bare question code",
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "answers"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The notation was resubmitted for review"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "A flagged answer was left blank"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or the caller does not participate in its matter"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The notation is not awaiting re-collection"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The re-collection could not be resubmitted"
+          }
+        },
+        "summary": "Resubmit a re-collected notation for review"
+      }
+    },
+    "/app/api/notations/{id}/request-changes": {
+      "post": {
+        "description": "Sends a notation parked at `lawyer_review` back to its client for changes: records the flagged answer codes (and an optional note) and fires the `changes_requested` transition \u2014 the REST mirror of the lawyer request-changes control, converging on the same command. `204 No Content` on success. Authorization: the caller's `persons.role` must be `lawyer` or `admin`, and the caller must participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404 (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "flagged": {
+                    "description": "The question codes to send back for re-collection",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "note": {
+                    "description": "An optional note to the client",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "flagged"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The notation was sent back for changes"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No answer was flagged"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or the caller does not participate in its matter"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The notation is not awaiting review"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The change request could not be recorded"
+          }
+        },
+        "summary": "Send a notation back to its client for changes"
+      }
+    },
+    "/app/api/notations/{id}/review-documents": {
+      "get": {
+        "description": "The review drafts rendered on a notation (firm work product). Authorization: lawyer or admin, and the caller must participate in the notation's matter (out-of-scope \u2192 404).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The review drafts"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or out of scope"
+          }
+        },
+        "summary": "List a notation's review drafts"
+      }
+    },
+    "/app/api/notations/{id}/signature": {
+      "post": {
+        "description": "Sends the notation's rendered document out for signature: fires `pdf_persisted` and dispatches exactly one envelope through the signature provider (the client signs first, the firm countersigns). Requires the document PDF to have been rendered by a prior approval \u2014 if the worker has not persisted it yet, returns `409 document_not_ready` (retry) rather than sending a missing document. Idempotent: a notation that already has an envelope out reuses its request id and sends nothing. Returns the workflow state and the provider's signature request id (which the inbound completion webhook correlates back to this notation). Same command the lawyer form drives. Authorization: the caller's `persons.role` must be `lawyer` or `admin` (anonymous, `client`, and non-lawyer `clerk` callers are rejected), and the caller must additionally participate in the notation's matter \u2014 an out-of-scope or unknown notation returns 404 (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotationSignatureResponse"
+                }
+              }
+            },
+            "description": "The envelope was dispatched (or already out)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or it is outside the caller's scope"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The document PDF has not been rendered yet \u2014 approve first, then retry"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The envelope could not be dispatched (provider, storage, or database error)"
+          }
+        },
+        "summary": "Dispatch a notation's document for signature"
+      }
+    },
+    "/app/api/notations/{id}/transcript": {
+      "post": {
+        "description": "Runs a batch transcript against the notation's bound questionnaire, recording every likely-answered inquiry as a proposed default \u2014 the REST mirror of the lawyer/CLI transcript control, converging on the same command. `200 OK` with `{template_code, covered, uncovered}`. Authorization: lawyer or admin, and the caller must participate in the matter (out-of-scope \u2192 404). An empty transcript is `400`; a template with no questionnaire is `422`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "transcript": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "transcript"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "covered": {
+                      "items": {
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "template_code": {
+                      "type": "string"
+                    },
+                    "uncovered": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Coverage computed"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Empty transcript"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such notation, or out of scope"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The template has no questionnaire"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The coverage pass failed"
+          }
+        },
+        "summary": "Run a transcript against a notation's questionnaire"
+      }
+    },
+    "/app/api/people": {
+      "get": {
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Person"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Person list"
+          }
+        },
+        "summary": "List all people",
+        "x-mcp-tool": "aida_show_person"
+      },
+      "post": {
+        "description": "Creates one Person row. The `role` field defaults conservatively to `client`; supported values are `owner`, `admin`, `lawyer`, `clerk`, and `client`, and non-empty invalid values are rejected. Blank structured legal-name fields are stored as null. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePersonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Person"
+                }
+              }
+            },
+            "description": "Created person"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Email already exists"
+          }
+        },
+        "summary": "Create a person",
+        "x-mcp-tool": "aida_create_person"
+      }
+    },
+    "/app/api/people/{id}": {
+      "delete": {
+        "description": "Deletes one Person row. The configured bootstrap Owner (see `NAVIGATOR_BOOTSTRAP_OWNER_EMAIL`) is undeletable and returns 409. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous and `client` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Person"
+                }
+              }
+            },
+            "description": "Deleted person"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No person with that id"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The bootstrap Owner cannot be deleted"
+          }
+        },
+        "summary": "Delete a person"
+      },
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Person"
+                }
+              }
+            },
+            "description": "Person"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "summary": "Get one person by id"
+      },
+      "patch": {
+        "description": "Updates one Person row. A blank/absent `role` preserves the row's current role; a submitted `role` is honored only for `admin` callers (a `lawyer` caller's role change is ignored) and the bootstrap Owner is pinned to `owner`. An Admin cannot edit or assign Owner. Structured legal-name fields preserve an omitted value and store a present-but-blank one as null. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePersonRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Person"
+                }
+              }
+            },
+            "description": "Updated person"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No person with that id"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Email already exists"
+          }
+        },
+        "summary": "Update a person"
+      }
+    },
+    "/app/api/people/{id}/welcome": {
+      "post": {
+        "description": "Renders and dispatches the welcome email to the Person, journaling one `sent_emails` row per attempt. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous and `client` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Welcome email dispatched"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No person with that id"
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The email could not be dispatched"
+          }
+        },
+        "summary": "Send this person the welcome email",
+        "x-mcp-tool": "aida_send_welcome_email"
+      }
+    },
+    "/app/api/playbooks": {
+      "get": {
+        "description": "Every firm contract-review playbook. Authorization: lawyer or admin.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The playbooks"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The playbooks could not be read"
+          }
+        },
+        "summary": "List contract-review playbooks"
+      },
+      "post": {
+        "description": "Creates a client Company's negotiating-position playbook \u2014 the yardstick an inbound contract review measures against. The REST mirror of the lawyer playbook form, converging on the same command; unlike the form's pipe-delimited textarea, this door takes structured positions. `201 Created` with the new id. Authorization: lawyer or admin. A blank name or empty position set is `400`; a duplicate name on that Company is `409`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "entity_id": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "positions": {
+                    "items": {
+                      "properties": {
+                        "fallback": {
+                          "type": "string"
+                        },
+                        "preferred": {
+                          "type": "string"
+                        },
+                        "severity": {
+                          "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                          ],
+                          "type": "string"
+                        },
+                        "topic": {
+                          "type": "string"
+                        },
+                        "walkaway": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "entity_id",
+                  "name",
+                  "positions"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "playbook_id": {
+                      "format": "uuid",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "playbook_id"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The playbook was created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Blank name or empty position set"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "That Company already has a playbook with that name"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The playbook could not be created"
+          }
+        },
+        "summary": "Create a contract-review playbook"
+      }
+    },
+    "/app/api/playbooks/{id}": {
+      "get": {
+        "description": "One firm contract-review playbook. Authorization: lawyer or admin.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The playbook"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such playbook"
+          }
+        },
+        "summary": "Get one playbook"
+      },
+      "put": {
+        "description": "Replaces a playbook's whole position set \u2014 the REST mirror of the lawyer edit form, converging on the same command. `204 No Content` on success. Authorization: lawyer or admin. An unknown playbook is `404`; an empty position set is `400`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "positions": {
+                    "items": {
+                      "properties": {
+                        "fallback": {
+                          "type": "string"
+                        },
+                        "preferred": {
+                          "type": "string"
+                        },
+                        "severity": {
+                          "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                          ],
+                          "type": "string"
+                        },
+                        "topic": {
+                          "type": "string"
+                        },
+                        "walkaway": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "positions"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The positions were replaced"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Empty position set"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such playbook"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The positions could not be saved"
+          }
+        },
+        "summary": "Replace a playbook's positions"
+      }
+    },
+    "/app/api/project-lifecycle": {
+      "get": {
+        "description": "Returns one minimal row per matter with its `code`, `status`, and `closed_at`. This is a deployment-wide oversight read, not a participation-scoped matter read, and returns no matter content. Authorization: admin-tier only (`owner`/`admin`).",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "closed_at": {
+                        "format": "date-time",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "enum": [
+                          "open",
+                          "closed",
+                          "archived"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "status",
+                      "closed_at"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The lifecycle rows"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not admin-tier"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The matters could not be read"
+          }
+        },
+        "summary": "Read every matter's lifecycle fields (admin)"
+      }
+    },
+    "/app/api/project-repositories": {
+      "get": {
+        "description": "Reports where a Project row and its `repository_url` disagree, across every matter in the deployment. A Project code is its repository name, so a row whose recorded URL names a different repository is drift provable from the row alone \u2014 no checkout and no configuration required. Findings carry a `severity` of `warn` or `fail`; the report's `reconciled` is false when any finding is a `fail`. Where the deployment has a configured forge pair, a row recorded outside it is reported as a `warn` and `compared_against_deployment_forge` is true; where it has none that comparison is skipped and the flag is false. `project_codes` lists every live Project code, sorted, including the ones with no finding \u2014 the repository-side reconciliation (`navigator projects drift`) reads it to ask whether a checkout's declared code names a live row at all, which the finding set alone cannot answer. Authorization: admin-tier only (`owner`/`admin`) \u2014 unlike every other matter read here, this deliberately reads all rows rather than the caller's participation-scoped lens, so `lawyer`, `clerk`, and `client` are rejected.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The reconciliation report"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not admin-tier"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The matters could not be read"
+          }
+        },
+        "summary": "Reconcile every matter against the repository it records (admin)"
+      }
+    },
+    "/app/api/project-surfaces/{id}": {
+      "post": {
+        "description": "Creates or adopts the three handles a Project opens with: the documents-bucket prefix `projects/ ` (a key convention; nothing is written), the Drive ingest folder named for the code, and one private source repository named for the code. Each step is idempotent \u2014 an existing folder or repository is adopted, a recorded `repository_url` is left alone, and missing Drive or forge configuration skips that surface. Matter-open already runs this pass best-effort; this door is the admin retry for a failed or legacy Project. Project participation is never copied onto the forge. Authorization: admin-tier only (`owner`/`admin`).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The recorded handles"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not admin-tier"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No matter with that id"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Drive, forge, or the store failed"
+          }
+        },
+        "summary": "Create or adopt a Project's Drive ingest folder and source repository (admin)"
+      }
+    },
+    "/app/api/projects": {
+      "get": {
+        "description": "Every matter the caller may see, already scoped \u2014 the directory lens for Owner/Admin, participation for lawyer/clerk, the client's own matters for a client. Authorization: any authenticated session.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The caller's visible matters"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The matters could not be read"
+          }
+        },
+        "summary": "List the caller's matters",
+        "x-mcp-tool": "aida_list_projects"
+      },
+      "post": {
+        "description": "Opens a new matter: it runs the conflict check, requires the opening attorney's conflict attestation, and designates both DRIs. The matter's Drive ingest folder and source repository are then created or adopted best-effort \u2014 a Drive or forge fault leaves the matter open, and `POST /app/api/project-surfaces/{id}` retries. The client of record must be a pre-existing `client`-role person (never a firm attorney), and the entity must already exist. `attestation` must be `true` \u2014 a matter open with no attestation is refused (`attestation_required`). A **blocking** conflict (adverse to a current client) is a hard `409 conflict_blocked` that no attestation overrides. The attester is the authenticated session's person, recorded on the attestation audit row and designated the accountable lawyer DRI \u2014 never taken from the request body. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; at this firm `lawyer` is an attorney, so this is the 'an attorney is opening and attesting' gate. Anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenMatterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            },
+            "description": "The opened matter"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed, a bad client/entity reference, a non-client client of record, a non-lawyer attester, or a missing attestation"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "A blocking conflict (adverse to a current client) or a duplicate project code"
+          }
+        },
+        "summary": "Open a matter",
+        "x-mcp-tool": "aida_create_project"
+      }
+    },
+    "/app/api/projects/{id}": {
+      "delete": {
+        "description": "Removes one matter and returns it. A matter opened the normal way carries dependent rows (DRI participations, later notations and documents), whose foreign keys block the delete \u2014 returned as 409 with the database's own detail naming the referencing table, a conflict the caller resolves by detaching or closing those records first. Only a matter with no dependents deletes cleanly. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            },
+            "description": "The deleted matter"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No matter with that id"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Other records still reference this matter"
+          }
+        },
+        "summary": "Delete a matter"
+      },
+      "get": {
+        "description": "One matter the caller may see. Authorization: any authenticated session; a matter the caller does not participate in returns a non-disclosing 404 (Owner/Admin see all).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The matter"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or out of scope"
+          }
+        },
+        "summary": "Get one matter"
+      },
+      "patch": {
+        "description": "Updates the name, entity, and scope narrative of an existing matter. This is the descriptive update only: it runs no conflict check and provisions no repo (those belong to matter-open and `POST /app/api/project-surfaces/{id}`), and it does not change the matter's lifecycle `status`/`closed_at` \u2014 moving through open/closed/archived is a transition with firm retention semantics, handled by `POST /app/api/projects/{id}/lifecycle`, not this edit. `status` and `closed_at` are rejected outright (`400`) rather than silently dropped if a caller posts them \u2014 a caller must be told a field it named was not applied. **Every field is optional and this is always a patch**: send only the fields you want to change. An absent field \u2014 or an explicit `null` \u2014 leaves its column exactly as it was, and an empty string clears it. Nothing is blanked out because a body did not mention it. `name` is the one exception to clearing: an empty `name` is rejected rather than applied, while omitting it leaves the name alone. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            },
+            "description": "The updated matter"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed \u2014 a blank name or an entity that does not exist"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No matter with that id"
+          }
+        },
+        "summary": "Update a matter's descriptive fields"
+      }
+    },
+    "/app/api/projects/{id}/close": {
+      "post": {
+        "description": "Opens the firm-signed `offboarding__letter` notation on an existing matter, addressed to the matter's client \u2014 the REST mirror of the lawyer close control, converging on the same command. `201 Created` carrying the new notation's id; the walk that follows (and the eventual flip to `closed`) is driven separately. Authorization: the caller's `persons.role` must be `lawyer` or `admin`, and the caller must participate in the matter \u2014 an out-of-scope matter returns 404, never disclosing its existence (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "notation_id": {
+                      "format": "uuid",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "notation_id"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The closing notation was opened"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or the caller does not participate in it"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The matter has no client to address the closing letter to"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The closing notation could not be opened"
+          }
+        },
+        "summary": "Open a matter's closing-letter notation"
+      }
+    },
+    "/app/api/projects/{id}/contract-review": {
+      "post": {
+        "description": "Uploads an inbound third-party contract for deviation review as `multipart/form-data`: either a `file` part (the contract) or a `text` part (the pasted contract). Opens a contract-review notation, files the contract, runs the deviation analysis against the client company's playbook, and lands the matter at `lawyer_review`. Same command the lawyer/portal upload form drives. Client-writable: a matter's client may submit their own contract, or the firm may \u2014 so any authenticated caller is admitted, and the door enforces matter scope through either lens (lawyer or client); a non-participant receives 404. If the company has no playbook on file yet, returns 422.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "contract_text": {
+                    "description": "The pasted contract text, used when no file is given.",
+                    "type": "string"
+                  },
+                  "file": {
+                    "description": "The contract file (preferred over `contract_text`).",
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractReviewResponse"
+                }
+              }
+            },
+            "description": "The created contract review"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Malformed multipart, or neither a file nor non-empty text was provided"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The session has no linked person to attribute the contract to"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such project, or the caller does not participate in it"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The client company has no contract-review playbook on file"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The review could not be run (runtime, reviewer, or database error)"
+          }
+        },
+        "summary": "Upload a contract for playbook review"
+      }
+    },
+    "/app/api/projects/{id}/conversation": {
+      "get": {
+        "description": "The matter conversation thread. A client sees the client-visible thread (internal notes filtered out); the firm sees the full thread. Authorization: any authenticated session; out-of-scope matter \u2192 404.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The conversation"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or out of scope"
+          }
+        },
+        "summary": "Read a matter's conversation"
+      }
+    },
+    "/app/api/projects/{id}/conversation/messages": {
+      "post": {
+        "description": "Posts one message to a matter's conversation \u2014 the REST mirror of the portal message control, converging on the same command. `204 No Content` on success. This is a client-writable door: any authenticated caller reaches the policy layer, and the command enforces either-lens matter access (a non-participant is a non-disclosing 404). The caller's tier decides the side: a client's message is inbound, a lawyer's is outbound, or an internal note when `internal` is set (a client's `internal` flag is ignored).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "body": {
+                    "description": "The message body",
+                    "type": "string"
+                  },
+                  "internal": {
+                    "description": "Lawyer lens only: post as an internal note rather than a client-visible message",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "body"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "The message was posted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The message body is empty"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or the caller does not participate in it"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The message could not be posted"
+          }
+        },
+        "summary": "Post a message to a matter's conversation"
+      }
+    },
+    "/app/api/projects/{id}/documents": {
+      "get": {
+        "description": "The documents filed on a matter. A client sees only client-visible documents (internal work product is filtered out); the firm sees them all. Authorization: any authenticated session; out-of-scope matter \u2192 404.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The matter's documents"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or out of scope"
+          }
+        },
+        "summary": "List a matter's documents"
+      },
+      "post": {
+        "description": "Files a document into a matter \u2014 the REST mirror of the lawyer upload control, converging on the same command. The browser uploads via multipart; this door takes the bytes base64-encoded. `201 Created` with the new document id. Authorization: lawyer or admin, and the caller must participate in the matter (out-of-scope \u2192 404). A blank filename, a missing or blank `kind`, undecodable base64, or a `kind` outside the accepted set is `400`. `kind` is required and must be one of the documented enum values. `visibility` defaults to internal work product; pass `\"client\"` to make it client-visible.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "content_base64": {
+                    "description": "Base64-encoded file bytes",
+                    "type": "string"
+                  },
+                  "content_type": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "filename": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "description": "Required asset-lane document classification (`rules::kind::Kind` values valid for `Lane::Asset`). A missing or blank value is refused with `400 kind_required`; a value outside this set is refused with `400 invalid_kind`. Both messages name the accepted values; nothing is silently coerced to `unclassified`.",
+                    "enum": [
+                      "letter",
+                      "filing",
+                      "will",
+                      "trust",
+                      "directive",
+                      "agreement",
+                      "onboarding",
+                      "offboarding",
+                      "memo",
+                      "transcript",
+                      "inbound_contract",
+                      "certificate_of_naturalization",
+                      "unclassified"
+                    ],
+                    "type": "string"
+                  },
+                  "visibility": {
+                    "enum": [
+                      "client",
+                      "internal"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "filename",
+                  "content_base64",
+                  "kind"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "document_id": {
+                      "format": "uuid",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "document_id"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The document was filed"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Blank filename, missing or blank `kind` (error `kind_required`), undecodable base64, or an unaccepted `kind` (error `invalid_kind`). Both kind errors name the accepted values."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or out of scope"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The document could not be filed \u2014 a storage or database fault, never a rejected field"
+          }
+        },
+        "summary": "File a document into a matter"
+      }
+    },
+    "/app/api/projects/{id}/lifecycle": {
+      "post": {
+        "description": "Moves a matter directly through `open` \u2192 `closed` \u2192 `archived`, the REST door onto `store::projects::transition_project`. Distinct from `POST /app/api/projects/{id}/close`: that door opens the firm-signed closing-letter notation and leaves the status flip to the walk that follows, while this one flips `status`/`closed_at` immediately and opens no notation. `closed_at` is derived from `transition`, never posted directly. Idempotent: re-applying a transition the matter already made returns `200` with the matter unchanged. `archived` is terminal \u2014 every transition off it, other than a repeated archive, is refused as `400`. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected \u2014 the same tier gate as the bare `PATCH`/`DELETE` matter path, not scoped to the caller's own matters.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            },
+            "description": "The matter, in its new (or unchanged) lifecycle state"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Malformed body, an unrecognized `transition`, or a transition refused because the matter is archived"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No matter with that id"
+          }
+        },
+        "summary": "Move a matter through its lifecycle",
+        "x-mcp-tool": "aida_close_project"
+      }
+    },
+    "/app/api/projects/{id}/notations": {
+      "get": {
+        "description": "The notations opened on a matter the caller may see. Authorization: any authenticated session; out-of-scope matter \u2192 404.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The matter's notations"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or out of scope"
+          }
+        },
+        "summary": "List a matter's notations"
+      },
+      "post": {
+        "description": "Opens a notation on an existing matter from a template. The template is read from the matter's own git repo, auto-saved as an immutable version, and the notation opens pinned to it; a code absent from the repo falls back to the bundled firm catalog. The client is resolved by email (a `client`-role Person is created on first sight and attached to the matter). The first notation on a matter must be the engagement that opens it (a retainer or an onboarding). This is the same command the lawyer notation form funnels through. Authorization: the caller's `persons.role` must be `lawyer` or `admin` (anonymous, `client`, and non-lawyer `clerk` callers are rejected), and the caller must additionally participate in the matter \u2014 an out-of-scope matter returns 404, never disclosing its existence (`admin` bypasses the scope check).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNotationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateNotationResponse"
+                }
+              }
+            },
+            "description": "The opened notation's id"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed \u2014 template_code or client_email is blank"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter (or it is outside the caller's scope), or no such template"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The client email already belongs to another person"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The template is not the required engagement, or it fails a blocking authoring rule"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The notation could not be opened (repo unconfigured or database error)"
+          }
+        },
+        "summary": "Open a notation on a matter",
+        "x-mcp-tool": "aida_create_notation"
+      }
+    },
+    "/app/api/projects/{id}/participants": {
+      "get": {
+        "description": "The participation rows on a matter the caller may see. Authorization: any authenticated session; out-of-scope matter \u2192 404.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "The participation ledger"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such matter, or out of scope"
+          }
+        },
+        "summary": "List a matter's participation ledger"
+      },
+      "post": {
+        "description": "Adds a person to a matter as a participant. The matter and the person must pre-exist, and a person appears on a matter at most once. The body names only the person: their matter-side participation is derived from `persons.role`, so a `client` lands on the client side and a firm tier lands firm-side. This is the same command the lawyer participation form funnels through. Designating the accountable DRI is a separate concern. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddParticipantRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Participation"
+                }
+              }
+            },
+            "description": "The created participation row"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No matter or no person with that id"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "That person is already assigned to this matter"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The participation row could not be persisted (database error)"
+          }
+        },
+        "summary": "Add a person to a matter's participation ledger",
+        "x-mcp-tool": "aida_link_person_project"
+      }
+    },
+    "/app/api/projects/{id}/participants/{role_id}": {
+      "delete": {
+        "description": "Removes a participation row from a matter. The row must belong to the matter and must not be the matter's lawyer DRI \u2014 removing it would strand the accountable lawyer, so reassign the DRI first. `204 No Content` on success. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "role_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The participant was removed"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such participation row on that matter"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "That row is the matter's lawyer DRI and cannot be removed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The participation row could not be removed (database error)"
+          }
+        },
+        "summary": "Remove a matter participant"
+      },
+      "patch": {
+        "description": "Re-points a participation row at a different person; the participation is re-derived from that person's `persons.role`. The row must belong to the matter, the person must exist, no other row may already place them on the matter, and the edit must not strand the matter's lawyer DRI (the accountability marker rides this row, so moving it to another person or to a client-tier one is refused \u2014 reassign the DRI first). Same command the lawyer form uses. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; anonymous, `client`, and non-lawyer `clerk` callers are rejected.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "role_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateParticipantRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Participation"
+                }
+              }
+            },
+            "description": "The updated participation row"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such participation row on that matter, or no such person"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The person is already on the matter, or the edit would strand the lawyer DRI"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The participation row could not be updated (database error)"
+          }
+        },
+        "summary": "Edit a matter participation row"
+      }
+    },
+    "/app/api/projects/{id}/participants/{role_id}/dri": {
+      "delete": {
+        "description": "Removes the DRI marker from the participation row named by `role_id`. `204 No Content` on success; clearing a marker that is not set is an accepted no-op. Authorization: the caller's `persons.role` must be `lawyer` or `admin` and, like designation, the caller must already hold the marker for that side (`403` otherwise). The command refuses to remove the matter's last lawyer DRI \u2014 that would strand its accountable lawyer \u2014 answering `409`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "role_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The participant no longer carries the DRI marker"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin, or does not hold the marker for that side"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such participation row on that matter"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "That row is the matter's last lawyer DRI; a matter always keeps one"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The marker could not be cleared (database error)"
+          }
+        },
+        "summary": "Clear a matter participant's DRI marker"
+      },
+      "put": {
+        "description": "Marks the participation row named by `role_id` as one of the matter's directly responsible individuals. The side \u2014 lawyer DRI or client DRI \u2014 follows from that person's tier and is not a field the caller names, so this door takes no body. `204 No Content` on success. Authorization: the caller's `persons.role` must be `lawyer` or `admin`; the shared command additionally gates the change on the caller already holding the marker for that side (a matter's lawyer DRIs govern their own set), so a lawyer who is not a current holder is refused `403`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "role_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The participant now carries the DRI marker"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin, or does not hold the marker for that side"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such participation row on that matter"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "That person cannot hold the DRI marker on that side"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The designation could not be written (database error)"
+          }
+        },
+        "summary": "Designate a matter participant as a DRI"
+      }
+    },
+    "/app/api/review-documents/{id}/comments": {
+      "post": {
+        "description": "Adds one anchored comment to a review document (a ProseMirror range plus the text it covered) and folds it into the matter's privileged conversation log. This is the client-writable review surface, so \u2014 unlike every other write here \u2014 any authenticated caller is admitted, and the door then enforces **client-lens** matter scope: the caller must participate in the document's matter through the client side (the same gate the read-only review surface uses), so a firm-side-only lawyer or a non-participant receives 404, and a still-draft document is never disclosed. The comment's `direction` in the conversation log is derived from the caller's role (a client's comment is inbound, a lawyer/admin comment outbound); a Clerk has no review-comment capability and is refused.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddReviewCommentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddReviewCommentResponse"
+                }
+              }
+            },
+            "description": "The created comment and its conversation-log spine row"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Validation failed \u2014 blank body or invalid anchor range"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No such (client-visible, non-draft) review document, or the caller can't author here"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "The comment could not be recorded (database error)"
+          }
+        },
+        "summary": "Add an anchored comment to a review document"
+      }
+    },
+    "/app/api/seed": {
+      "post": {
+        "description": "Applies one YAML document in Navigator's standard `lookup_fields` / `records` seed format. The model is a supported singular glossary term. Existing lookup matches are unchanged by default; `overwrite` replaces the fields represented in the seed record. `dry_run` performs the same lookups and reference checks, returns a per-record plan, and writes nothing. Authorization: Lawyer tier only. A session minted with a project scope (a CI-obtained token) is further restricted to its own endpoint, models, and project \u2014 a write outside that scope is refused as `403 scope_violation`, distinguishable from an ordinary role failure.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SeedRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedReport"
+                }
+              }
+            },
+            "description": "Reconciliation summary"
+          },
+          "401": {
+            "description": "No authenticated session"
+          },
+          "403": {
+            "description": "Authenticated caller is not Lawyer/admin, or a project-scoped session wrote outside its endpoint, model, or project scope (`error: scope_violation`)"
+          },
+          "422": {
+            "description": "Unsupported model or invalid seed document"
+          }
+        },
+        "summary": "Reconcile a seed document"
+      }
+    },
+    "/app/api/templates/validate": {
+      "post": {
+        "description": "Runs the Neon Law Navigator rule engine over the supplied markdown and returns the violations. Stateless: no row is inserted and no Template is registered; nothing is looked up or created, so this is the right call to lint a draft before it exists anywhere. Mirrors `cli validate` rule-set selection: the default uses `navigator_default_rules` (M-family markdown + N-family notation + S101 line length); set `markdown_only: true` to drop the N-family and enable `S102` line packing. Authorization: linting a Template is a lawyer authoring activity, so the caller's `persons.role` must be `lawyer` or `admin`; anonymous and `client` callers are rejected.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateResponse"
+                }
+              }
+            },
+            "description": "Lint report"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "No authenticated session"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Authenticated caller is not Lawyer/admin"
+          }
+        },
+        "summary": "Lint a Template markdown file without saving it",
+        "x-mcp-tool": "aida_validate_notation"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    },
+    {
+      "sessionCookie": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "/",
+      "description": "Same origin \u2014 the gateway proxies /app/api"
+    }
+  ]
+}

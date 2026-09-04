@@ -11,8 +11,10 @@
  * `sub` (subject), `exp` (unix seconds), and `role`.
  */
 
-/** Roles as defined by `store::entity::person::Role` in Navigator. */
-export type SessionRole = 'admin' | 'staff' | 'client' | string
+import type { components } from '../api/schema'
+
+/** Roles as declared by `PersonRole` in the pinned OpenAPI snapshot. */
+export type SessionRole = components['schemas']['PersonRole']
 
 export interface Session {
   /** Subject — the authenticated principal, usually an email address. */
