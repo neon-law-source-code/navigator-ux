@@ -92,7 +92,7 @@ other.
 
 ## Gate
 
-The documented gate is `pnpm check` — lint, the four source gates, build, typecheck, bundle, coverage. Run
+The documented gate is `pnpm check` — lint, the five source gates, build, typecheck, bundle, coverage. Run
 `.agents/skills/cut-release/scripts/preflight.sh` before pushing the bump: clean tree, today's default-tag standing, and
 `pnpm check`.
 

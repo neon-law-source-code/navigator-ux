@@ -55,6 +55,9 @@ const GEOMETRIC_RADII = new Set(['0', '50%', '999px'])
 /** Tests assert on these values; that is not shipping one. */
 const isTest = (rel) => rel.startsWith('src/test/')
 
+/** Generated from the OpenAPI snapshot — not component source. */
+const isGenerated = (rel) => rel === 'src/api/schema.d.ts'
+
 /**
  * Blank comments out so prose about a weight is not a weight.
  *
@@ -91,7 +94,7 @@ for await (const file of walkAll(ROOTS)) {
   if (!['.ts', '.tsx', '.css'].includes(ext)) continue
 
   const rel = relative(pkg, file).split('\\').join('/')
-  if (isTest(rel)) continue
+  if (isTest(rel) || isGenerated(rel)) continue
 
   scanned += 1
   const raw = await readFile(file, 'utf8')

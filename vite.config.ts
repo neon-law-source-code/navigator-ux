@@ -83,6 +83,7 @@ export default defineConfig({
         // Re-exports only. Importing it in a test would score 100% without
         // exercising anything, so counting it either way is noise.
         'src/index.ts',
+        'src/api/schema.d.ts',
       ],
       thresholds: {
         statements: 90,

@@ -21,7 +21,7 @@
     {
       // Build and CI scripts talk to the operator through stdout — that is
       // their interface, not a stray debug statement.
-      "files": ["scripts/**"],
+      "files": ["scripts/**", "e2e/**"],
       "rules": {
         "no-console": "off"
       }

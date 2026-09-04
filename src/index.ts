@@ -288,6 +288,16 @@ export {
   type Session,
   type SessionRole,
 } from './session/session'
+export {
+  API_PREFIX,
+  ApiRequestError,
+  apiFetch,
+  type ApiFetchOptions,
+  type ApiMethod,
+  type ApiPath,
+  type ApiSuccess,
+} from './api/client'
+export type { components as ApiComponents, paths as ApiPaths } from './api/schema'
 
 export { CaseNav, type CaseNavLink, type CaseNavProps } from './components/CaseNav'
 export {

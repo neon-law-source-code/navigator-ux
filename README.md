@@ -206,7 +206,7 @@ The matter surfaces, on the same tokens:
 | Primitives | `Panel`, `Badge`, `Button`, `LinkButton`, `ButtonRow`, `Callout` |
 | Review | `Decision`, `DecisionGrid`, `DraftCard`, `AuthorityList`, `AuthorityDialog`, `HarvardOutlineViewer` |
 | Record | `SourceThread`, `CiteTheRecord`, `RecordCite`, `ClaimTable`, `FactGrid`, `DownloadGrid`, `ActionList`, `Record`, `StatusStrip` |
-| Platform | `ThemeProvider`/`useTheme`, `SessionProvider`/`useSession` |
+| Platform | `ThemeProvider`/`useTheme`, `SessionProvider`/`useSession`, `apiFetch` |
 
 ### The page that shows one thing
 
@@ -309,6 +309,10 @@ before it lapses. See [docs/gateway.md](./docs/gateway.md).
 
 A component that validated its own token would be trusting a value the reader controls.
 
+`apiFetch` is the same idea for `/app/api`: a typed caller of the pinned OpenAPI snapshot, relative
+paths only, `credentials: 'same-origin'`. Components still take props; the app fetches and hands the
+result in. Refresh the snapshot with `pnpm generate:api`.
+
 ## Develop
 
 The repository *is* the package — `src/` at the root, no workspace, no `packages/` directory. Clone it
@@ -320,7 +324,7 @@ pnpm gallery            # every component on one page at :5174, from src
 pnpm check              # what CI runs
 ```
 
-`pnpm check` is lint, four source gates, the build, typecheck, the bundle gate, and tests with
+`pnpm check` is lint, five source gates, the build, typecheck, the bundle gate, and tests with
 coverage:
 
 | Gate | Fails on |
@@ -329,8 +333,12 @@ coverage:
 | `pnpm check:tokens` | Any literal color outside the token layer — including a named one. |
 | `pnpm check:type` | A font weight that is not 400 or 700, or a radius that is neither a token nor geometry. |
 | `pnpm check:contrast` | Any palette pairing under its WCAG floor, recomputed from `tokens.css`. |
+| `pnpm check:api` | A stale generated schema, or a path in `spec/openapi.json` that leaves `/app/api`. |
 | `pnpm check:bundle` | Any off-origin reference in `dist`. Runs after the build, where a remote URL would appear. |
 | `pnpm test:coverage` | Coverage under 90% on statements, lines, functions, or branches. |
+
+`pnpm test:e2e` is Cypress against a fake OpenAPI backend. It is a CI job of its own, not part of
+`pnpm check`.
 
 ### The gallery
 

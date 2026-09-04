@@ -1,0 +1,4 @@
+# Package-manager settings only. This repository is not a pnpm workspace —
+# there is no packages/ directory and every command runs from the root.
+allowBuilds:
+  cypress: true

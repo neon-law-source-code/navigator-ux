@@ -58,6 +58,9 @@ jobs:
       # this gate found two status colors that had never cleared AA.
       - run: pnpm check:contrast
 
+      # The typed client must stay on the pinned OpenAPI snapshot.
+      - run: pnpm check:api
+
   verify:
     # Same skip as lint, and for the same reason.
     if: github.event.action != 'closed' || github.event.pull_request.merged == true
@@ -96,6 +99,20 @@ jobs:
           name: coverage
           path: coverage/
           retention-days: 14
+
+  e2e:
+    # Same skip as lint, and for the same reason.
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:e2e
 
   # Turn on GitHub auto-merge on open / ready-for-review AND on every push
   # (`synchronize`). Auto-merge squash-merges the PR the moment `verify` is
@@ -395,7 +412,7 @@ jobs:
   # jobs it guards had failed.
   ci:
     name: ci
-    needs: [lint, verify]
+    needs: [lint, verify, e2e]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -404,11 +421,13 @@ jobs:
         env:
           LINT_RESULT: ${{ needs.lint.result }}
           VERIFY_RESULT: ${{ needs.verify.result }}
+          E2E_RESULT: ${{ needs.e2e.result }}
         run: |
           set -euo pipefail
           echo "lint: ${LINT_RESULT}"
           echo "verify: ${VERIFY_RESULT}"
-          if [ "${LINT_RESULT}" != "success" ] || [ "${VERIFY_RESULT}" != "success" ]; then
+          echo "e2e: ${E2E_RESULT}"
+          if [ "${LINT_RESULT}" != "success" ] || [ "${VERIFY_RESULT}" != "success" ] || [ "${E2E_RESULT}" != "success" ]; then
               echo "::error::the merge gate is red"
               exit 1
           fi

@@ -34,5 +34,5 @@
   // the rest of the Node globals in scope for every component and every
   // gallery page. Browser code that reaches for a Node global should fail, so
   // the narrower `types` list is worth leaving two config files unchecked.
-  "include": ["src", "gallery"]
+  "include": ["src", "gallery", "e2e/harness"]
 }
