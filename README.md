@@ -206,6 +206,7 @@ The matter surfaces, on the same tokens:
 | Primitives | `Panel`, `Badge`, `Button`, `LinkButton`, `ButtonRow`, `Callout` |
 | Review | `Decision`, `DecisionGrid`, `DraftCard`, `AuthorityList`, `AuthorityDialog`, `HarvardOutlineViewer` |
 | Record | `SourceThread`, `CiteTheRecord`, `RecordCite`, `ClaimTable`, `FactGrid`, `DownloadGrid`, `ActionList`, `Record`, `StatusStrip` |
+| Chat | `Chat`, `ChatComposer` |
 | Platform | `ThemeProvider`/`useTheme`, `SessionProvider`/`useSession`, `apiFetch` |
 
 ### The page that shows one thing

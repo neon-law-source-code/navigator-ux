@@ -354,6 +354,18 @@ export {
   type FeedProps,
   type FeedSource,
 } from './components/Feed'
+export {
+  Chat,
+  ChatComposer,
+  type ChatComposerProps,
+  type ChatMessage,
+  type ChatPart,
+  type ChatProps,
+  type ChatRole,
+  type ChatToolCall,
+  type ChatToolKind,
+  type ChatToolStatus,
+} from './components/Chat'
 export { ClaimTable, type ClaimTableColumn, type ClaimTableProps } from './components/ClaimTable'
 export {
   ActionList,
