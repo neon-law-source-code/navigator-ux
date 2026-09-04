@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [react()],
   root: resolve(here, 'harness'),
   server: {
+    host: '127.0.0.1',
     port: 5175,
     strictPort: true,
     proxy: {

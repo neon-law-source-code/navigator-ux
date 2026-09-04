@@ -197,7 +197,7 @@ export function createMockApi() {
     }
 
     const missing = requiredBodyFields(found.operation).filter(
-      (field) => body == null || body[field] === undefined || body[field] === '',
+      (field) => body === undefined || body === null || body[field] === undefined || body[field] === '',
     )
     if (missing.length > 0) {
       send(res, 400, { error: 'invalid', message: `missing ${missing.join(', ')}` })
