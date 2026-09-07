@@ -10,18 +10,20 @@ already published; when it is newer, `release-tag` creates and pushes `v${versio
 behind it, all in the same run. An ordinary merge that carries no bump answers "not a release" in seconds and nothing
 downstream runs.
 
+The merge event must be handled by the run that can observe it. GitHub suppresses workflow runs for events caused by
+`GITHUB_TOKEN`, so a bot-armed auto-merge suppresses both the follow-up `push` and the `pull_request: closed` event. On
+2026-09-05, 2026-09-06, and 2026-09-07, PRs #38, #39, and #40 each had only a successful pre-merge `pull_request` run
+on their `cursor/release-cut-*` branch; each ended seconds before its bot merge, and no post-merge run evaluated
+`release-version`. The release job now identifies a candidate in that successful PR run, waits for the landed commit,
+and publishes from that commit. Human merges and `workflow_dispatch` remain reconciliation paths.
+
 There is deliberately no hand-pushed tag as a second way to publish — keeping one would mean keeping a way for the
 tag and the manifest to disagree, which is exactly the failure this design removes by construction rather than by
 asserting it in CI.
 
-**`release-version` does have two *triggers*, though, and that is not the same thing as a second way to publish —
-both name the identical decision, off the identical commit.** Nearly every merge here lands through
-`enable-automerge`'s bot-armed auto-merge, and GitHub does not start a new workflow run for a `push` an Actions
-`GITHUB_TOKEN` caused — the anti-recursion rule. A `push`-only trigger silently never fires for a bot-merged PR: `v26.9.1`
-sat on `main` unreleased for exactly this reason before the `pull_request: closed` (with `merged == true`) trigger was
-added. That event is a PR lifecycle event rather than a token-attributed push, so it fires regardless of who performed
-the merge, and it is the trigger that actually does the work in this repository. `push` stays only for the rare
-commit that reaches `main` some other way.
+`release-version` is reachable from `push`, `pull_request`, and `workflow_dispatch`. The first two cover human merges
+and pre-merge candidates; the last is an operator recovery path if a run is interrupted. All three make the same
+manifest-versus-tags decision, and only the workflow's release jobs can create the tag.
 
 **`YY.M.D` is a convention, not a rule.** npm parses `package.json`'s `version` as semver, so a name that departs from
 the calendar publishes just as well, provided it is newer than every version already published. What the date buys is
@@ -45,6 +47,16 @@ answers:
 
 The first published line here was `0.1.0`. `26.8.31` is newer than `0.8.0`; that jump is the intended switch onto the
 Navigator calendar, not a mistake.
+
+## Version recovery and product cadence
+
+The manifest is authoritative. After the missed bot publishes, `26.9.5` and `26.9.6` are abandoned release numbers:
+they have no tag or release and must not be recovered by moving the manifest backwards. The next release is `26.9.7`,
+followed by `26.9.8` on the next UTC calendar day.
+
+Navigator UX and Navigator share the `YY.M.D` spelling but not a release sequence. Their product versions have already
+diverged, so cross-product version synchronisation is not a goal and there is no reconciler keeping the two streams
+aligned. Each repository's manifest and published tags define its own cadence.
 
 ## Shape
 

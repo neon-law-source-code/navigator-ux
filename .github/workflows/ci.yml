@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+  workflow_dispatch:
   # Explicit `types:` because the release chain below needs `closed` added to
   # the default set (opened, synchronize, reopened) — see `release-version`.
   # `ready_for_review` is included too: `enable-automerge`'s `if` has checked
@@ -200,55 +201,57 @@ jobs:
           fi
           printf '%s\n' "${result}"
 
-  # Decides whether main just gained a release, by comparing package.json's
+  # Decides whether this run carries a release, by comparing package.json's
   # version against every tag already on the remote — the same
   # `scripts/release-default-tag.mjs --check-manifest` the cut-release
-  # preflight runs on a branch, now run again on the commit that landed. An
-  # ordinary merge that carries no version bump answers `publishable=false`
-  # and the two jobs below are no-ops; a bump answers `publishable=true` and
-  # names the tag to cut.
+  # preflight runs on a branch. On a pull_request run this identifies a
+  # release candidate before merge; the tag job below waits for the actual
+  # merge commit before publishing. An ordinary PR or merge answers
+  # `publishable=false` and the two jobs below are no-ops.
   #
   # THE VERSION IS THE MANIFEST. There is no separate tag push to check it
   # against, so the mismatch the old `release` job used to guard against
   # (tagging v26.8.31 without bumping package.json) is unsatisfiable by
   # construction rather than merely caught.
   #
-  # TWO WAYS TO FIRE, because one of them silently never does. A PR merged by
-  # this repo's own `enable-automerge` job is merged BY GITHUB_TOKEN — GitHub
-  # does not start a new workflow run for an event a `GITHUB_TOKEN` caused, to
-  # block recursive runs. #25 merged that way and proved it: the `push` this
-  # job used to trigger on never happened, no tag was cut, and nothing said
-  # so. `pull_request: closed` is a PR lifecycle event, not a token-attributed
-  # push, so it fires regardless of who performed the merge — it is the
-  # primary path here since nearly every merge in this repository is
-  # bot-armed. `push` stays as the fallback for the rare manually-merged
-  # commit, which genuinely does carry a human's push.
+  # The successful PR run is the bot-merge path: it discovers the candidate
+  # before merge, waits for the PR to report its landed commit, and publishes
+  # from that commit. This is necessary because a GITHUB_TOKEN merge
+  # suppresses the follow-up workflow events, including `pull_request: closed`.
+  # `push` and `closed` remain reconciliation paths for human merges; see
+  # docs/releasing.md for the incident evidence.
   release-version:
     name: did main just gain a release?
-    needs: [lint, verify]
+    needs: [lint, verify, e2e]
     if: |
-      github.event_name == 'push' ||
-      (github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+      always() &&
+      (
+        github.event_name == 'push' ||
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          (
+            github.event.action != 'closed' ||
+            (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+          )
+        )
+      )
     runs-on: ubuntu-latest
     permissions:
       contents: read
     outputs:
-      # The commit that actually landed on main. NOT `github.sha` on a
-      # `pull_request` event — that resolves to the ephemeral
-      # `refs/pull/<n>/merge` preview ref, which can already be gone by the
-      # time `closed` fires. `merge_commit_sha` is the real one.
-      sha: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
       publishable: ${{ steps.check.outputs.publishable }}
       tag: ${{ steps.check.outputs.tag }}
       prerelease: ${{ steps.check.outputs.prerelease }}
     steps:
       # The script lists tags with `git ls-remote`, so history depth does not
-      # matter — the default shallow checkout is enough. `ref:` matters more
-      # here than depth: without it, a `pull_request` checkout resolves the
-      # preview merge ref above, not the commit that landed.
+      # matter — the default shallow checkout is enough. For a PR candidate,
+      # the head commit is sufficient because this job only reads its manifest;
+      # release-tag resolves the commit that actually landed.
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.merge_commit_sha || github.sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -281,6 +284,8 @@ jobs:
     name: cut the release tag
     needs: [release-version]
     if: needs.release-version.outputs.publishable == 'true'
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -297,8 +302,48 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release-version.outputs.sha }}
+      - name: resolve the landed commit
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+          GH_HOST="${GITHUB_SERVER_URL#https://}"
+          export GH_HOST
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.action }}" != "closed" ]; then
+              for attempt in $(seq 1 120); do
+                  pr_json="$(gh pr view "${PR_URL}" --json mergedAt,mergeCommit,state)"
+                  merged_at="$(printf '%s' "${pr_json}" | jq -r '.mergedAt // empty')"
+                  sha="$(printf '%s' "${pr_json}" | jq -r '.mergeCommit.oid // empty')"
+                  if [ -n "${merged_at}" ] && [ -n "${sha}" ]; then
+                      echo "sha=${sha}" >> "${GITHUB_OUTPUT}"
+                      exit 0
+                  fi
+                  state="$(printf '%s' "${pr_json}" | jq -r '.state')"
+                  if [ "${state}" = "CLOSED" ]; then
+                      echo "release candidate PR closed without a merge" >&2
+                      exit 1
+                  fi
+                  echo "waiting for ${PR_URL} to merge (attempt ${attempt}/120)"
+                  sleep 5
+              done
+              echo "timed out waiting for ${PR_URL} to merge" >&2
+              exit 1
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+              sha="${{ github.event.pull_request.merge_commit_sha }}"
+              [ -n "${sha}" ] || { echo "merged PR has no merge commit" >&2; exit 1; }
+              echo "sha=${sha}" >> "${GITHUB_OUTPUT}"
+          else
+              echo "sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+          fi
+      - name: check out the landed commit
+        env:
+          SHA: ${{ steps.resolve.outputs.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "${SHA}"
+          git checkout --detach "${SHA}"
       - name: create and push the tag
         env:
           TAG: ${{ needs.release-version.outputs.tag }}
@@ -346,7 +391,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release-version.outputs.sha }}
+          ref: ${{ needs.release-tag.outputs.sha }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
