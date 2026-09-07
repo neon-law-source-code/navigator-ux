@@ -1,25 +1,29 @@
+import { DEFENDANT_SHORT, DEPONENT_SHORT, PLAINTIFF } from '../fixtures/matter.mjs'
 import { RecordCite, type RecordCitation } from '../src/components/CiteTheRecord'
 import type { HarvardOutlineSection } from '../src/components/HarvardOutline'
 
-/** Invented brief excerpts. No real matter, no real transcript. */
+/**
+ * Invented brief excerpts. Each quote sits inside its excerpt verbatim, which
+ * is what `RecordCite`'s quote-locating needs in order to have anything to find.
+ */
 export const CURE_NOTICE: RecordCitation = {
   id: 'cure-notice',
-  quote: 'Northwind shall have thirty days to cure any alleged default',
+  quote: `${DEFENDANT_SHORT} shall have thirty days to cure any alleged default`,
   cite: 'R. 14:6–8',
   source: 'Supply Agreement dated 14 March 2023',
   speaker: '§ 8.2 · Cure',
   excerpt:
-    '8.2 Cure. Upon written notice of default, Northwind shall have thirty days to cure any alleged default before the non-breaching party may terminate or seek damages. Notice is effective on the date of delivery to the address in § 12.',
+    `8.2 Cure. Upon written notice of default, ${DEFENDANT_SHORT} shall have thirty days to cure any alleged default before the non-breaching party may terminate or seek damages. Notice is effective on the date of delivery to the address in § 12.`,
 }
 
 export const DEPOSITION_QUOTE: RecordCitation = {
-  id: 'osei-dep',
+  id: 'officer-dep',
   quote: 'we did not send a cure notice until August',
   cite: 'Dep. 18:4–9',
-  source: 'Deposition of K. Osei, 12 August 2026',
-  speaker: 'K. Osei',
+  source: `Deposition of ${DEPONENT_SHORT}, 12 August 2026`,
+  speaker: DEPONENT_SHORT,
   excerpt:
-    'Q. When did Northwind first give written notice of the alleged default?\nA. I reviewed the file. we did not send a cure notice until August, after the delivery window had already closed.\nQ. And the agreement required thirty days?\nA. That is what § 8.2 says.',
+    `Q. When did ${DEFENDANT_SHORT} first give written notice of the alleged default?\nA. I reviewed the file. we did not send a cure notice until August, after the delivery window had already closed.\nQ. And the agreement required thirty days?\nA. That is what § 8.2 says.`,
 }
 
 export const MISSING_SPAN: RecordCitation = {
@@ -39,7 +43,7 @@ export const MOTION_SECTIONS: HarvardOutlineSection[] = [
     title: 'Introduction',
     children: (
       <p>
-        Vance moves for summary judgment on the breach claim. The supply agreement
+        {PLAINTIFF.lastName} moves for summary judgment on the breach claim. The supply agreement
         required notice and a cure window; the record shows neither arrived in time.
       </p>
     ),
@@ -70,7 +74,7 @@ export const MOTION_SECTIONS: HarvardOutlineSection[] = [
         children: (
           <>
             <p>
-              Counsel for Northwind testified that written notice went out only after
+              Counsel for {DEFENDANT_SHORT} testified that written notice went out only after
               the delivery window closed.
             </p>
             <RecordCite citation={DEPOSITION_QUOTE} />

@@ -1,3 +1,10 @@
+import {
+  CAPTION,
+  COMPLAINT_PDF,
+  DEFENDANT,
+  DEFENDANT_SHORT,
+  PLAINTIFF,
+} from '../fixtures/matter.mjs'
 import { useState } from 'react'
 // Vite's explicit `?url` import, not `PdfViewer`'s own `import.meta.url` default: that
 // default resolves the worker relative to `PdfViewer.tsx`'s own module, which is correct
@@ -34,7 +41,7 @@ import {
  * The authenticated portal pages, everything inside `NavigatorShell` and
  * `NavigatorNavbar`, read as one dense reference surface regardless of what
  * point in the matter a reader is looking at. This is the counter-example: the
- * same matter, `Vance v. Northwind` (the fictional breach already used by
+ * same matter (the invented breach already used by
  * `gallery/outline-specimen.tsx`), carried through a `Stepper` from the first
  * inquiry to a filed complaint. The first two steps are the focus set — a
  * `Stage` no wider than the one question it asks — because a prospective
@@ -59,7 +66,8 @@ const CLAIM_ROWS: ClaimRow[] = [
   { claim: 'Breach of contract', basis: 'Supply Agreement § 8.2 (cure)', status: 'Filed' },
 ]
 
-const COMPLAINT_PDF_SRC = `${import.meta.env.BASE_URL}specimens/vance-v-northwind-complaint.pdf`
+/* `COMPLAINT_PDF` is shared with the generator so the two cannot drift apart. */
+const COMPLAINT_PDF_SRC = `${import.meta.env.BASE_URL}specimens/${COMPLAINT_PDF}.pdf`
 
 function PitchStep() {
   return (
@@ -100,7 +108,7 @@ function EngagementStep() {
   return (
     <Stage width="md" fill={false}>
       <Hero
-        eyebrow="Adaeze Vance · Northwind Holdings, Inc."
+        eyebrow={`${PLAINTIFF.name} · ${DEFENDANT}`}
         title="This reads as a breach-of-contract matter"
         lede="Section 8.2 of the supply agreement promised a thirty-day cure window. The record does not show one running before the delivery date passed."
         level={2}
@@ -145,7 +153,7 @@ function PleadingsStep() {
         footer={<NavigatorFooter legal="© 2026 Shook Law PLLC" release="v0.5.0" />}
       >
         <PageHeader
-          title="Vance v. Northwind"
+          title={CAPTION}
           summary="Case No. CV-26-041782"
           actions={<Badge tone="ready">Complaint filed</Badge>}
         />
@@ -158,7 +166,8 @@ function PleadingsStep() {
               rowKey={(row) => row.claim}
             />
             <DocketRecord when="3 Mar 2026" title="Inquiry received">
-              Adaeze Vance described a missed delivery under the March 2023 supply agreement.
+              {PLAINTIFF.name} described a missed delivery under the March 2023 supply
+              agreement.
             </DocketRecord>
             <DocketRecord when="6 Mar 2026" title="Engagement signed">
               Contingency engagement letter executed; the matter opened.
@@ -173,7 +182,7 @@ function PleadingsStep() {
           >
             <PdfViewer
               src={COMPLAINT_PDF_SRC}
-              label="Complaint, Vance v. Northwind"
+              label={`Complaint, ${CAPTION}`}
               workerSrc={pdfWorkerSrc}
             />
           </Panel>
@@ -181,7 +190,7 @@ function PleadingsStep() {
         <DraftCard
           title="Internal note"
           note="Counsel · not client-facing"
-          text="Complaint filed on the cure-clause theory. Next: serve Northwind and calendar the answer deadline."
+          text={`Complaint filed on the cure-clause theory. Next: serve ${DEFENDANT_SHORT} and calendar the answer deadline.`}
           copyable={false}
         />
       </NavigatorShell>

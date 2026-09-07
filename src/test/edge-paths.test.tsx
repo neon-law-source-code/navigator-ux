@@ -1,10 +1,13 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fakeCaption } from '../../fixtures/fake.mjs'
 import { AuthorityList, type Authority } from '../components/AuthorityDialog'
 import { CaseNav } from '../components/CaseNav'
 import { DraftCard } from '../components/DraftCard'
 import { ThemeProvider } from '../theme/ThemeProvider'
+
+const CAPTION = fakeCaption('edge-paths/matter')
 
 beforeEach(() => window.localStorage.clear())
 
@@ -70,7 +73,7 @@ describe('CaseNav edge paths', () => {
       <ThemeProvider>
         <CaseNav
           brand="NEON LAW"
-          caption="Vance v. Northwind"
+          caption={CAPTION}
           links={[{ label: 'Counterclaims', href: '/c/', emphasis: true }]}
         />
       </ThemeProvider>,
@@ -83,7 +86,7 @@ describe('CaseNav edge paths', () => {
     const link = screen.getByRole('link', { name: 'Counterclaims' })
     expect(link).toHaveClass('nav-btn')
     expect(link).toHaveClass('nav-btn--primary')
-    expect(document.querySelector('.case-nav__caption')).toHaveTextContent('Vance v. Northwind')
+    expect(document.querySelector('.case-nav__caption')).toHaveTextContent(CAPTION)
   })
 
   it('renders an ordinary link as the unadorned button', () => {

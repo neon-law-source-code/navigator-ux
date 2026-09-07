@@ -66,7 +66,7 @@ export interface AuthorityListProps {
   authorities: Authority[]
   /**
    * localStorage key holding which authorities the reader has verified.
-   * Scope it per page, e.g. "northwind-review-0724-authority-review-v1".
+   * Scope it per page, e.g. "<matter>-review-0724-authority-review-v1".
    */
   storageKey: string
   children?: ReactNode

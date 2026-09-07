@@ -1,5 +1,6 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 
+import { FIRM } from '../fixtures/matter.mjs'
 import {
   ChoiceGroup,
   Hero,
@@ -67,7 +68,7 @@ export function FocusSet({ Section }: { Section: ComponentType<SectionProps> }) 
         <div className="gallery__stage">
           <Stage
             width="md"
-            header={<p className="gallery__stage-brand">Northwind Legal</p>}
+            header={<p className="gallery__stage-brand">{FIRM}</p>}
             footer={
               <p>
                 Nothing here is legal advice, and nothing you enter is shared until you ask us to

@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { fakePerson } from '../../fixtures/fake.mjs'
 import { Icon, ICON_NAMES } from '../components/Icon'
 import {
   Card,
@@ -22,6 +23,9 @@ import {
   NavButton,
   NavLinkButton,
 } from '../components/Navigation'
+
+/* One person, drawn once: a testimonial's author and the impersonated user. */
+const WITNESS = fakePerson('design-system/person')
 import { Prose, Runs } from '../components/Prose'
 
 describe('Icon', () => {
@@ -137,28 +141,32 @@ describe('PricingCard', () => {
 describe('TestimonialCard', () => {
   it('uses the portrait when there is one, decoratively', () => {
     const { container } = render(
-      <TestimonialCard quote="They won." name="Dana Whitfield" avatarUrl="/dana.jpg" />,
+      <TestimonialCard quote="They won." name={WITNESS.name} avatarUrl="/portrait.jpg" />,
     )
     const img = container.querySelector('img')
-    expect(img).toHaveAttribute('src', '/dana.jpg')
+    expect(img).toHaveAttribute('src', '/portrait.jpg')
     // The name sits beside it; alt text would be the same words twice.
     expect(img).toHaveAttribute('alt', '')
   })
 
   it('derives initials when there is no portrait', () => {
-    const { container } = render(<TestimonialCard quote="Good." name="Dana Whitfield" />)
-    expect(container.querySelector('.testimonial-card__avatar--initials')).toHaveTextContent('DW')
+    const { container } = render(<TestimonialCard quote="Good." name={WITNESS.name} />)
+    expect(container.querySelector('.testimonial-card__avatar--initials')).toHaveTextContent(
+      WITNESS.initials,
+    )
   })
 
   it('prefers explicit initials over derived ones', () => {
     const { container } = render(
-      <TestimonialCard quote="Good." name="Dana Whitfield" initials="DQ" />,
+      <TestimonialCard quote="Good." name={WITNESS.name} initials="DQ" />,
     )
     expect(container.querySelector('.testimonial-card__avatar--initials')).toHaveTextContent('DQ')
   })
 
   it('derives nothing from a non-string name', () => {
-    const { container } = render(<TestimonialCard quote="Good." name={<span>Dana</span>} />)
+    const { container } = render(
+      <TestimonialCard quote="Good." name={<span>{WITNESS.firstName}</span>} />,
+    )
     expect(container.querySelector('.testimonial-card__avatar--initials')).toHaveTextContent('')
   })
 
@@ -240,19 +248,19 @@ describe('Feedback', () => {
 
 describe('ImpersonationBanner', () => {
   it('is a status region, not an alert', () => {
-    render(<ImpersonationBanner name="Dana Whitfield" stopAction="/impersonation/stop" />)
+    render(<ImpersonationBanner name={WITNESS.name} stopAction="/impersonation/stop" />)
     // A standing condition is announced politely, once — not asserted over
     // whatever the reader is doing.
     const banner = screen.getByRole('status')
-    expect(banner).toHaveTextContent('You are acting as Dana Whitfield')
+    expect(banner).toHaveTextContent(`You are acting as ${WITNESS.name}`)
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('offers the way out as a form post, with its hidden fields', () => {
     const { container } = render(
       <ImpersonationBanner
-        name="Dana"
-        email="dana@example.com"
+        name={WITNESS.firstName}
+        email={WITNESS.email}
         stopAction="/impersonation/stop"
         stopLabel="Return to my account"
         hiddenFields={{ _csrf: 'tok' }}
@@ -267,7 +275,7 @@ describe('ImpersonationBanner', () => {
       'type',
       'submit',
     )
-    expect(screen.getByText('dana@example.com')).toBeInTheDocument()
+    expect(screen.getByText(WITNESS.email)).toBeInTheDocument()
   })
 })
 

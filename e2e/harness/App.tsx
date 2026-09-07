@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { fakePerson, fakeSentence } from '../../fixtures/fake.mjs'
 import { apiFetch, ApiRequestError } from '../../src/api/client'
 import type { components } from '../../src/api/schema'
 import { Callout } from '../../src/components/Primitives'
@@ -11,6 +12,9 @@ type ApiPerson = components['schemas']['Person']
 type ValidateResponse = components['schemas']['ValidateResponse']
 
 const SESSION = 'navigator_session=e2e'
+
+/* Absent from the seed on purpose — the spec asserts that a create shows up. */
+const NEW_CLERK = fakePerson('e2e/new-clerk')
 
 function formatError(error: unknown): string {
   if (error instanceof ApiRequestError) return `${error.status} ${error.message}`
@@ -98,8 +102,8 @@ export function App() {
             run('person created', async () => {
               await apiFetch('/app/api/people', 'post', {
                 body: {
-                  name: 'Tobias Lindqvist',
-                  email: 'tobias@example.com',
+                  name: NEW_CLERK.name,
+                  email: NEW_CLERK.email,
                   role: 'clerk',
                 },
               })
@@ -146,7 +150,7 @@ export function App() {
             run('message posted', async () => {
               await apiFetch('/app/api/projects/{id}/conversation/messages', 'post', {
                 path: { id: '0199a1f0-0000-7000-8000-000000000010' },
-                body: { body: 'Ready for the Northwind review.' },
+                body: { body: fakeSentence('e2e/message') },
               })
             })
           }

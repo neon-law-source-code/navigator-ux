@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { fakePerson } from '../../fixtures/fake.mjs'
 import { API_PREFIX, ApiRequestError, apiFetch } from '../api/client'
 import type { components } from '../api/schema'
 import type { Person as FormPerson } from '../components/Form'
@@ -14,11 +15,14 @@ type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ?
 
 export type SessionRoleMatchesSpec = Expect<Equal<SessionRole, PersonRole>>
 
+const LAWYER = fakePerson('api-client/lawyer')
+const CLIENT = fakePerson('api-client/client')
+
 function person(overrides: Partial<ApiPerson> = {}): ApiPerson {
   return {
     id: '0199a1f0-0000-7000-8000-000000000003',
-    name: 'Dana Whitfield',
-    email: 'dana@example.com',
+    name: LAWYER.name,
+    email: LAWYER.email,
     role: 'lawyer',
     inserted_at: '2026-01-15T00:00:00.000Z',
     updated_at: '2026-01-15T00:00:00.000Z',
@@ -52,11 +56,11 @@ describe('apiFetch', () => {
   })
 
   it('fills a path template and POSTs a JSON body', async () => {
-    const created = person({ name: 'Amara Osei', email: 'amara@example.com', role: 'client' })
+    const created = person({ name: CLIENT.name, email: CLIENT.email, role: 'client' })
     const fetchMock = respondWith(201, created)
     await expect(
       apiFetch('/app/api/people', 'post', {
-        body: { name: 'Amara Osei', email: 'amara@example.com', role: 'client' },
+        body: { name: CLIENT.name, email: CLIENT.email, role: 'client' },
       }),
     ).resolves.toEqual(created)
 
@@ -163,7 +167,7 @@ describe('API prefix and view-model assignability', () => {
       name: person().name,
       email: person().email,
     }
-    expect(row.email).toBe('dana@example.com')
+    expect(row.email).toBe(LAWYER.email)
   })
 
   it('names the same roles the snapshot names', () => {

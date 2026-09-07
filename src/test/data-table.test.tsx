@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { fakePerson } from '../../fixtures/fake.mjs'
 import { DataTable, Pagination, RowActions, type DataColumn } from '../components/DataTable'
 import { ConfirmDelete } from '../components/ConfirmDelete'
 
@@ -10,9 +11,12 @@ interface Person {
   email: string
 }
 
+const FIRST = fakePerson('data-table/first')
+const SECOND = fakePerson('data-table/second')
+
 const people: Person[] = [
-  { id: '1', name: 'Dana Whitfield', email: 'dana@example.com' },
-  { id: '2', name: 'Amara Osei', email: 'amara@example.com' },
+  { id: '1', name: FIRST.name, email: FIRST.email },
+  { id: '2', name: SECOND.name, email: SECOND.email },
 ]
 
 const columns: DataColumn<Person>[] = [
@@ -28,7 +32,7 @@ describe('DataTable', () => {
     render(<DataTable columns={columns} rows={people} rowKey={(row) => row.id} />)
     // Two records plus the header row.
     expect(screen.getAllByRole('row')).toHaveLength(3)
-    expect(screen.getByText('dana@example.com')).toBeInTheDocument()
+    expect(screen.getByText(FIRST.email)).toBeInTheDocument()
   })
 
   it('puts sort state in the URL, as real anchors', () => {
@@ -191,7 +195,7 @@ describe('RowActions', () => {
   it('names every control for the row it belongs to', () => {
     render(
       <RowActions
-        label="Dana Whitfield"
+        label={FIRST.name}
         actions={[
           { kind: 'link', label: 'Edit', href: '/people/1/edit', icon: 'pencil-square' },
           { kind: 'post', label: 'Delete', action: '/people/1/delete', destructive: true },
@@ -199,9 +203,9 @@ describe('RowActions', () => {
       />,
     )
     // A table of identical Edit/Delete pairs is unnavigable without this.
-    expect(screen.getByRole('link', { name: 'Edit — Dana Whitfield' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Delete — Dana Whitfield' })).toBeInTheDocument()
-    expect(screen.getByRole('group', { name: 'Dana Whitfield' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: `Edit — ${FIRST.name}` })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: `Delete — ${FIRST.name}` })).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: FIRST.name })).toBeInTheDocument()
   })
 
   it('makes a destructive action a POST form, never a link', () => {

@@ -1,5 +1,6 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 
+import { LAWYER, MATTER_CODE } from '../fixtures/matter.mjs'
 import { Chat, ChatComposer, type ChatMessage } from '../src/index'
 import { ZODIAC_CHATS } from './zodiac-chats'
 
@@ -31,7 +32,7 @@ function LiveCopilot() {
       {
         id: `u-${n}`,
         role: 'user',
-        name: 'Dana Whitfield',
+        name: LAWYER.name,
         initials: 'DW',
         parts: [{ type: 'text', id: `u-${n}-t`, text }],
       },
@@ -50,7 +51,7 @@ function LiveCopilot() {
               id: `tool-${n}`,
               kind: 'cli',
               name: 'Echo (specimen)',
-              command: `navigator project update --id NW-0724 --note ${JSON.stringify(text)}`,
+              command: `navigator project update --id ${MATTER_CODE} --note ${JSON.stringify(text)}`,
               status: 'done',
               result: 'Not executed. The composer only appends to this page.',
             },
@@ -83,7 +84,7 @@ export function ChatSet({ Section }: { Section: ComponentType<SectionProps> }) {
       </Section>
       <Section
         title="Twelve zodiac threads"
-        note="One mocked copilot conversation per sign. Invented Northwind facts; the commands name real Navigator seams."
+        note="One mocked copilot conversation per sign. The facts are invented and the parties drawn; the commands name real Navigator seams."
       >
         <div className="gallery__zodiac" role="group" aria-label="Zodiac chats">
           {ZODIAC_CHATS.map((entry) => {

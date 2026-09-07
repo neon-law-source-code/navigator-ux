@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react'
 
 import {
+  DEFENDANT_SHORT,
+  OPPOSING_COUNSEL_SHORT,
+  PLAINTIFF,
+} from '../fixtures/matter.mjs'
+import {
   AreaChart,
   BarChart,
   ChartLegend,
@@ -109,11 +114,26 @@ const PAGE_FIGURES: Record<string, PageFigure> = {
     'Who must be screened',
     'People, entities, and prior matters in one picture, so a relationship is not left in a note.',
     [
-      { id: 'client', label: 'Northwind', kind: 'party', fields: { role: 'Prospective client' } },
-      { id: 'adverse', label: 'Vance', kind: 'party', fields: { role: 'Adverse party' } },
+      {
+        id: 'client',
+        label: DEFENDANT_SHORT,
+        kind: 'party',
+        fields: { role: 'Prospective client' },
+      },
+      {
+        id: 'adverse',
+        label: PLAINTIFF.lastName,
+        kind: 'party',
+        fields: { role: 'Adverse party' },
+      },
       { id: 'affiliate', label: 'Harbor LLC', kind: 'entity', fields: { role: 'Affiliate' } },
       { id: 'prior', label: 'Matter 19-04', kind: 'matter', fields: { role: 'Closed file' } },
-      { id: 'counsel', label: 'A. Reyes', kind: 'counsel', fields: { role: 'Screening lawyer' } },
+      {
+        id: 'counsel',
+        label: OPPOSING_COUNSEL_SHORT,
+        kind: 'counsel',
+        fields: { role: 'Screening lawyer' },
+      },
     ],
     [
       { source: 'client', target: 'affiliate', kind: 'owns' },

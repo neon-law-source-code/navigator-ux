@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { fakeFirstName, fakeInitials, fakeLastName, fakePerson } from '../../fixtures/fake.mjs'
 import { Accordion, Collapsible } from '../components/Disclosure'
 import { AspectRatio, Avatar, Progress, Separator, Skeleton } from '../components/Display'
 import { Combobox, Switch, ToggleGroup } from '../components/Controls'
@@ -82,12 +83,27 @@ describe('Accordion', () => {
 
 /* ---------------------------------------------------------------- Display -- */
 
+const TWO_PART = fakePerson('shadcn-set/avatar')
+const SECOND = fakePerson('shadcn-set/second')
+const THREE_PART = [
+  fakeFirstName('shadcn-set/given'),
+  fakeFirstName('shadcn-set/middle'),
+  fakeLastName('shadcn-set/family'),
+].join(' ')
+const MONONYM = fakeFirstName('shadcn-set/mononym')
+
 describe('initialsFor', () => {
+  /*
+   * The expected value for a drawn name comes from `fakeInitials`, which is a
+   * separate implementation of the same rule in `fixtures/fake.mjs` — so this
+   * is a differential test, not a tautology. The mononym and whitespace rows
+   * stay literal: they are shapes, not names.
+   */
   it.each([
-    ['Dana Whitfield', 'DW'],
-    ['Amara Osei', 'AO'],
-    ['Tobias Mikkel Lindqvist', 'TL'],
-    ['Prince', 'P'],
+    [TWO_PART.name, fakeInitials(TWO_PART.name)],
+    [SECOND.name, fakeInitials(SECOND.name)],
+    [THREE_PART, fakeInitials(THREE_PART)],
+    [MONONYM, MONONYM.slice(0, 1).toUpperCase()],
     ['', ''],
     ['   ', ''],
   ])('turns %o into %o', (name, expected) => {
@@ -96,7 +112,11 @@ describe('initialsFor', () => {
 
   it('takes the first and last part, not the first two', () => {
     // A middle name should not displace the family name.
-    expect(initialsFor('Ada Byron Lovelace')).toBe('AL')
+    const first = THREE_PART.split(' ')[0] ?? ''
+    const last = THREE_PART.split(' ').at(-1) ?? ''
+    expect(initialsFor(THREE_PART)).toBe(
+      `${first.slice(0, 1)}${last.slice(0, 1)}`.toUpperCase(),
+    )
   })
 })
 
@@ -123,21 +143,24 @@ describe('Separator', () => {
 
 describe('Avatar', () => {
   it('uses the portrait, named', () => {
-    render(<Avatar src="/dana.jpg" name="Dana Whitfield" />)
-    expect(screen.getByRole('img', { name: 'Dana Whitfield' })).toHaveAttribute('src', '/dana.jpg')
+    render(<Avatar src="/portrait.jpg" name={TWO_PART.name} />)
+    expect(screen.getByRole('img', { name: TWO_PART.name })).toHaveAttribute(
+      'src',
+      '/portrait.jpg',
+    )
   })
 
   it('falls back to initials, announced once', () => {
-    render(<Avatar name="Dana Whitfield" />)
-    const avatar = screen.getByRole('img', { name: 'Dana Whitfield' })
-    expect(avatar).toHaveTextContent('DW')
+    render(<Avatar name={TWO_PART.name} />)
+    const avatar = screen.getByRole('img', { name: TWO_PART.name })
+    expect(avatar).toHaveTextContent(TWO_PART.initials)
     // The visible initials are hidden so the name is not read twice.
-    expect(within(avatar).getByText('DW')).toHaveAttribute('aria-hidden', 'true')
+    expect(within(avatar).getByText(TWO_PART.initials)).toHaveAttribute('aria-hidden', 'true')
   })
 
   it('takes an initials override and a size', () => {
-    render(<Avatar name="Dana Whitfield" initials="DQ" size="lg" />)
-    const avatar = screen.getByRole('img', { name: 'Dana Whitfield' })
+    render(<Avatar name={TWO_PART.name} initials="DQ" size="lg" />)
+    const avatar = screen.getByRole('img', { name: TWO_PART.name })
     expect(avatar).toHaveTextContent('DQ')
     expect(avatar).toHaveClass('nav-avatar--lg')
   })

@@ -207,7 +207,7 @@ export type RowAction = RowActionLink | RowActionPost
 export interface RowActionsProps {
   actions: RowAction[]
   /**
-   * Names the cluster for assistive technology — "Actions for Dana Whitfield".
+   * Names the cluster for assistive technology — "Actions for <the row's subject>".
    * A table of identical "Edit / Delete" pairs is unnavigable without it.
    */
   label: string

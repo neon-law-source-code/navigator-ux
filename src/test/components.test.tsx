@@ -1,10 +1,17 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fakeCompany, fakeSlug } from '../../fixtures/fake.mjs'
 import { AuthorityList, type Authority } from '../components/AuthorityDialog'
 import { DraftCard } from '../components/DraftCard'
 import { CaseNav } from '../components/CaseNav'
 import { ThemeProvider } from '../theme/ThemeProvider'
+
+/*
+ * The legacy per-matter URL shape, which used to be a client's name. It is the
+ * shape being tested, not the word, so the word is drawn.
+ */
+const MATTER_PATH = fakeSlug('components/matter-path', 1)
 
 const authorities: Authority[] = [
   {
@@ -115,10 +122,10 @@ describe('CaseNav', () => {
     render(
       <ThemeProvider>
         <CaseNav
-          brand="MERIDIAN LAW · NORTHWIND"
+          brand={`MERIDIAN LAW · ${fakeCompany('components/case-nav').toUpperCase()}`}
           links={[
-            { label: 'Status', href: '/northwind/discovery/' },
-            { label: 'July 26 review', href: '/northwind/review-0724/', current: true },
+            { label: 'Status', href: `/${MATTER_PATH}/discovery/` },
+            { label: 'July 26 review', href: `/${MATTER_PATH}/review-0724/`, current: true },
           ]}
         />
       </ThemeProvider>,

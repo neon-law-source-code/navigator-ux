@@ -217,7 +217,7 @@ decision — after shadcn's login and onboarding blocks: a card no wider than it
 viewport, with more space around it than inside it.
 
 ```tsx
-<Stage width="md" header={<b>Northwind Legal</b>} footer={<p>Nothing here is legal advice.</p>}>
+<Stage width="md" header={<b>Your firm</b>} footer={<p>Nothing here is legal advice.</p>}>
   <Stepper
     label="Intake progress"
     finishType="submit"

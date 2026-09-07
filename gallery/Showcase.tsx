@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { CAPTION } from '../fixtures/matter.mjs'
 import {
   Accordion,
   Avatar,
@@ -415,7 +416,7 @@ function PageOutline() {
         document scrolls, the current section stays marked. A direct quote opens
         the matching span in the record; a paraphrase does not light up.
       </Callout>
-      <Panel title="Brief" note="Invented motion · Vance v. Northwind is a fictional caption.">
+      <Panel title="Brief" note={`Invented motion · ${CAPTION} is a drawn caption.`}>
         <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Motion outline" />
       </Panel>
       <Panel title="Cite the record" note="Every quoted span the brief already committed to, located in the excerpt it came from.">
@@ -436,7 +437,7 @@ function PageVerify() {
         the quoted words in the excerpt they came from.
       </Callout>
       <div className="showcase__verify">
-        <Panel title="The brief" note="Harvard outline · invented motion in Vance v. Northwind.">
+        <Panel title="The brief" note={`Harvard outline · invented motion in ${CAPTION}.`}>
           <HarvardOutlineViewer sections={MOTION_SECTIONS} aria-label="Motion outline beside the record" />
         </Panel>
         <Panel title="The record" note="Every quoted span, located in the notation excerpt it came from.">

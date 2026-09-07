@@ -5,8 +5,7 @@
  * Shared by `Avatar` and `TestimonialCard`, which had grown separate copies
  * that were already one edge case apart.
  *
- * Deliberately naive about names. It gives "Dana Whitfield" DW and
- * "Tobias Lindqvist" TL, and it will get plenty of names wrong — mononyms,
+ * Deliberately naive, and it will get plenty of names wrong — mononyms,
  * particles, non-Latin scripts, anyone whose family name comes first. That is
  * why every caller takes an `initials` override: this is the fallback for the
  * fallback, not an opinion about what a name is.

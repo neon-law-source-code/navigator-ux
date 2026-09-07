@@ -1,4 +1,15 @@
 import {
+  CAPTION,
+  CLIENT_HANDLE,
+  COOPERATIVE,
+  DEFENDANT_SHORT,
+  ENTITY_HANDLE,
+  FAMILY_TRUST,
+  LAWYER,
+  MATTER_CODE,
+  SUBSIDIARY,
+} from '../fixtures/matter.mjs'
+import {
   ActionList,
   AreaChart,
   BarChart,
@@ -15,9 +26,9 @@ import {
 /*
  * Twelve mocked copilot threads — one per zodiac — for the gallery.
  *
- * Each turn is invented specimen data (Northwind / Vance). The tool lines
- * name real Navigator seams (`navigator` CLI, `aida_*` MCP tools, `/app/api`)
- * but nothing here executes them.
+ * Each turn is invented specimen data. The tool lines name real Navigator
+ * seams (`navigator` CLI, `aida_*` MCP tools, `/app/api`) but nothing here
+ * executes them.
  */
 
 const PROJECT = '00000000-0000-4000-8000-000000000001'
@@ -35,8 +46,8 @@ function user(id: string, text: string): ChatMessage {
   return {
     id,
     role: 'user',
-    name: 'Dana Whitfield',
-    initials: 'DW',
+    name: LAWYER.name,
+    initials: LAWYER.initials,
     parts: [{ type: 'text', id: `${id}-t`, text }],
   }
 }
@@ -58,7 +69,10 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
     note: 'Name the fire: the deadline, then the call.',
     messages: [
       notice('Staff copilot. This thread is not a filing and not legal advice.'),
-      user('a1', 'Five-day notice. Answer is due tonight. What is on the Northwind eviction matter?'),
+      user(
+        'a1',
+        `Five-day notice. Answer is due tonight. What is on the ${DEFENDANT_SHORT} eviction matter?`,
+      ),
       {
         id: 'a2',
         role: 'assistant',
@@ -76,7 +90,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               name: 'Read matter',
               command: `GET /app/api/projects/${PROJECT}`,
               status: 'done',
-              result: 'NW-0724 · answer due 4 Sep 2026 · status open.',
+              result: `${MATTER_CODE} · answer due 4 Sep 2026 · status open.`,
             },
           },
           {
@@ -85,7 +99,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               id: 'render',
               kind: 'cli',
               name: 'Render answer template',
-              command: 'navigator template render --notation eviction-answer --project NW-0724',
+              command: `navigator template render --notation eviction-answer --project ${MATTER_CODE}`,
               status: 'running',
             },
           },
@@ -101,7 +115,10 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
     note: 'A title change is a receipt, not a vibe.',
     messages: [
       notice('Staff copilot. This thread is not a filing and not legal advice.'),
-      user('t1', 'Rename the formation matter so it matches the articles: Northwind Supply LLC.'),
+      user(
+        't1',
+        `Rename the formation matter so it matches the articles: ${SUBSIDIARY}.`,
+      ),
       {
         id: 't2',
         role: 'assistant',
@@ -113,9 +130,9 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               id: 'cli-update',
               kind: 'cli',
               name: 'Update project',
-              command: 'navigator project update --id NW-0724 --title "Northwind Supply LLC"',
+              command: `navigator project update --id ${MATTER_CODE} --title "${SUBSIDIARY}"`,
               status: 'done',
-              result: 'Title is now Northwind Supply LLC.',
+              result: `Title is now ${SUBSIDIARY}.`,
             },
           },
           {
@@ -123,7 +140,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
             id: 't-facts',
             children: (
               <FactGrid>
-                <FactCard title="Entity">Northwind Supply LLC</FactCard>
+                <FactCard title="Entity">{SUBSIDIARY}</FactCard>
                 <FactCard title="Jurisdiction">Nevada</FactCard>
                 <FactCard title="Status">Articles drafted, not filed</FactCard>
               </FactGrid>
@@ -157,9 +174,9 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               id: 'create-notation',
               kind: 'mcp',
               name: 'Create notation',
-              command: 'aida_create_notation · project NW-0724 · kind intake',
+              command: `aida_create_notation · project ${MATTER_CODE} · kind intake`,
               status: 'done',
-              result: 'Notation ntn_northwind_intake created.',
+              result: `Notation ntn_${ENTITY_HANDLE}_intake created.`,
             },
           },
         ],
@@ -203,7 +220,10 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
     note: 'A chart of exposure, then a dignified next step.',
     messages: [
       notice('Staff copilot. This thread is not a filing and not legal advice.'),
-      user('l1', 'They want to sue Northwind. Show me the Phase 0 assessment, not a pep talk.'),
+      user(
+        'l1',
+        `They want to sue ${DEFENDANT_SHORT}. Show me the Phase 0 assessment, not a pep talk.`,
+      ),
       {
         id: 'l2',
         role: 'assistant',
@@ -221,7 +241,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               name: 'List matters',
               command: 'aida_list_projects',
               status: 'done',
-              result: '1 open matter · NW-0724 Vance v. Northwind.',
+              result: `1 open matter · ${MATTER_CODE} ${CAPTION}.`,
             },
           },
           {
@@ -279,7 +299,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               name: 'Read entity',
               command: 'GET /app/api/entities/00000000-0000-4000-8000-0000000000e1',
               status: 'done',
-              result: 'Northwind Supply LLC · formed 12 Mar 2025 · NV.',
+              result: `${SUBSIDIARY} · formed 12 Mar 2025 · NV.`,
             },
           },
           {
@@ -381,7 +401,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
     note: 'Create the project, then the next horizon.',
     messages: [
       notice('Staff copilot. This thread is not a filing and not legal advice.'),
-      user('sg1', 'Founder is ready. Open a formation matter for Northwind Supply LLC.'),
+      user('sg1', `Founder is ready. Open a formation matter for ${SUBSIDIARY}.`),
       {
         id: 'sg2',
         role: 'assistant',
@@ -398,9 +418,9 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               kind: 'mcp',
               name: 'Open matter',
               command:
-                'aida_create_project · entity ent_northwind · client ppl_amara · attestation true',
+                `aida_create_project · entity ent_${ENTITY_HANDLE} · client ppl_${CLIENT_HANDLE} · attestation true`,
               status: 'done',
-              result: `Opened ${PROJECT} · code NW-0724.`,
+              result: `Opened ${PROJECT} · code ${MATTER_CODE}.`,
             },
           },
           {
@@ -440,9 +460,9 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               id: 'estate-update',
               kind: 'cli',
               name: 'Update project',
-              command: 'navigator project update --id NW-0724 --title "Northwind Family Trust"',
+              command: `navigator project update --id ${MATTER_CODE} --title "${FAMILY_TRUST}"`,
               status: 'done',
-              result: 'Title is now Northwind Family Trust.',
+              result: `Title is now ${FAMILY_TRUST}.`,
             },
           },
           {
@@ -497,7 +517,7 @@ export const ZODIAC_CHATS: ZodiacChat[] = [
               name: 'List entities',
               command: 'aida_list_entities',
               status: 'done',
-              result: 'Northwind Workers Cooperative · draft.',
+              result: `${COOPERATIVE} · draft.`,
             },
           },
           {

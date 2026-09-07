@@ -1,20 +1,25 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { fakeJudge, fakeLastName, fakePerson, fakeSentence } from '../../fixtures/fake.mjs'
 import { Feed, type FeedPost } from '../components/Feed'
+
+const JUDGE = fakeJudge('feed/judge')
+const ATTORNEY = fakePerson('feed/attorney')
+const PLAINTIFF = fakeLastName('feed/plaintiff')
 
 const posts: FeedPost[] = [
   {
     id: 'order-2026',
     date: '2026-02-09',
     dateLabel: 'Feb 9, 2026',
-    actor: 'Judge Christine Van Aken',
-    role: 'Dept. 301',
-    initials: 'CT',
+    actor: JUDGE.name,
+    role: 'Dept. 12',
+    initials: JUDGE.initials,
     accent: 'brand',
     kind: 'Order',
     tone: 'ready',
     title: 'Protective order granted',
-    body: 'The court enters the order.',
+    body: fakeSentence('feed/order-body'),
     sources: [
       { label: 'Order PDF', href: '/assets/order.pdf' },
       { label: 'Docket', href: '/assets/docket.pdf' },
@@ -24,22 +29,22 @@ const posts: FeedPost[] = [
     id: 'motion-2025',
     date: '2025-12-23',
     dateLabel: 'Dec 23, 2025',
-    actor: 'Michael Burshteyn',
-    initials: 'MB',
+    actor: ATTORNEY.name,
+    initials: ATTORNEY.initials,
     title: 'Motion for protective order drafted',
-    body: 'Drafting begins.',
+    body: fakeSentence('feed/motion-body'),
   },
   {
     id: 'complaint-2025',
     date: '2025-07-03',
     dateLabel: 'Jul 3, 2025',
-    actor: 'Vance Holdings, Inc.',
+    actor: PLAINTIFF,
     role: 'Plaintiff',
-    initials: 'CH',
+    initials: PLAINTIFF.slice(0, 2).toUpperCase(),
     accent: 'danger',
     kind: 'Filing',
     title: 'Complaint filed',
-    body: 'The case begins.',
+    body: fakeSentence('feed/complaint-body'),
     sources: [{ label: 'Complaint PDF', href: '/assets/complaint.pdf' }],
   },
 ]
@@ -50,8 +55,8 @@ describe('Feed', () => {
 
     expect(screen.getByRole('list', { name: 'Case timeline' })).toBeInTheDocument()
     expect(document.querySelectorAll('.feed-post')).toHaveLength(posts.length)
-    expect(screen.getByText('Judge Christine Van Aken')).toBeInTheDocument()
-    expect(screen.getByText('Dept. 301')).toBeInTheDocument()
+    expect(screen.getByText(JUDGE.name)).toBeInTheDocument()
+    expect(screen.getByText('Dept. 12')).toBeInTheDocument()
 
     const time = document.querySelector('[data-post="order-2026"] time')
     expect(time).toHaveAttribute('datetime', '2026-02-09')

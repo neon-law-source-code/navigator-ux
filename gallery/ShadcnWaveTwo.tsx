@@ -1,6 +1,13 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 
 import {
+  CAPTION,
+  DEFENDANT_SHORT,
+  DEPONENT_SHORT,
+  OPPOSING_COUNSEL_SHORT,
+  PLAINTIFF,
+} from '../fixtures/matter.mjs'
+import {
   AreaChart,
   BarChart,
   ButtonGroup,
@@ -41,8 +48,7 @@ import {
  * distinction worth drawing on the page: the charts and the graph are d3, the
  * PDF viewer is pdf.js, and everything else is still platform markup.
  *
- * The specimen data is invented, like the rest of the gallery's. `Northwind` is
- * a fictional counterparty and `Vance v. Northwind` a fictional caption.
+ * The specimen data is invented, like the rest of the gallery's.
  */
 
 interface SectionProps {
@@ -68,17 +74,27 @@ const THROUGHPUT = [
 ]
 
 const GRAPH_NODES: GraphNode[] = [
-  { id: 'vance', label: 'Vance', kind: 'party', fields: { role: 'Plaintiff', counsel: 'A. Reyes' } },
-  { id: 'northwind', label: 'Northwind', kind: 'party', fields: { role: 'Defendant', counsel: 'K. Osei' } },
+  {
+    id: 'plaintiff',
+    label: PLAINTIFF.lastName,
+    kind: 'party',
+    fields: { role: 'Plaintiff', counsel: OPPOSING_COUNSEL_SHORT },
+  },
+  {
+    id: 'defendant',
+    label: DEFENDANT_SHORT,
+    kind: 'party',
+    fields: { role: 'Defendant', counsel: DEPONENT_SHORT },
+  },
   { id: 'supply', label: 'Supply', kind: 'instrument', fields: { dated: '14 March 2023', term: '36 months' } },
   { id: 'cure', label: 'Cure', kind: 'term', fields: { window: '30 days', triggered: '2 August 2026' } },
   { id: 'notice', label: 'Notice', kind: 'evidence', fields: { filed: '5 August 2026' } },
 ]
 
 const GRAPH_EDGES = [
-  { source: 'vance', target: 'northwind', kind: 'adverse', label: 'disputes' },
-  { source: 'vance', target: 'supply', kind: 'instrument', label: 'party to' },
-  { source: 'northwind', target: 'supply', kind: 'instrument', label: 'party to' },
+  { source: 'plaintiff', target: 'defendant', kind: 'adverse', label: 'disputes' },
+  { source: 'plaintiff', target: 'supply', kind: 'instrument', label: 'party to' },
+  { source: 'defendant', target: 'supply', kind: 'instrument', label: 'party to' },
   { source: 'supply', target: 'cure', kind: 'instrument', label: 'contains' },
   { source: 'notice', target: 'cure', kind: 'evidence', label: 'evidences' },
 ]
@@ -165,7 +181,7 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
         <GraphView
           nodes={nodes}
           edges={GRAPH_EDGES}
-          label="Vance v. Northwind record graph"
+          label={`${CAPTION} record graph`}
           onFieldChange={(nodeId, field, value) =>
             setNodes((current) =>
               current.map((node) =>
@@ -185,7 +201,7 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
           </>
         }
       >
-        <Table caption="Fees by stage, Vance v. Northwind">
+        <Table caption={`Fees by stage, ${CAPTION}`}>
           <TableHeader>
             <TableRow>
               <TableHead>Stage</TableHead>
@@ -197,13 +213,13 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
           <TableBody>
             <TableRow>
               <TableCell>Pleadings</TableCell>
-              <TableCell>A. Reyes</TableCell>
+              <TableCell>{OPPOSING_COUNSEL_SHORT}</TableCell>
               <TableCell numeric>42.5</TableCell>
               <TableCell numeric>$18,700</TableCell>
             </TableRow>
             <TableRow selected>
               <TableCell>Discovery</TableCell>
-              <TableCell>A. Reyes</TableCell>
+              <TableCell>{OPPOSING_COUNSEL_SHORT}</TableCell>
               <TableCell numeric>96.0</TableCell>
               <TableCell numeric>$42,240</TableCell>
             </TableRow>

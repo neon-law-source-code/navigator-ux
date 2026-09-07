@@ -76,7 +76,7 @@ and warns at five minutes remaining, because a matter page is routinely left ope
    `Proxy`.
 
 4. **Route to per-client upstreams.** `GATEWAY_UPSTREAM` is a single `SocketAddr`. Neon Law needs a
-   map — `northwind.example.com` or `/northwind/*` to the Northwind app — resolved in `upstream_peer()`.
+   map — `tenant.example.com` or `/tenant/*` to that tenant's app — resolved in `upstream_peer()`.
 
 5. **Forward identity upstream.** `upstream_request_filter()` already injects `X-Forwarded-For` and
    `X-Real-IP`. Add the verified subject and role so the app and any backend can attribute actions
