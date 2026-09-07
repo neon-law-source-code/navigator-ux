@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { fakePerson } from '../../fixtures/fake.mjs'
 import {
   CheckboxField,
   FormCard,
@@ -230,9 +231,13 @@ describe('RadioGroup', () => {
 })
 
 describe('PeopleList', () => {
+  // The second person has no address on purpose: one test is that the email
+  // line appears only where there is one.
+  const withEmail = fakePerson('form/recipient-with-email')
+  const withoutEmail = fakePerson('form/recipient-no-email')
   const people = [
-    { id: 'p1', name: 'Dana Whitfield', email: 'dana@example.com' },
-    { id: 'p2', name: 'Amara Osei' },
+    { id: 'p1', name: withEmail.name, email: withEmail.email },
+    { id: 'p2', name: withoutEmail.name },
   ]
 
   it('pre-fills from the prior answer', () => {
@@ -244,19 +249,22 @@ describe('PeopleList', () => {
         defaultSelected={['p2']}
       />,
     )
-    expect(screen.getByLabelText(/Amara Osei/)).toBeChecked()
-    expect(screen.getByLabelText(/Dana Whitfield/)).not.toBeChecked()
+    expect(screen.getByLabelText(new RegExp(withoutEmail.name))).toBeChecked()
+    expect(screen.getByLabelText(new RegExp(withEmail.name))).not.toBeChecked()
   })
 
   it('posts the person id, not the name', () => {
     render(<PeopleList legend="Recipients" name="recipients" people={people} />)
-    expect(screen.getByLabelText(/Dana Whitfield/)).toHaveAttribute('value', 'p1')
-    expect(screen.getByLabelText(/Dana Whitfield/)).toHaveAttribute('name', 'recipients')
+    expect(screen.getByLabelText(new RegExp(withEmail.name))).toHaveAttribute('value', 'p1')
+    expect(screen.getByLabelText(new RegExp(withEmail.name))).toHaveAttribute(
+      'name',
+      'recipients',
+    )
   })
 
   it('shows the email only when there is one', () => {
     render(<PeopleList legend="Recipients" name="recipients" people={people} />)
-    expect(screen.getByText('dana@example.com')).toBeInTheDocument()
+    expect(screen.getByText(withEmail.email)).toBeInTheDocument()
   })
 
   it('explains an empty list rather than rendering nothing', () => {

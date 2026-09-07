@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
+import { fakeCompany } from '../../fixtures/fake.mjs'
 import {
   NavigatorFooter,
   NavigatorNavbar,
@@ -277,7 +278,7 @@ describe('ChromeLink external', () => {
   it('opens in a new tab with the OWASP rel pair and the outward glyph, in every chrome', () => {
     render(
       <>
-        <SiteHeader brand="Northwind" utility={[{ label: 'Source', href: 'https://example.com/src', external: true }]} />
+        <SiteHeader brand={fakeCompany('chrome/brand')} utility={[{ label: 'Source', href: 'https://example.com/src', external: true }]} />
         <SiteFooter links={[{ label: 'Docs', href: 'https://example.com/docs', external: true }, { label: 'Home', href: '/' }]} />
         <NavigatorFooter links={[{ label: 'Status', href: 'https://example.com/status', external: true }]} />
       </>,

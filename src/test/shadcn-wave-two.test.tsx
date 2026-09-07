@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { fakeCompany, fakeLastName } from '../../fixtures/fake.mjs'
 import {
   AreaChart,
   BarChart,
@@ -46,9 +47,10 @@ import { numericCountryId } from '../lib/iso-3166'
 /*
  * The second shadcn wave.
  *
- * Specimen data throughout is invented — `Northwind`, `example.com`, and a
- * fictional caption — for the reason the gallery's is: a fixture is read by
- * everyone who clones the repository.
+ * Specimen data throughout is drawn from `fixtures/fake.mjs` and addressed at
+ * `example.com`, for the reason the gallery's is: a fixture is read by
+ * everyone who clones the repository, and nobody should be able to type a real
+ * docket into one.
  */
 
 /* ------------------------------------------------------------------ Table -- */
@@ -695,9 +697,12 @@ describe('WorldMap', () => {
 
 /* -------------------------------------------------------------- GraphView -- */
 
+const PLAINTIFF = fakeLastName('wave-two/plaintiff')
+const DEFENDANT = fakeCompany('wave-two/defendant')
+
 const NODES = [
-  { id: 'a', label: 'Vance', kind: 'party', fields: { role: 'Plaintiff' } },
-  { id: 'b', label: 'Northwind', kind: 'party', fields: { role: 'Defendant' } },
+  { id: 'a', label: PLAINTIFF, kind: 'party', fields: { role: 'Plaintiff' } },
+  { id: 'b', label: DEFENDANT, kind: 'party', fields: { role: 'Defendant' } },
   { id: 'c', label: 'Agreement', kind: 'instrument' },
 ]
 const EDGES = [
@@ -733,14 +738,14 @@ describe('GraphView', () => {
     render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
     expect(screen.getByText('Select a node to read its record.')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Vance, party' }))
+    await user.click(screen.getByRole('button', { name: `${PLAINTIFF}, party` }))
     expect(screen.getByText('Plaintiff')).toBeInTheDocument()
   })
 
   it('selects with the keyboard', async () => {
     const user = userEvent.setup()
     render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
-    const node = screen.getByRole('button', { name: 'Vance, party' })
+    const node = screen.getByRole('button', { name: `${PLAINTIFF}, party` })
     node.focus()
     await user.keyboard('{Enter}')
     expect(screen.getByText('Plaintiff')).toBeInTheDocument()
@@ -752,8 +757,8 @@ describe('GraphView', () => {
     render(
       <GraphView nodes={NODES} edges={EDGES} label="Record graph" onFieldChange={onFieldChange} />,
     )
-    await user.click(screen.getByRole('button', { name: 'Vance, party' }))
-    await user.type(screen.getByLabelText('Vance role'), '!')
+    await user.click(screen.getByRole('button', { name: `${PLAINTIFF}, party` }))
+    await user.type(screen.getByLabelText(`${PLAINTIFF} role`), '!')
     expect(onFieldChange).toHaveBeenCalledWith('a', 'role', 'Plaintiff!')
   })
 
@@ -777,7 +782,7 @@ describe('GraphView dragging', () => {
   it('pins a node while dragging and releases it on drop', () => {
     render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
     sizeCanvas()
-    const node = screen.getByRole('button', { name: 'Vance, party' })
+    const node = screen.getByRole('button', { name: `${PLAINTIFF}, party` })
 
     fireEvent.pointerDown(node, { pointerId: 1 })
     fireEvent.pointerMove(node, { pointerId: 1, clientX: 400, clientY: 230 })
@@ -792,7 +797,7 @@ describe('GraphView dragging', () => {
   it('ignores a pointer move with no drag in progress', () => {
     render(<GraphView nodes={NODES} edges={EDGES} label="Record graph" />)
     sizeCanvas()
-    const node = screen.getByRole('button', { name: 'Vance, party' })
+    const node = screen.getByRole('button', { name: `${PLAINTIFF}, party` })
 
     // No pointerDown first, so this must be a no-op rather than a throw.
     expect(() => fireEvent.pointerMove(node, { clientX: 10, clientY: 10 })).not.toThrow()

@@ -1,6 +1,10 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { fakeSlug } from '../../fixtures/fake.mjs'
 import { SessionProvider, useSession } from '../session/SessionProvider'
+
+/* The legacy per-matter URL segment. The shape is under test, not the word. */
+const MATTER_PATH = fakeSlug('session/matter-path', 1)
 
 function respondWith(status: number, body?: unknown) {
   vi.stubGlobal(
@@ -137,7 +141,7 @@ describe('SessionProvider', () => {
     const assign = vi.fn()
     Object.defineProperty(window, 'location', {
       configurable: true,
-      value: { ...window.location, assign, pathname: '/northwind/review-0724/', search: '' },
+      value: { ...window.location, assign, pathname: `/${MATTER_PATH}/review-0724/`, search: '' },
     })
     respondWith(200, sessionExpiringIn(2))
 
@@ -153,7 +157,9 @@ describe('SessionProvider', () => {
     })
 
     await waitFor(() =>
-      expect(assign).toHaveBeenCalledWith('/__login?return_to=%2Fnorthwind%2Freview-0724%2F'),
+      expect(assign).toHaveBeenCalledWith(
+        `/__login?return_to=${encodeURIComponent(`/${MATTER_PATH}/review-0724/`)}`,
+      ),
     )
   })
 

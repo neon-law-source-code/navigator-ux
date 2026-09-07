@@ -1,7 +1,8 @@
 /*
  * Generates the one specimen PDF the gallery ships: a synthetic complaint in
- * the invented matter `Vance v. Northwind` (see `gallery/outline-specimen.tsx`,
- * the same caption the Harvard-outline and cite-the-record specimens use).
+ * the same invented matter every other specimen uses, so the caption on the PDF
+ * matches the caption on the page that embeds it. The pleading exists so
+ * `PdfViewer` has real selectable text to render.
  *
  * The file is never committed — CLAUDE.md bans binaries outright, and `.pdf`
  * is blocked in `.gitignore` with no exception. This script is the "generate
@@ -19,48 +20,61 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 
+import {
+  CAPTION,
+  COMPLAINT_PDF,
+  DEFENDANT,
+  DEFENDANT_SHORT,
+  PLAINTIFF,
+} from '../fixtures/matter.mjs'
+
 const here = dirname(fileURLToPath(import.meta.url))
 const outDir = resolve(here, '..', 'gallery', 'public', 'specimens')
-const outFile = resolve(outDir, 'vance-v-northwind-complaint.pdf')
+const outFile = resolve(outDir, `${COMPLAINT_PDF}.pdf`)
 
 const PAGE = { width: 612, height: 792 } // US Letter, in points.
 const MARGIN = { top: 96, left: 96, right: 96, bottom: 96 }
 
+const PLAINTIFF_SURNAME = PLAINTIFF.lastName
+
 const BODY = [
-  'Plaintiff Adaeze Vance, by and through undersigned counsel, alleges as follows:',
+  `Plaintiff ${PLAINTIFF.name}, by and through undersigned counsel, alleges as follows:`,
   '',
   'NATURE OF THE ACTION',
   '',
-  '1. This is an action for breach of contract arising from a supply agreement between Vance ' +
-    'and Defendant Northwind Holdings, Inc. dated 14 March 2023 (the "Agreement").',
-  '2. Section 8.2 of the Agreement entitles Northwind to thirty days’ written notice and an ' +
-    'opportunity to cure any alleged default before Vance may terminate or seek damages.',
-  '3. Northwind failed to perform its delivery obligations under the Agreement, and the cure ' +
-    'period Section 8.2 promises never ran before Vance’s losses became irreversible.',
+  `1. This is an action for breach of contract arising from a supply agreement between ` +
+    `${PLAINTIFF_SURNAME} and Defendant ${DEFENDANT} dated 14 March 2023 (the "Agreement").`,
+  `2. Section 8.2 of the Agreement entitles ${DEFENDANT_SHORT} to thirty days’ written notice ` +
+    `and an opportunity to cure any alleged default before ${PLAINTIFF_SURNAME} may terminate ` +
+    `or seek damages.`,
+  `3. ${DEFENDANT_SHORT} failed to perform its delivery obligations under the Agreement, and ` +
+    `the cure period Section 8.2 promises never ran before ${PLAINTIFF_SURNAME}’s losses ` +
+    `became irreversible.`,
   '',
   'PARTIES',
   '',
-  '4. Plaintiff Adaeze Vance is an individual residing in Clark County, Nevada.',
-  '5. Defendant Northwind Holdings, Inc. is a Nevada corporation with its principal place of ' +
-    'business in Las Vegas, Nevada.',
+  `4. Plaintiff ${PLAINTIFF.name} is an individual residing in Clark County, Nevada.`,
+  `5. Defendant ${DEFENDANT} is a Nevada corporation with its principal place of business in ` +
+    `Las Vegas, Nevada.`,
   '',
   'FIRST CLAIM FOR RELIEF',
   '(Breach of Contract)',
   '',
-  '6. Vance realleges and incorporates by reference each preceding paragraph.',
-  '7. The Agreement is a valid and enforceable contract between Vance and Northwind.',
-  '8. Northwind breached the Agreement by failing to deliver the goods described in Exhibit A ' +
-    'by the delivery date the Agreement required.',
-  '9. Vance has performed all conditions, covenants, and promises required on her part under ' +
-    'the Agreement.',
-  '10. As a direct and proximate result of Northwind’s breach, Vance has suffered damages in ' +
-    'an amount to be proven at trial.',
+  `6. ${PLAINTIFF_SURNAME} realleges and incorporates by reference each preceding paragraph.`,
+  `7. The Agreement is a valid and enforceable contract between ${PLAINTIFF_SURNAME} and ` +
+    `${DEFENDANT_SHORT}.`,
+  `8. ${DEFENDANT_SHORT} breached the Agreement by failing to deliver the goods described in ` +
+    `Exhibit A by the delivery date the Agreement required.`,
+  `9. ${PLAINTIFF_SURNAME} has performed all conditions, covenants, and promises required on ` +
+    `their part under the Agreement.`,
+  `10. As a direct and proximate result of ${DEFENDANT_SHORT}’s breach, ${PLAINTIFF_SURNAME} ` +
+    `has suffered damages in an amount to be proven at trial.`,
   '',
   'PRAYER FOR RELIEF',
   '',
-  'WHEREFORE, Plaintiff Adaeze Vance respectfully requests that this Court enter judgment in ' +
-    'her favor and against Defendant Northwind Holdings, Inc. for damages, costs, and such ' +
-    'other relief as the Court deems just and proper.',
+  `WHEREFORE, Plaintiff ${PLAINTIFF.name} respectfully requests that this Court enter ` +
+    `judgment in their favor and against Defendant ${DEFENDANT} for damages, costs, and such ` +
+    `other relief as the Court deems just and proper.`,
 ]
 
 function wrap(text, font, size, maxWidth) {
@@ -82,7 +96,7 @@ function wrap(text, font, size, maxWidth) {
 
 async function main() {
   const pdf = await PDFDocument.create()
-  pdf.setTitle('Complaint — Vance v. Northwind (specimen)')
+  pdf.setTitle(`Complaint — ${CAPTION} (specimen)`)
   pdf.setAuthor('Navigator UX gallery')
   pdf.setSubject('Invented specimen document. No real matter, no real parties.')
 
@@ -119,10 +133,10 @@ async function main() {
 
   drawLine('DISTRICT COURT, CLARK COUNTY, NEVADA', { font: serifBold, size: 12 })
   cursor -= lineHeight / 2
-  drawLine('ADAEZE VANCE,', { font: serifBold })
+  drawLine(`${PLAINTIFF.name.toUpperCase()},`, { font: serifBold })
   drawLine('    Plaintiff,')
   drawLine('v.', { font: serifBold })
-  drawLine('NORTHWIND HOLDINGS, INC.,', { font: serifBold })
+  drawLine(`${DEFENDANT.toUpperCase()},`, { font: serifBold })
   drawLine('    Defendant.')
   cursor -= lineHeight
   drawLine('Case No. CV-26-041782', { font: serifBold })
@@ -146,7 +160,7 @@ async function main() {
   drawLine('Respectfully submitted,')
   cursor -= lineHeight
   drawLine('/s/ Sample Counsel', { font: serifBold })
-  drawLine('Attorney for Plaintiff Adaeze Vance')
+  drawLine(`Attorney for Plaintiff ${PLAINTIFF.name}`)
 
   const bytes = await pdf.save()
   await mkdir(outDir, { recursive: true })

@@ -24,6 +24,7 @@ not declare a workspace.
 | `src/` | The library. `src/index.ts` is the published entry and is re-exports only. |
 | `gallery/` | The specimen page. A dev server, never published. |
 | `scripts/` | The check scripts (tokens, type, contrast, api, bundle) and the font-emit step. Each resolves its root as `scripts/..`. |
+| `fixtures/` | The specimen-data generators. Not published, and outside `src/` so coverage does not grade them. |
 | `docs/` | Prose that does not belong in the README. |
 
 This was a pnpm workspace with a single package under `packages/ux` until shortly before the first
@@ -321,11 +322,30 @@ license, so the two woff2 files are not Apache-2.0, and `THIRD-PARTY-NOTICES.md`
 recorded. Declaring the whole tree Apache-2.0 would be a license violation dressed up as a
 simplification.
 
-**Specimen data is invented, and that now includes the tests.** The gallery already had this rule.
-The test suite did not, and carried a real client name, a real matter path, and a real case caption
-naming a real adverse party. They are `Northwind`, `/northwind/review-0724/`, `Vance v. Northwind`,
-and `attorney@example.com` now — all fictional, `example.com` being IANA-reserved for exactly this.
-A fixture is read by everyone who clones the repository; it is not a scratch pad.
+**Specimen data is generated, and no name is written by hand anywhere.** Every name, address,
+company, caption, and matter code in the tests, the gallery, the e2e seed, and the specimen PDF is
+drawn from `fixtures/fake.mjs`, which wraps `@faker-js/faker` (a devDependency — nothing here ships
+it). The one invented dispute they all share lives in `fixtures/matter.mjs`, so the gallery, the
+chat transcripts, and the complaint PDF show the same file rather than ten unrelated fragments.
+
+Each generator takes a **key** and reseeds from a hash of it rather than the module seeding faker
+once, which is what makes a value the same in every process and a failure reproducible. Why that is
+not the obvious `faker.seed(1)` is in `fixtures/fake.mjs`, and is worth reading before changing it.
+
+Tests assert against the generators, never against a literal: `expect(screen.getByText(JUDGE.name))`,
+not the string. Writing the string back in is what re-couples a spec to a draw.
+
+This replaced a hand-written identity — `Northwind`, `Vance v. Northwind` — that had itself replaced
+a real client's. Both rounds were needed, and the second is why: `src/test/feed.test.tsx` was still
+carrying a sitting judge and a practicing attorney, lifted from a real docket, because `Feed` is the
+one component with no gallery specimen and nobody ever reviewed its fixture. Hand-written fictional
+data does not stay fictional — a fixture is a place a real docket can be pasted, and it was.
+
+What generating a name **does not** buy is a guarantee it belongs to nobody: faker composes from real
+given and family names, and at this many draws a collision is expected. That is tolerable because the
+datum carries no facts. `example.com` is the part that is actually reserved — RFC 2606 — which is why
+every address is forced onto it rather than taking faker's default of a live consumer domain. A
+fixture is read by everyone who clones the repository; it is not a scratch pad.
 
 **The provenance is neonlaw.com, and that is settled.** `theme.css`, `matter.css`, and
 `icon-glyphs.tsx` used to cite a client's domain as the source of the ported stylesheet and the icon

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { act } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fakeCompany, fakeLastName } from '../../fixtures/fake.mjs'
 import {
   CiteTheRecord,
   RecordCite,
@@ -32,6 +33,9 @@ const SECTIONS: HarvardOutlineSection[] = [
   },
 ]
 
+const COUNTERPARTY = fakeCompany('harvard/counterparty')
+const DEPONENT = `Deposition of ${fakeLastName('harvard/deponent')}`
+
 const CITATIONS: RecordCitation[] = [
   {
     id: 'cure',
@@ -39,13 +43,13 @@ const CITATIONS: RecordCitation[] = [
     cite: 'R. 14:6',
     source: 'Supply Agreement',
     speaker: '§ 8.2',
-    excerpt: 'Northwind shall have thirty days to cure any alleged default.',
+    excerpt: `${COUNTERPARTY} shall have thirty days to cure any alleged default.`,
   },
   {
     id: 'dep',
     quote: 'we did not send a cure notice until August',
     cite: 'Dep. 18:4',
-    source: 'Deposition of K. Osei',
+    source: DEPONENT,
     excerpt: 'A. we did not send a cure notice until August, after the window closed.',
   },
 ]
@@ -304,7 +308,7 @@ describe('CiteTheRecord', () => {
     expect(document.querySelector('mark')).toHaveTextContent(
       'we did not send a cure notice until August',
     )
-    expect(screen.getByText('Deposition of K. Osei')).toBeInTheDocument()
+    expect(screen.getByText(DEPONENT)).toBeInTheDocument()
   })
 
   it('says so when the quoted words are not in the excerpt', () => {

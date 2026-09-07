@@ -77,8 +77,9 @@ ones:
 
 - A new specimen or sample page is a gallery-only addition (`gallery/`), never a change to what `src/index.ts`
   publishes, unless the issue is asking for a new component.
-- Reuse the established specimen identity (`Vance v. Northwind`, the fictional supply-agreement breach) rather than
-  inventing new fictional parties — see CLAUDE.md's note on invented specimen data and `gallery/outline-specimen.tsx`.
+- Reuse the established specimen identity — the invented supply-agreement breach whose parties are drawn in
+  `fixtures/matter.mjs` — rather than writing new parties, and never write a name into a fixture by hand. See
+  CLAUDE.md's note on generated specimen data and `gallery/outline-specimen.tsx`.
 - A binary asset (a PDF, an image) is never committed. If the change needs one, generate it from source with a
   script under `scripts/`, write it to a gitignored path, and wire the script as a `pre<script>` hook in
   `package.json` so `pnpm gallery` and the relevant `build:*` script regenerate it — see the pattern of

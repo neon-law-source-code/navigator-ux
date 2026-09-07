@@ -50,6 +50,7 @@ import {
   Toast,
   type DataColumn,
 } from '../src/index'
+import { CFO, CLIENT, DEFENDANT_SHORT, LAWYER } from '../fixtures/matter.mjs'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 import { GalleryFrame } from './site-frame'
 import { ComponentPages, SectionGroup } from './component-nav'
@@ -137,9 +138,9 @@ interface Person {
 }
 
 const PEOPLE: Person[] = [
-  { id: '1', name: 'Dana Whitfield', email: 'dana@example.com', role: 'General Counsel' },
-  { id: '2', name: 'Amara Osei', email: 'amara@example.com', role: 'Founder' },
-  { id: '3', name: 'Tobias Lindqvist', email: 'tobias@example.com', role: 'CFO' },
+  { id: '1', name: LAWYER.name, email: LAWYER.email, role: 'General Counsel' },
+  { id: '2', name: CLIENT.name, email: CLIENT.email, role: 'Founder' },
+  { id: '3', name: CFO.name, email: CFO.email, role: 'CFO' },
 ]
 
 const COLUMNS: DataColumn<Person>[] = [
@@ -270,14 +271,14 @@ export function Gallery() {
             <TestimonialCard
               label="Litigation"
               quote="They read the whole record and found the one line that mattered."
-              name="Dana Whitfield"
+              name={LAWYER.name}
               title="General Counsel, Acme"
             />
             <TestimonialCard
               label="Company counsel"
               quote="A flat fee and an actual answer the same day."
-              name="Amara Osei"
-              title="Founder, Northwind"
+              name={CLIENT.name}
+              title={`Founder, ${DEFENDANT_SHORT}`}
             />
           </TestimonialSection>
         </Section>
@@ -307,8 +308,8 @@ export function Gallery() {
             <Flash tone="success">Entity created.</Flash>
             <Flash tone="danger">That email is already registered.</Flash>
             <ImpersonationBanner
-              name="Dana Whitfield"
-              email="dana@example.com"
+              name={LAWYER.name}
+              email={LAWYER.email}
               stopAction="#stop-impersonating"
             />
           </div>
@@ -352,12 +353,12 @@ export function Gallery() {
           note="A native <dialog> carrying role=alertdialog — the focus trap, the Esc key, and the inert background come from the platform."
         >
           <NavButton variant="danger" onClick={() => setConfirming(true)}>
-            Delete Dana Whitfield
+            Delete {LAWYER.name}
           </NavButton>
           <ConfirmDelete
             open={confirming}
             title="Delete this person?"
-            message="Dana Whitfield will be removed from the matter. This cannot be undone."
+            message={`${LAWYER.name} will be removed from the matter. This cannot be undone.`}
             action="#delete"
             onCancel={() => setConfirming(false)}
           />
@@ -375,13 +376,13 @@ export function Gallery() {
               label="Full name"
               name="name"
               required
-              defaultValue="Dana Whitfield"
+              defaultValue={LAWYER.name}
               help="As it appears on the engagement letter."
             />
             <TextField
               label="Email"
               name="email"
-              defaultValue="dana@"
+              defaultValue={`${LAWYER.email.split('@')[0]}@`}
               error="Enter a valid email address."
             />
             <TextField label="Monthly fee" name="fee" addon="$" defaultValue="4500" />

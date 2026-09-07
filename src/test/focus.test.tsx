@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+import { fakeCompany } from '../../fixtures/fake.mjs'
 
 import {
   ChoiceGroup,
@@ -17,9 +18,10 @@ import {
 /*
  * The focus set: the page that shows one thing.
  *
- * Specimen data is invented — `Northwind` is a fictional firm — for the reason
- * the gallery's is.
+ * Specimen data is drawn from `fixtures/fake.mjs` rather than written, for the
+ * reason the gallery's is.
  */
+const BRAND = fakeCompany('focus/brand')
 
 /* ------------------------------------------------------------------ Stage -- */
 
@@ -39,13 +41,13 @@ describe('Stage', () => {
 
   it('takes a width, a header, a footer, and stops filling when told', () => {
     const { container } = render(
-      <Stage width="sm" fill={false} className="intake" header={<b>Northwind</b>} footer={<p>Not advice.</p>}>
+      <Stage width="sm" fill={false} className="intake" header={<b>{BRAND}</b>} footer={<p>Not advice.</p>}>
         <p>One question</p>
       </Stage>,
     )
     const stage = container.firstElementChild as HTMLElement
     expect(stage.className).toBe('nav-stage nav-stage--sm intake')
-    expect(stage.querySelector('.nav-stage__header')).toHaveTextContent('Northwind')
+    expect(stage.querySelector('.nav-stage__header')).toHaveTextContent(BRAND)
     expect(stage.querySelector('.nav-stage__footer')).toHaveTextContent('Not advice.')
   })
 })

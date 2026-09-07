@@ -1,5 +1,6 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 
+import { CFO, CLIENT, LAWYER } from '../fixtures/matter.mjs'
 import {
   Accordion,
   AspectRatio,
@@ -123,9 +124,9 @@ export function ShadcnSet({ Section }: { Section: ComponentType<SectionProps> })
 
       <Section title="Avatar, Separator, and AspectRatio">
         <div className="gallery__row">
-          <Avatar name="Dana Whitfield" size="sm" />
-          <Avatar name="Amara Osei" />
-          <Avatar name="Tobias Lindqvist" size="lg" />
+          <Avatar name={LAWYER.name} size="sm" />
+          <Avatar name={CLIENT.name} />
+          <Avatar name={CFO.name} size="lg" />
           <Separator orientation="vertical" />
           <Avatar name="Custom Initials" initials="PS" size="lg" />
         </div>
@@ -263,7 +264,10 @@ export function ShadcnSet({ Section }: { Section: ComponentType<SectionProps> })
             label="Matter actions"
             items={[
               { label: 'Open', href: '#shadcn-set' },
-              { label: 'Assign', onSelect: () => toast('Assigned to Dana Whitfield', { tone: 'success' }) },
+              {
+                label: 'Assign',
+                onSelect: () => toast(`Assigned to ${LAWYER.name}`, { tone: 'success' }),
+              },
               { label: 'Archive', disabled: true },
               {
                 label: 'Delete',
@@ -302,9 +306,9 @@ export function ShadcnSet({ Section }: { Section: ComponentType<SectionProps> })
       <Section title="Composed">
         <Card header="Everything at once">
           <div className="gallery__row">
-            <Avatar name="Dana Whitfield" />
+            <Avatar name={LAWYER.name} />
             <div style={{ flex: 1 }}>
-              <strong>Dana Whitfield</strong>
+              <strong>{LAWYER.name}</strong>
               <br />
               <span className="nav-text-muted">General Counsel, Acme</span>
             </div>

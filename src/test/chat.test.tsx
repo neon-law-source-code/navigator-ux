@@ -3,7 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { fakeCaption, fakeMatterCode, fakePerson } from '../../fixtures/fake.mjs'
 import { Chat, ChatComposer, type ChatMessage } from '../index'
+
+const SPEAKER = fakePerson('chat/speaker')
+const CAPTION = fakeCaption('chat/matter')
+const MATTER_CODE = fakeMatterCode('chat/matter')
 
 const TURN: ChatMessage[] = [
   {
@@ -14,9 +19,9 @@ const TURN: ChatMessage[] = [
   {
     id: 'u1',
     role: 'user',
-    name: 'Dana Whitfield',
-    initials: 'DW',
-    parts: [{ type: 'text', id: 'ask', text: 'Update the Northwind project title.' }],
+    name: SPEAKER.name,
+    initials: SPEAKER.initials,
+    parts: [{ type: 'text', id: 'ask', text: 'Update the project title.' }],
   },
   {
     id: 'a1',
@@ -31,13 +36,13 @@ const TURN: ChatMessage[] = [
           name: 'Update project',
           command: 'PATCH /app/api/projects/00000000-0000-4000-8000-000000000001',
           status: 'done',
-          result: 'Title set to Vance v. Northwind.',
+          result: `Title set to ${CAPTION}.`,
         },
       },
       {
         type: 'card',
         id: 'facts',
-        children: <p>Matter code NW-0724 is still open.</p>,
+        children: <p>{`Matter code ${MATTER_CODE} is still open.`}</p>,
       },
     ],
   },
@@ -49,7 +54,7 @@ describe('Chat', () => {
 
     expect(screen.getByRole('log', { name: 'Matter copilot' })).toBeInTheDocument()
     expect(screen.getByText('Staff thread. Nothing here is legal advice.')).toBeInTheDocument()
-    expect(screen.getByText('Dana Whitfield')).toBeInTheDocument()
+    expect(screen.getByText(SPEAKER.name)).toBeInTheDocument()
     expect(screen.getByText('Navigator')).toBeInTheDocument()
     expect(screen.getByText('Update project')).toBeInTheDocument()
     expect(screen.getByText('API')).toBeInTheDocument()
@@ -57,7 +62,7 @@ describe('Chat', () => {
     expect(
       screen.getByText('PATCH /app/api/projects/00000000-0000-4000-8000-000000000001'),
     ).toBeInTheDocument()
-    expect(screen.getByText('Matter code NW-0724 is still open.')).toBeInTheDocument()
+    expect(screen.getByText(`Matter code ${MATTER_CODE} is still open.`)).toBeInTheDocument()
     expect(document.querySelector('[data-role="user"]')).not.toBeNull()
     expect(document.querySelector('[data-status="done"]')).toHaveAttribute('data-kind', 'api')
   })
@@ -141,11 +146,11 @@ describe('Chat', () => {
     render(
       <Chat
         messages={[]}
-        empty={<p>Ask about Northwind.</p>}
+        empty={<p>Ask about the matter.</p>}
         composer={<ChatComposer action="/app/api/projects/1/conversation/messages" />}
       />,
     )
-    expect(screen.getByText('Ask about Northwind.')).toBeInTheDocument()
+    expect(screen.getByText('Ask about the matter.')).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Message' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Send' })).toBeInTheDocument()
     expect(document.querySelector('form')).toHaveAttribute(

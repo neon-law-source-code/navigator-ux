@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { fakeCompany } from '../../fixtures/fake.mjs'
 import {
   ActionList,
   DownloadCard,
@@ -17,10 +18,14 @@ import { ReviewNav } from '../components/ReviewNav'
 import { CaseHead, Layout, Shell, Stack } from '../components/Shell'
 import { SourceThread } from '../components/SourceThread'
 
+const CLIENT = fakeCompany('surfaces/client')
+
 describe('Shell and CaseHead', () => {
   it('renders the matter header without optional parts', () => {
-    render(<CaseHead title="Northwind — cross-complaint" />)
-    expect(screen.getByRole('heading', { name: 'Northwind — cross-complaint' })).toBeInTheDocument()
+    render(<CaseHead title={`${CLIENT} — cross-complaint`} />)
+    expect(
+      screen.getByRole('heading', { name: `${CLIENT} — cross-complaint` }),
+    ).toBeInTheDocument()
     expect(document.querySelector('.docket')).toBeNull()
     expect(document.querySelector('.case-kicker')).toBeNull()
   })
@@ -29,7 +34,7 @@ describe('Shell and CaseHead', () => {
     render(
       <CaseHead
         kicker="Privileged client-review package"
-        title="Northwind"
+        title={CLIENT}
         docket="CGC-25-626923"
         summary="Expanded client-review draft."
       >
