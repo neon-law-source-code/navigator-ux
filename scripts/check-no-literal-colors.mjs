@@ -31,10 +31,14 @@ const ROOTS = [join(pkg, 'src'), join(pkg, 'gallery')]
 
 /** Where color is allowed to be written down.
  *
- * `tokens.css` is the shipped identity. The gallery's example layer is the
- * template an app copies to write its own brand, so it is a token layer too —
- * a brand layer that could not name a color would be useless. */
-const TOKEN_LAYER = new Set(['src/styles/tokens.css', 'gallery/brand-example-tokens.css'])
+ * `tokens.css` is the shipped identity. Brand layers name colors on purpose —
+ * the gallery example is the template an app copies, and `gallery/brands/`
+ * holds the compiled identities the gallery switch attaches. */
+function isTokenLayer(rel) {
+  if (rel === 'src/styles/tokens.css') return true
+  if (rel === 'gallery/brand-example-tokens.css') return true
+  return rel.startsWith('gallery/brands/') && rel.endsWith('.css')
+}
 
 /** Tests assert on color strings; that is not shipping a color. */
 const isTest = (rel) => rel.startsWith('src/test/')
@@ -108,7 +112,7 @@ for await (const file of walkAll(ROOTS)) {
   if (!['.ts', '.tsx', '.css'].includes(ext)) continue
 
   const rel = relative(pkg, file).split('\\').join('/')
-  if (TOKEN_LAYER.has(rel) || isTest(rel) || isGenerated(rel)) continue
+  if (isTokenLayer(rel) || isTest(rel) || isGenerated(rel)) continue
 
   scanned += 1
   const raw = await readFile(file, 'utf8')

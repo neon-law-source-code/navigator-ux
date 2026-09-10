@@ -192,14 +192,14 @@ export function Gallery() {
 
         <Section
           title="Brand tokens"
-          note="The eight semantic tokens a brand layer redeclares. A consuming app overrides these at :root:root; this gallery ships the library identity only."
+          note="The eight semantic tokens a brand layer redeclares. The bar above attaches a real brand sheet at :root:root; Neon Law is the library with no extra layer."
         >
           <Swatches tokens={BRAND_TOKENS} />
         </Section>
 
         <Section
           title="Shared tokens"
-          note="Surfaces, borders, text, and the status colors are shared across every brand. These do not move when the brand does."
+          note="Surfaces, borders, text, and the status colors stay shared unless a brand argues for its own ground — Lawyer Shook's legal pad is that case."
         >
           <Swatches tokens={SHARED_TOKENS} />
         </Section>

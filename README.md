@@ -349,10 +349,11 @@ coverage:
 the library the way a hand-written specimen page does.
 
 It also carries the one control an app does not: a **brand-layer switch**. That is not a theme toggle
-— the color scheme still follows the OS and has no control anywhere. It attaches and detaches
-`gallery/brand-example-tokens.css`, which is the only way to see the claim the three-layer split
-makes: the same components, re-toned, with no component touched. The brand swatches repaint; the
-shared tokens beside them do not move.
+— the color scheme still follows the OS and has no control anywhere. It attaches a sheet from
+`gallery/brands/` (Neon Law is the library with none; DeleteYourData.com wears Plus Jakarta Sans;
+Lawyer Shook wears Tinos and the legal-pad ground). The violet file
+`gallery/brand-example-tokens.css` stays the copy-paste template. The same components re-tone, and
+no component is touched.
 
 The gallery is a dev server, not a build target, and has its own `vite.gallery.config.ts` because
 `vite.config.ts` is a library build — one config trying to be both would emit the gallery into `dist`

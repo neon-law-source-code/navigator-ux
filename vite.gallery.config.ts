@@ -21,6 +21,11 @@ const here = import.meta.dirname
 export default defineConfig({
   plugins: [react()],
   root: resolve(here,'gallery'),
+  resolve: {
+    alias: {
+      '@fontsource': resolve(here, 'node_modules/@fontsource'),
+    },
+  },
   // GitHub Pages serves this repository below /navigator-ux/. Local previews
   // use a relative base so the same build can be opened from a file-backed
   // artifact without rewriting asset URLs.

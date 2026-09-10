@@ -1,0 +1,45 @@
+/* DeleteYourData.com — layer two, in the shape a consuming app copies.
+ *
+ * Self-hosted Plus Jakarta Sans at 400 and 700. The files come from the
+ * gallery's fontsource package, not from neonlaw.com and not from a CDN.
+ */
+
+@import '@fontsource/plus-jakarta-sans/latin-400.css';
+@import '@fontsource/plus-jakarta-sans/latin-700.css';
+
+:root:root {
+  --nav-font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --nav-dyd-400: #ffa3a3;
+  --nav-dyd-500: #b91c1c;
+  --nav-dyd-600: #991b1b;
+  --nav-dyd-700: #7f1d1d;
+  --nav-dyd-950: #2c0606;
+  --nav-dyd-subtle: #fdecec;
+
+  --nav-color-primary: var(--nav-dyd-500);
+  --nav-color-primary-hover: var(--nav-dyd-600);
+  --nav-color-primary-active: var(--nav-dyd-700);
+  --nav-color-on-primary: #ffffff;
+  --nav-color-on-brand: #ffffff;
+  --nav-color-link: var(--nav-dyd-500);
+  --nav-color-link-hover: var(--nav-dyd-700);
+  --nav-color-surface-subtle: var(--nav-dyd-subtle);
+  --nav-color-focus: var(--nav-dyd-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:root {
+    /* 500 is 4.29:1 on #0d1117; primary climbs to 400 and ink drops to 950.
+       Contrast: 400 on #0d1117 9.93:1, 950 on 400 9.70:1. */
+    --nav-color-primary: var(--nav-dyd-400);
+    --nav-color-primary-hover: #ffb8b8;
+    --nav-color-primary-active: #ffd0d0;
+    --nav-color-on-primary: var(--nav-dyd-950);
+    --nav-color-on-brand: var(--nav-dyd-950);
+    --nav-color-link: var(--nav-dyd-400);
+    --nav-color-link-hover: #ffb8b8;
+    --nav-color-surface-subtle: #2a0f0f;
+    --nav-color-focus: var(--nav-dyd-400);
+  }
+}
