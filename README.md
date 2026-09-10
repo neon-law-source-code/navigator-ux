@@ -1,6 +1,6 @@
 # @neon-law-source-code/navigator-ux
 
-[Open the Navigator UX gallery](https://neon-law-source-code.github.io/navigator-ux/?showcase=home)
+[Open the Navigator UX gallery](https://neon-law-source-code.github.io/navigator-ux/pages)
 
 A React component library on the Neon Law teal, from Shook Law PLLC. No Tailwind, no Radix,
 no CVA, no icon package — every component that can be is built on the platform primitive that already
@@ -41,7 +41,7 @@ this records and how to move between versions.
 The component gallery, the thirty-two-page legal-work specimen, and a Neon Law public-site
 specimen are built as a static GitHub Pages site on every push to `main`. The same header and
 navigation run on the gallery views, including the side-by-side
-[verify-the-record](https://neon-law-source-code.github.io/navigator-ux/?showcase=page&id=verify-the-record)
+[verify-the-record](https://neon-law-source-code.github.io/navigator-ux/pages/verify-the-record)
 page. The public-site specimen uses its own marketing chrome.
 
 The sample site includes twelve Client Council voices, twelve Legal Council voices, and addressable

@@ -10,7 +10,7 @@ import {
 
 /*
  * One component per page, with a sidenav to the rest. The selected id comes
- * from `?component=`, so every entry is a plain anchor and a bookmark.
+ * from the path (`/components/<id>`), so every entry is a plain anchor and a bookmark.
  */
 
 /** Names the sidenav heading the sections inside it register under. */

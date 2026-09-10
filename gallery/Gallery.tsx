@@ -55,7 +55,7 @@ import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 import { GalleryFrame } from './site-frame'
 import { ComponentPages, SectionGroup } from './component-nav'
 import { useSection } from './sections'
-import { readComponentId } from './routes'
+import { readComponentId, readGalleryLocation } from './routes'
 
 /* ------------------------------------------------------------------ shell -- */
 
@@ -178,8 +178,7 @@ const NAV_LINKS = [
 
 export function Gallery() {
   const [confirming, setConfirming] = useState(false)
-  const showcase = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('showcase')
-  if (showcase) return <Showcase />
+  if (readGalleryLocation().view !== 'components') return <Showcase />
 
   return (
     <GalleryFrame>

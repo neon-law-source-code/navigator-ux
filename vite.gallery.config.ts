@@ -1,3 +1,4 @@
+import { copyFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
@@ -16,20 +17,34 @@ const here = import.meta.dirname
  * to be both would emit the gallery into `dist` and ship it to every consumer.
  *
  * Nothing here is published. `files` in package.json lists `dist` only.
+ *
+ * History-API paths need the site to answer every address with the SPA. Vite's
+ * dev server already does. GitHub Pages does not, so the build copies
+ * index.html to 404.html and the router reads the original pathname.
  */
 
+function spaFallback() {
+  return {
+    name: 'gallery-spa-fallback',
+    async closeBundle() {
+      const index = resolve(here, 'gallery-dist/index.html')
+      await copyFile(index, resolve(here, 'gallery-dist/404.html'))
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react()],
-  root: resolve(here,'gallery'),
+  plugins: [react(), spaFallback()],
+  root: resolve(here, 'gallery'),
+  appType: 'spa',
   resolve: {
     alias: {
       '@fontsource': resolve(here, 'node_modules/@fontsource'),
     },
   },
-  // GitHub Pages serves this repository below /navigator-ux/. Local previews
-  // use a relative base so the same build can be opened from a file-backed
-  // artifact without rewriting asset URLs.
-  base: process.env.GITHUB_PAGES === '1' ? '/navigator-ux/' : './',
+  // GitHub Pages serves this repository below /navigator-ux/. Locally the
+  // gallery owns the host root so `/pages` and `/components/...` resolve.
+  base: process.env.GITHUB_PAGES === '1' ? '/navigator-ux/' : '/',
   server: {
     port: 5174,
     // Fail loudly rather than wandering to another port — the launch config and
@@ -38,7 +53,7 @@ export default defineConfig({
   },
   build: {
     // Only used by `build:gallery`, for a static preview or a CI artifact.
-    outDir: resolve(here,'gallery-dist'),
+    outDir: resolve(here, 'gallery-dist'),
     emptyOutDir: true,
   },
 })

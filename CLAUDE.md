@@ -369,6 +369,8 @@ built against `dist` is a page that silently shows you last build's components. 
 `vite.gallery.config.ts` because `vite.config.ts` is a library build (`build.lib`, externalized React,
 `vite-plugin-dts`); one config doing both would emit the gallery into `dist` and publish it. Its
 brand-layer switch is **not** a theme toggle — it attaches a sheet from `gallery/brands/`.
+Addresses are paths (`/pages`, `/components/<id>`, `/neon/<id>`); `?brand=` and `?sku=` are the
+filters. GitHub Pages has no rewrite, so the Pages build copies `index.html` to `404.html`.
 
 **pdf.js's worker cannot be resolved the same way in both builds.** The package emits ESM *and* CJS.
 `import.meta.url` is how a bundler is told to emit the worker as a same-origin asset — but in the CJS
