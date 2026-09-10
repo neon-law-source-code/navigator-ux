@@ -101,11 +101,20 @@ packages:
       - Standard document library
       - Redline of paper you bring us at $100
 
+find:
+  prompt: What legal need do you have today?
+  lede: Type a filing, an item number, or a few words. The list is the stock.
+  placeholder: "LLC, NDA, will, or 1501"
+  examples:
+    - { label: LLC, query: LLC }
+    - { label: Annual report, query: annual }
+    - { label: NDA, query: NDA }
+    - { label: Will, query: will }
+    - { label: "Item 1501", query: "1501" }
+
 catalog:
   title: Products in this catalog
   note: Item numbers stay put, like a parts list. The fee is ours; government fees pass through at cost.
-  search_label: Search
-  search_placeholder: Item # or name
   item_header: Item #
   name_header: Description
   status_header: Status

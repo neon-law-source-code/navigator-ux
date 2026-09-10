@@ -724,6 +724,47 @@
   margin: 0 0 var(--nav-space-2);
 }
 
+.neon-site__find {
+  max-width: 40rem;
+}
+
+.neon-site__find h1,
+.neon-site__find h2 {
+  margin: 0 0 var(--nav-space-3);
+}
+
+.neon-site__find-lede {
+  margin: 0 0 var(--nav-space-4);
+  color: var(--nav-color-text-muted);
+}
+
+.neon-site__find-form {
+  margin: 0 0 var(--nav-space-3);
+}
+
+.neon-site__find-input {
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+.neon-site__find-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nav-space-2);
+  margin: 0;
+}
+
+a.neon-site__chip {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.neon-site__cat-section:first-of-type {
+  margin-top: 0;
+}
+
 .neon-site__sku-blurb,
 .neon-site__price-period {
   margin: 0.2rem 0 0;

@@ -76,6 +76,19 @@ describe('formatGalleryHref', () => {
 })
 
 describe('canonicalizeGalleryHref', () => {
+  it('preserves catalog searches on canonical and legacy URLs under either base', () => {
+    for (const base of [ROOT, PAGES]) {
+      const expected = `${base}neon/services?brand=lawyer-shook&q=1501`
+      expect(canonicalizeGalleryHref(`${base}neon/services`, '?brand=lawyer-shook&q=1501', base)).toBe(expected)
+      expect(canonicalizeGalleryHref(base, '?showcase=neon&id=services&brand=lawyer-shook&q=1501', base)).toBe(expected)
+    }
+  })
+
+  it('does not carry a catalog search into other views', () => {
+    expect(canonicalizeGalleryHref('/neon/checkout', '?sku=nda&q=1501', ROOT)).toBe('/neon/checkout?sku=nda')
+    expect(canonicalizeGalleryHref('/pages', '?q=1501', ROOT)).toBe('/pages')
+  })
+
   it('rewrites a query-only bookmark to path + query', () => {
     expect(
       canonicalizeGalleryHref('/', '?showcase=neon&id=checkout&sku=llc-file&brand=delete-your-data', ROOT),

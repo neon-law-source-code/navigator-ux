@@ -36,6 +36,7 @@ import {
   TextareaField,
 } from '../src/index'
 import './gallery.css'
+import { FindNeed } from './find-need'
 import {
   en,
   pages,
@@ -152,6 +153,7 @@ function HomePage() {
     <Stack>
       <PageHero doc={doc} />
       <Blocks body={doc.body} />
+      <FindNeed headingLevel={2} />
       <div className="neon-site__doors">
         {en.doors.map((door) => (
           <a className="neon-site__door" href={neonHref(door.id)} key={door.id}>
@@ -166,7 +168,8 @@ function HomePage() {
 }
 
 function skuNeedle(sku: Sku, needle: string) {
-  return `${sku.item} ${sku.name} ${sku.blurb}`.toLowerCase().includes(needle)
+  const category = en.categories.find((entry) => entry.value === sku.category)?.label ?? ''
+  return `${sku.item} ${sku.name} ${sku.blurb} ${category}`.toLowerCase().includes(needle)
 }
 
 function categoryCount(value: SkuCategory | 'all') {
@@ -214,25 +217,23 @@ function CatalogTable({ items, caption }: { items: readonly Sku[]; caption: stri
   )
 }
 
-function ServicesPage() {
+function ServicesPage({ initialQuery }: { initialQuery: string }) {
   const [category, setCategory] = useState<SkuCategory | 'all'>('all')
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(initialQuery)
   const needle = query.trim().toLowerCase()
   const items = en.skus.filter((sku) => {
     if (category !== 'all' && sku.category !== category) return false
     if (!needle) return true
     return skuNeedle(sku, needle)
   })
-  const doc = pages.services
   const cat = en.catalog
   const current = en.categories.find((entry) => entry.value === category)
   const grouped = category === 'all' && !needle
 
   return (
     <Stack>
-      <PageHero doc={doc} />
+      <FindNeed headingLevel={1} query={query} onQueryChange={setQuery} />
       <Callout tone="info">{en.callout}</Callout>
-      <Blocks body={doc.body} />
       <Panel title={cat.title} note={cat.note}>
         <div className="neon-site__catalog">
           <nav className="neon-site__categories" aria-label={en.shelf.category_label}>
@@ -252,13 +253,6 @@ function ServicesPage() {
             ))}
           </nav>
           <div>
-            <TextField
-              label={cat.search_label}
-              name="q"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={cat.search_placeholder}
-            />
             {current ? <p className="neon-site__cat-blurb">{current.blurb}</p> : null}
             {items.length === 0 ? (
               <Empty title={cat.empty} />
@@ -463,11 +457,11 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
 }
 
 export function NeonSite() {
-  const { pageId, sku } = readGalleryLocation()
+  const { pageId, sku, q: findQuery = '' } = readGalleryLocation()
   const page: NeonPageId = isNeonPage(pageId) ? pageId : 'home'
 
   let body = <HomePage />
-  if (page === 'services') body = <ServicesPage />
+  if (page === 'services') body = <ServicesPage initialQuery={findQuery} />
   else if (page === 'litigation' || page === 'fractional-gc' || page === 'personal-plan') {
     body = <DoorPage id={page} />
   } else if (page === 'checkout') body = <CheckoutPage skuId={sku} />

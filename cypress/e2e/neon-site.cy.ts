@@ -18,6 +18,7 @@ interface EnCopy {
   fallback_sku: string
   categories: { value: string; label: string }[]
   catalog: { title: string; add: string; related_header: string }
+  find: { prompt: string; examples: { label: string; query: string }[] }
 }
 
 const gallery = (path: string) => `/?showcase=neon&${path}`
@@ -31,6 +32,7 @@ describe('Neon Law public-site specimen', () => {
       cy.contains(page.matter.lede.trim().slice(0, 40))
       cy.contains('h2', 'You have a place here.')
       cy.task<EnCopy>('neonEn').then((en) => {
+        cy.contains('h2', en.find.prompt)
         for (const door of en.doors) cy.contains(door.title)
       })
     })
@@ -38,28 +40,25 @@ describe('Neon Law public-site specimen', () => {
 
   it('renders the services storefront from en.yaml', () => {
     cy.task<EnCopy>('neonEn').then((en) => {
-      cy.task<PageDoc>('neonPage', 'services').then((page) => {
-        cy.visit(gallery('id=services'))
-        cy.contains('h1', page.matter.title)
-        cy.contains(en.catalog.title)
-        cy.contains('Start a company')
-        cy.contains(en.skus[0]?.item ?? '')
-        for (const plan of en.packages) {
-          cy.contains(plan.name)
-          cy.contains(plan.amount)
-        }
-        const nda = en.skus.find((sku) => sku.id === 'nda')
-        if (!nda) throw new Error('en.yaml is missing the nda SKU')
-        cy.contains('button', 'Contracts').click()
-        cy.contains(nda.name)
-        cy.contains(nda.item)
-        cy.contains(nda.amount)
-        cy.get('input[name=q]').clear().type(nda.item)
-        cy.contains(nda.name)
-        cy.contains('button', 'All filings').click()
-        cy.get('input[name=q]').clear()
-        cy.contains(en.skus[0]?.item ?? '')
-      })
+      cy.visit(gallery('id=services'))
+      cy.contains('h1', en.find.prompt)
+      cy.get('input[name=q]')
+      cy.contains(en.catalog.title)
+      cy.contains('Start a company')
+      cy.contains(en.skus[0]?.item ?? '')
+      for (const plan of en.packages) {
+        cy.contains(plan.name)
+        cy.contains(plan.amount)
+      }
+      const nda = en.skus.find((sku) => sku.id === 'nda')
+      if (!nda) throw new Error('en.yaml is missing the nda SKU')
+      cy.contains('button', 'Item 1501').click()
+      cy.contains(nda.name)
+      cy.contains(nda.item)
+      cy.contains(nda.amount)
+      cy.contains('button', 'All filings').click()
+      cy.get('input[name=q]').clear()
+      cy.contains(en.skus[0]?.item ?? '')
     })
   })
 
@@ -78,6 +77,39 @@ describe('Neon Law public-site specimen', () => {
       cy.get('select[name=jurisdiction]').select('nv')
       cy.contains('button', en.checkout.continue).click()
       cy.contains(en.checkout.sent)
+    })
+  })
+
+  it('submits the find form to the catalog path and preserves the brand', () => {
+    cy.visit('/neon?brand=lawyer-shook')
+    cy.get('input[name=q]').type('1501{enter}')
+    cy.location('pathname').should('eq', '/neon/services')
+    cy.location('search').should('include', 'q=1501').and('include', 'brand=lawyer-shook')
+    cy.get('input[name=q]').should('have.value', '1501')
+    cy.get('input[name=q]').clear().type('LLC{enter}')
+    cy.location('pathname').should('eq', '/neon/services')
+    cy.get('input[name=q]').should('have.value', 'LLC')
+  })
+
+  it('opens the catalog from a find example link', () => {
+    cy.task<EnCopy>('neonEn').then((en) => {
+      const example = en.find.examples[0]
+      if (!example) throw new Error('en.yaml is missing find examples')
+      cy.visit('/neon')
+      cy.contains('a', example.label).click()
+      cy.location('pathname').should('eq', '/neon/services')
+      cy.get('input[name=q]').should('have.value', example.query)
+    })
+  })
+
+  it('opens the catalog from a find query string', () => {
+    cy.task<EnCopy>('neonEn').then((en) => {
+      const nda = en.skus.find((sku) => sku.id === 'nda')
+      if (!nda) throw new Error('en.yaml is missing the nda SKU')
+      cy.visit(gallery(`id=services&q=${nda.item}`))
+      cy.contains('h1', en.find.prompt)
+      cy.get('input[name=q]').should('have.value', nda.item)
+      cy.contains(nda.name)
     })
   })
 })
