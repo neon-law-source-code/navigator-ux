@@ -40,6 +40,7 @@ export interface Sku {
   category: SkuCategory
   includes: string[]
   stateFee: boolean
+  related?: string[]
 }
 
 export interface EnCopy {
@@ -52,7 +53,7 @@ export interface EnCopy {
   legal: string[]
   nav: { id: NeonPageId; label: string }[]
   doors: { id: NeonPageId; title: string; body: string }[]
-  categories: { value: SkuCategory | 'all'; label: string }[]
+  categories: { value: SkuCategory | 'all'; label: string; blurb: string }[]
   packages: {
     id: string
     name: string
@@ -78,6 +79,9 @@ export interface EnCopy {
     add: string
     empty: string
     status_active: string
+    details_for: string
+    related_header: string
+    related_note: string
   }
   llc_panel: { title: string; note: string }
   shelf: { title: string; note: string; start_filing: string; category_label: string }
@@ -138,4 +142,10 @@ export function skuById(id: string | null): Sku {
   const fallback = en.skus.find((sku) => sku.id === en.fallback_sku)
   if (!fallback) throw new Error(`neon content: missing fallback SKU ${en.fallback_sku}`)
   return fallback
+}
+
+export function relatedSkus(sku: Sku): Sku[] {
+  return (sku.related ?? [])
+    .map((id) => en.skus.find((item) => item.id === id))
+    .filter((item): item is Sku => item != null)
 }

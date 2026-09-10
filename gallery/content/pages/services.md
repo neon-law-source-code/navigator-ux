@@ -14,4 +14,4 @@ secondary:
   href: fractional-gc
 ---
 
-Kits are bundles (an LLC with its operating agreement and EIN). Everything else is a discrete item, the way a parts house sells a regulator instead of a whole robot.
+A category index on the left, item numbers in the table, add on the row. Kits are bundles (an LLC with its operating agreement and EIN).

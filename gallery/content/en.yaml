@@ -37,13 +37,27 @@ doors:
     body: A will, a trust, a formation, a trademark, an annual report. One scope and one flat fee, agreed before we start.
 
 categories:
-  - { value: all, label: All filings }
-  - { value: company, label: Start a company }
-  - { value: compliance, label: Stay current }
-  - { value: identity, label: Name and mark }
-  - { value: estate, label: Estate }
-  - { value: contracts, label: Contracts }
-  - { value: urgent, label: Need it now }
+  - value: all
+    label: All filings
+    blurb: Every active item. Pick a category or search by item number, the way a parts house is browsed.
+  - value: company
+    label: Start a company
+    blurb: Formations. A kit bundles the filing with the papers a bank actually asks for.
+  - value: compliance
+    label: Stay current
+    blurb: Annual list, licence renewal, and a Nevada street address for service.
+  - value: identity
+    label: Name and mark
+    blurb: One class of trademark, or an uncontested name change.
+  - value: estate
+    label: Estate
+    blurb: A will, a package that agrees with itself, or a revocable trust.
+  - value: contracts
+    label: Contracts
+    blurb: Review their paper, or send one of ours. Fees match the live site.
+  - value: urgent
+    label: Need it now
+    blurb: A signed demand, or the answer in a Nevada summary eviction.
 
 packages:
   - id: llc-file
@@ -99,6 +113,9 @@ catalog:
   add: Add
   empty: No items match that search.
   status_active: Active
+  details_for: Details for item
+  related_header: Compatible items
+  related_note: Not included. Add separately.
 
 skus:
   - id: llc-file
@@ -114,6 +131,7 @@ skus:
       - Name check
       - Articles of organization
       - Attorney review before filing
+    related: [llc-launch, nv-address, annual-report]
   - id: llc-launch
     item: "1102"
     status: Active
@@ -127,6 +145,7 @@ skus:
       - Everything in File
       - Operating agreement
       - EIN
+    related: [nv-address, annual-report, nda]
   - id: nonprofit
     item: "1103"
     status: Active
@@ -140,6 +159,7 @@ skus:
       - Articles and bylaws
       - Conflict-of-interest policy
       - Form 1023 through filing
+    related: [nv-address]
   - id: annual-report
     item: "1201"
     status: Active
@@ -153,6 +173,7 @@ skus:
       - Annual list
       - Business licence renewal
       - Filed after attorney review
+    related: [nv-address]
   - id: nv-address
     item: "1202"
     status: Active
@@ -165,6 +186,7 @@ skus:
     includes:
       - Street address for service
       - Mail forwarded
+    related: [annual-report]
   - id: trademark
     item: "1301"
     status: Active
@@ -178,6 +200,7 @@ skus:
       - Clearance search
       - One class, one application
       - Filed after attorney review
+    related: [name-change]
   - id: name-change
     item: "1302"
     status: Active
@@ -204,6 +227,7 @@ skus:
       - Questionnaire to notation
       - Attorney-reviewed will
       - Signing and witnessing
+    related: [estate-package, trust]
   - id: estate-package
     item: "1402"
     status: Active
@@ -217,6 +241,7 @@ skus:
       - Will
       - Financial power of attorney
       - Healthcare directive
+    related: [trust]
   - id: trust
     item: "1403"
     status: Active
@@ -230,6 +255,7 @@ skus:
       - Trust
       - Pour-over will
       - One Nevada deed
+    related: [will]
   - id: nda
     item: "1501"
     status: Active
@@ -243,6 +269,7 @@ skus:
       - Full read
       - Redline
       - Cover note
+    related: [consulting, send-template]
   - id: consulting
     item: "1502"
     status: Active
@@ -256,6 +283,7 @@ skus:
       - Full read
       - Redline
       - Independent-contractor terms
+    related: [employment, nda]
   - id: employment
     item: "1503"
     status: Active
@@ -268,6 +296,7 @@ skus:
     includes:
       - Offer or employment agreement
       - Equity and non-compete review
+    related: [msa, nda]
   - id: msa
     item: "1504"
     status: Active
@@ -280,6 +309,7 @@ skus:
     includes:
       - Full read
       - Redline of their paper
+    related: [consulting]
   - id: form-review
     item: "1505"
     status: Active
@@ -292,6 +322,7 @@ skus:
     includes:
       - One form reviewed
       - Government fees at cost
+    related: [send-template]
   - id: send-template
     item: "1506"
     status: Active
@@ -304,6 +335,7 @@ skus:
     includes:
       - Firm template
       - DocuSign send and track
+    related: [nda]
   - id: demand
     item: "1601"
     status: Active
@@ -316,6 +348,7 @@ skus:
     includes:
       - Read the record you send
       - One signed letter
+    related: [eviction]
   - id: eviction
     item: "1602"
     status: Active
@@ -328,6 +361,7 @@ skus:
     includes:
       - Answer
       - One summary-eviction hearing
+    related: [demand]
 
 llc_panel:
   title: LLC kits

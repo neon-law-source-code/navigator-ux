@@ -691,7 +691,37 @@
 }
 
 .neon-site__categories .neon-site__chip {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--nav-space-2);
   text-align: start;
+}
+
+.neon-site__cat-count {
+  color: var(--nav-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.neon-site__cat-blurb {
+  margin: var(--nav-space-3) 0;
+  max-width: 52ch;
+  color: var(--nav-color-text-muted);
+}
+
+.neon-site__cat-section {
+  margin-top: var(--nav-space-5);
+}
+
+.neon-site__cat-section h3 {
+  margin: 0 0 var(--nav-space-2);
+}
+
+.neon-site__related {
+  margin-top: var(--nav-space-4);
+}
+
+.neon-site__related h3 {
+  margin: 0 0 var(--nav-space-2);
 }
 
 .neon-site__sku-blurb,
