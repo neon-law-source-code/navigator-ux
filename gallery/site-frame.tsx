@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { SiteFooter, SiteHeader } from '../src/index'
-import { COMPONENTS_HREF, pageHref, readGalleryLocation } from './routes'
+import { COMPONENTS_HREF, neonHref, pageHref, readGalleryLocation } from './routes'
 
 /*
  * The GitHub Pages site is one site, not two: the component gallery and the
@@ -15,7 +15,7 @@ const LEGAL = <p>© 2026 Shook Law PLLC.</p>
 
 export function GalleryFrame({ children }: { children: ReactNode }) {
   const { view, pageId } = readGalleryLocation()
-  const onPages = view === 'home' || view === 'page' || pageId !== null
+  const onPages = view === 'home' || view === 'page' || (pageId !== null && view !== 'neon')
 
   return (
     <div className="public-shell nav-theme gallery-shell">
@@ -25,6 +25,7 @@ export function GalleryFrame({ children }: { children: ReactNode }) {
         links={[
           { label: 'Components', href: COMPONENTS_HREF, current: view === 'components' },
           { label: 'Sample pages', href: pageHref('home'), current: onPages },
+          { label: 'Public site', href: neonHref('home'), current: view === 'neon' },
           { label: 'Councils', href: pageHref('councils'), current: view === 'councils' },
         ]}
         utility={[
@@ -40,6 +41,7 @@ export function GalleryFrame({ children }: { children: ReactNode }) {
         links={[
           { label: 'Components', href: COMPONENTS_HREF },
           { label: 'Sample pages', href: pageHref('home') },
+          { label: 'Public site', href: neonHref('home') },
           { label: 'Councils', href: pageHref('councils') },
         ]}
         legal={LEGAL}

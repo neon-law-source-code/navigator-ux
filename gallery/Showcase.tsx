@@ -36,9 +36,10 @@ import {
   TextField,
 } from '../src/index'
 import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
+import { NeonSite } from './neon-site'
 import { PageCardArt, PageFigurePanel } from './page-figures'
 import { PitchToPleadingsJourney } from './pitch-to-pleadings'
-import { pageHref } from './routes'
+import { neonHref, pageHref } from './routes'
 import { GalleryFrame } from './site-frame'
 
 type Council = 'Client Council' | 'Legal Council' | 'Engineering Council'
@@ -181,8 +182,8 @@ function Home() {
         summary="A page catalog for discovery, enforcement, transactional work, immigration, and planning. Every page is a static consumer of Navigator UX, so the same library can carry a client view, a lawyer view, or both. The header on this page is the same header on every other page."
       >
         <div className="showcase__hero-actions">
-          <LinkButton variant="primary" href={pageHref('page', 'new-matter')}>Open a sample page</LinkButton>
-          <LinkButton href={pageHref('page', 'verify-the-record')}>Verify the record</LinkButton>
+          <LinkButton variant="primary" href={neonHref('home')}>Open the public site</LinkButton>
+          <LinkButton href={pageHref('page', 'new-matter')}>Open a sample page</LinkButton>
           <LinkButton href={pageHref('councils')}>Meet the councils</LinkButton>
         </div>
       </CaseHead>
@@ -190,6 +191,27 @@ function Home() {
       <Callout tone="info">
         This is a public specimen. The names, matters, deadlines, and documents are invented. The build is published by GitHub Actions from every push to <code>main</code>.
       </Callout>
+
+      <Panel title="Public site" note="A close reading of neonlaw.com, plus a storefront rewrite of /services.">
+        <div className="showcase__page-grid">
+          <a className="showcase__page-card" href={neonHref('home')}>
+            <div className="showcase__page-card-topline">
+              <Badge tone="next">Client</Badge>
+            </div>
+            <h3>Neon Law home</h3>
+            <p>The live home page, rebuilt in this library: hero, four doors, the same invitation.</p>
+            <span className="showcase__page-meta">Marketing · home</span>
+          </a>
+          <a className="showcase__page-card" href={neonHref('services')}>
+            <div className="showcase__page-card-topline">
+              <Badge tone="next">Client</Badge>
+            </div>
+            <h3>Services storefront</h3>
+            <p>Buy a filing: published prices, LLC packages, à la carte SKUs, checkout.</p>
+            <span className="showcase__page-meta">Marketing · services</span>
+          </a>
+        </div>
+      </Panel>
 
       <Panel title="The page catalog" note="Each card opens an addressable static page; the URL is safe to bookmark or share.">
         <div className="showcase__page-grid">
@@ -505,6 +527,7 @@ export function Showcase() {
   const params = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
   const view = params.get('showcase')
   const page = SAMPLE_PAGES.find((candidate) => candidate.id === params.get('id'))
+  if (view === 'neon') return <NeonSite />
   if (view === 'page' && page) return <GalleryFrame><SamplePageView page={page} /></GalleryFrame>
   if (view === 'councils') return <GalleryFrame><Councils /></GalleryFrame>
   return <GalleryFrame><Home /></GalleryFrame>
