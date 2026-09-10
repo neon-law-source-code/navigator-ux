@@ -147,5 +147,5 @@ export function skuById(id: string | null): Sku {
 export function relatedSkus(sku: Sku): Sku[] {
   return (sku.related ?? [])
     .map((id) => en.skus.find((item) => item.id === id))
-    .filter((item): item is Sku => item != null)
+    .filter((item): item is Sku => item !== undefined)
 }
