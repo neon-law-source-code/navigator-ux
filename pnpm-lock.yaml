@@ -71,7 +71,7 @@ importers:
         version: 1.0.5
       '@vitejs/plugin-react':
         specifier: ^6.0.5
-        version: 6.0.5(vite@8.2.1)
+        version: 6.0.5(vite@8.2.1(yaml@2.9.0))
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
@@ -101,13 +101,16 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^8.2.1
-        version: 8.2.1
+        version: 8.2.1(yaml@2.9.0)
       vite-plugin-dts:
         specifier: ^5.0.3
-        version: 5.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1)
+        version: 5.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1(yaml@2.9.0))
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1)
+        version: 4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1(yaml@2.9.0))
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
 
 packages:
 
@@ -2062,6 +2065,11 @@ packages:
   yaml-ast-parser@0.0.43:
     resolution: {integrity: sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==}
 
+  yaml@2.9.0:
+    resolution: {integrity: sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
+
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
@@ -2401,7 +2409,7 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
     optionalDependencies:
-      vitest: 4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1)
+      vitest: 4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1(yaml@2.9.0))
 
   '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
@@ -2473,10 +2481,10 @@ snapshots:
     dependencies:
       '@types/geojson': 7946.0.16
 
-  '@vitejs/plugin-react@6.0.5(vite@8.2.1)':
+  '@vitejs/plugin-react@6.0.5(vite@8.2.1(yaml@2.9.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.2.1
+      vite: 8.2.1(yaml@2.9.0)
 
   '@vitest/coverage-v8@4.1.10(vitest@4.1.10)':
     dependencies:
@@ -2490,7 +2498,7 @@ snapshots:
       obug: 2.1.4
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1)
+      vitest: 4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1(yaml@2.9.0))
 
   '@vitest/expect@4.1.10':
     dependencies:
@@ -2501,13 +2509,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.10(vite@8.2.1)':
+  '@vitest/mocker@4.1.10(vite@8.2.1(yaml@2.9.0))':
     dependencies:
       '@vitest/spy': 4.1.10
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.2.1
+      vite: 8.2.1(yaml@2.9.0)
 
   '@vitest/pretty-format@4.1.10':
     dependencies:
@@ -3661,7 +3669,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unplugin-dts@1.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1):
+  unplugin-dts@1.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1(yaml@2.9.0)):
     dependencies:
       '@rollup/pluginutils': 5.4.0
       '@volar/typescript': 2.4.28
@@ -3674,7 +3682,7 @@ snapshots:
       unplugin: 2.3.11
     optionalDependencies:
       rolldown: 1.2.4
-      vite: 8.2.1
+      vite: 8.2.1(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -3695,11 +3703,11 @@ snapshots:
       core-util-is: 1.0.2
       extsprintf: 1.3.0
 
-  vite-plugin-dts@5.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1):
+  vite-plugin-dts@5.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1(yaml@2.9.0)):
     dependencies:
-      unplugin-dts: 1.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1)
+      unplugin-dts: 1.0.3(rolldown@1.2.4)(supports-color@7.2.0)(typescript@5.9.3)(vite@8.2.1(yaml@2.9.0))
     optionalDependencies:
-      vite: 8.2.1
+      vite: 8.2.1(yaml@2.9.0)
     transitivePeerDependencies:
       - '@rspack/core'
       - '@vue/language-core'
@@ -3709,7 +3717,7 @@ snapshots:
       - typescript
       - webpack
 
-  vite@8.2.1:
+  vite@8.2.1(yaml@2.9.0):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.5
@@ -3718,11 +3726,12 @@ snapshots:
       tinyglobby: 0.2.17
     optionalDependencies:
       fsevents: 2.3.3
+      yaml: 2.9.0
 
-  vitest@4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1):
+  vitest@4.1.10(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.2.1(yaml@2.9.0)):
     dependencies:
       '@vitest/expect': 4.1.10
-      '@vitest/mocker': 4.1.10(vite@8.2.1)
+      '@vitest/mocker': 4.1.10(vite@8.2.1(yaml@2.9.0))
       '@vitest/pretty-format': 4.1.10
       '@vitest/runner': 4.1.10
       '@vitest/snapshot': 4.1.10
@@ -3739,7 +3748,7 @@ snapshots:
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vite: 8.2.1
+      vite: 8.2.1(yaml@2.9.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@vitest/coverage-v8': 4.1.10(vitest@4.1.10)
@@ -3799,6 +3808,8 @@ snapshots:
   xmlchars@2.2.0: {}
 
   yaml-ast-parser@0.0.43: {}
+
+  yaml@2.9.0: {}
 
   yargs-parser@21.1.1: {}
 
