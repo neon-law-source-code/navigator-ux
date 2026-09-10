@@ -19,11 +19,10 @@ export function BrandSwitch() {
       existing?.remove()
       return
     }
-    const link = existing instanceof HTMLLinkElement ? existing : document.createElement('link')
-    link.id = LAYER_ID
-    link.rel = 'stylesheet'
-    link.href = brand.sheet
-    if (!existing) document.head.append(link)
+    const style = existing instanceof HTMLStyleElement ? existing : document.createElement('style')
+    style.id = LAYER_ID
+    style.textContent = brand.sheet
+    if (!existing) document.head.append(style)
   }, [selected])
 
   return (
