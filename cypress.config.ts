@@ -4,8 +4,8 @@ import { parse } from 'yaml'
 import { defineConfig } from 'cypress'
 
 /*
- * The API specs hit the fake OpenAPI harness (CYPRESS_BASE_URL, :5175).
- * neon-site.cy.ts hits the gallery (CYPRESS_GALLERY_URL) and asserts copy from
+ * Specs share one origin: the fake OpenAPI harness (CYPRESS_BASE_URL, :5175).
+ * neon-site.cy.ts visits `?showcase=neon` on that origin and asserts copy from
  * gallery/content/en.yaml plus the Markdown page files.
  */
 
@@ -26,9 +26,6 @@ export default defineConfig({
     video: false,
     screenshotOnRunFailure: true,
     defaultCommandTimeout: 8000,
-    env: {
-      GALLERY_URL: process.env.CYPRESS_GALLERY_URL ?? 'http://127.0.0.1:5176',
-    },
     setupNodeEvents(on) {
       on('task', {
         neonEn() {

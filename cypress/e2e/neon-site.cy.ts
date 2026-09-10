@@ -19,12 +19,12 @@ interface EnCopy {
   categories: { value: string; label: string }[]
 }
 
-const gallery = () => Cypress.env('GALLERY_URL') as string
+const gallery = (path: string) => `/?showcase=neon&${path}`
 
 describe('Neon Law public-site specimen', () => {
   it('renders home copy from the Markdown notation', () => {
     cy.task<PageDoc>('neonPage', 'home').then((page) => {
-      cy.visit(`${gallery()}/?showcase=neon&id=home`)
+      cy.visit(gallery('id=home'))
       cy.contains('a', 'Neon Law')
       cy.contains('h1', page.matter.title)
       cy.contains(page.matter.lede.trim().slice(0, 40))
@@ -38,7 +38,7 @@ describe('Neon Law public-site specimen', () => {
   it('renders the services storefront from en.yaml', () => {
     cy.task<EnCopy>('neonEn').then((en) => {
       cy.task<PageDoc>('neonPage', 'services').then((page) => {
-        cy.visit(`${gallery()}/?showcase=neon&id=services`)
+        cy.visit(gallery('id=services'))
         cy.contains('h1', page.matter.title)
         for (const plan of en.packages) {
           cy.contains(plan.name)
@@ -59,7 +59,7 @@ describe('Neon Law public-site specimen', () => {
     cy.task<EnCopy>('neonEn').then((en) => {
       const sku = en.skus.find((item) => item.id === en.fallback_sku)
       if (!sku) throw new Error('en.yaml is missing the fallback SKU')
-      cy.visit(`${gallery()}/?showcase=neon&id=checkout&sku=${sku.id}`)
+      cy.visit(gallery(`id=checkout&sku=${sku.id}`))
       cy.contains('h1', sku.name)
       cy.contains(sku.amount)
       cy.get('input[name=name]').type('Jordan Rivera')
