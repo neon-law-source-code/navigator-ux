@@ -105,7 +105,7 @@ catalog:
   title: Products in this catalog
   note: Item numbers stay put, like a parts list. The fee is ours; government fees pass through at cost.
   search_label: Search
-  search_placeholder: Item # or name
+  search_placeholder: "Item # or name"
   item_header: Item #
   name_header: Description
   status_header: Status
