@@ -17,7 +17,7 @@ interface EnCopy {
   checkout: { sent: string; continue: string }
   fallback_sku: string
   categories: { value: string; label: string }[]
-  catalog: { title: string; add: string }
+  catalog: { title: string; add: string; related_header: string }
 }
 
 const gallery = (path: string) => `/?showcase=neon&${path}`
@@ -42,6 +42,8 @@ describe('Neon Law public-site specimen', () => {
         cy.visit(gallery('id=services'))
         cy.contains('h1', page.matter.title)
         cy.contains(en.catalog.title)
+        cy.contains('Start a company')
+        cy.contains(en.skus[0]?.item ?? '')
         for (const plan of en.packages) {
           cy.contains(plan.name)
           cy.contains(plan.amount)
@@ -69,6 +71,8 @@ describe('Neon Law public-site specimen', () => {
       cy.contains('h1', sku.name)
       cy.contains(sku.item)
       cy.contains(sku.amount)
+      cy.contains(en.catalog.related_header)
+      cy.contains('Nevada business address')
       cy.get('input[name=name]').type('Jordan Rivera')
       cy.get('input[name=email]').type('jordan@example.com')
       cy.get('select[name=jurisdiction]').select('nv')

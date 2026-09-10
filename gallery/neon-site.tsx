@@ -39,10 +39,12 @@ import './gallery.css'
 import {
   en,
   pages,
+  relatedSkus,
   skuById,
   type NeonPageId,
   type PageAction,
   type PageDoc,
+  type Sku,
   type SkuCategory,
 } from './content/load'
 import { neonHref, pageHref } from './routes'
@@ -163,6 +165,55 @@ function HomePage() {
   )
 }
 
+function skuNeedle(sku: Sku, needle: string) {
+  return `${sku.item} ${sku.name} ${sku.blurb}`.toLowerCase().includes(needle)
+}
+
+function categoryCount(value: SkuCategory | 'all') {
+  if (value === 'all') return en.skus.length
+  return en.skus.filter((sku) => sku.category === value).length
+}
+
+function CatalogTable({ items, caption }: { items: readonly Sku[]; caption: string }) {
+  const cat = en.catalog
+  return (
+    <Table caption={caption}>
+      <TableHeader>
+        <TableRow>
+          <TableHead>{cat.item_header}</TableHead>
+          <TableHead>{cat.name_header}</TableHead>
+          <TableHead>{cat.status_header}</TableHead>
+          <TableHead numeric>{cat.price_header}</TableHead>
+          <TableHead>{cat.add}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items.map((sku) => (
+          <TableRow key={sku.id}>
+            <TableCell>
+              <Kbd>{sku.item}</Kbd>
+            </TableCell>
+            <TableCell>
+              <a href={neonHref('checkout', sku.id)}>{sku.name}</a>
+              <p className="neon-site__sku-blurb">{sku.blurb}</p>
+            </TableCell>
+            <TableCell>{sku.status}</TableCell>
+            <TableCell numeric>
+              {sku.amount}
+              <span className="neon-site__price-period"> {sku.period}</span>
+            </TableCell>
+            <TableCell>
+              <LinkButton variant="primary" href={neonHref('checkout', sku.id)}>
+                {cat.add}
+              </LinkButton>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  )
+}
+
 function ServicesPage() {
   const [category, setCategory] = useState<SkuCategory | 'all'>('all')
   const [query, setQuery] = useState('')
@@ -170,16 +221,66 @@ function ServicesPage() {
   const items = en.skus.filter((sku) => {
     if (category !== 'all' && sku.category !== category) return false
     if (!needle) return true
-    return `${sku.item} ${sku.name} ${sku.blurb}`.toLowerCase().includes(needle)
+    return skuNeedle(sku, needle)
   })
   const doc = pages.services
   const cat = en.catalog
+  const current = en.categories.find((entry) => entry.value === category)
+  const grouped = category === 'all' && !needle
 
   return (
     <Stack>
       <PageHero doc={doc} />
       <Callout tone="info">{en.callout}</Callout>
       <Blocks body={doc.body} />
+      <Panel title={cat.title} note={cat.note}>
+        <div className="neon-site__catalog">
+          <nav className="neon-site__categories" aria-label={en.shelf.category_label}>
+            {en.categories.map((entry) => (
+              <button
+                key={entry.value}
+                type="button"
+                className={
+                  category === entry.value ? 'neon-site__chip is-current' : 'neon-site__chip'
+                }
+                aria-pressed={category === entry.value}
+                onClick={() => setCategory(entry.value)}
+              >
+                <span>{entry.label}</span>
+                <span className="neon-site__cat-count">{categoryCount(entry.value)}</span>
+              </button>
+            ))}
+          </nav>
+          <div>
+            <TextField
+              label={cat.search_label}
+              name="q"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={cat.search_placeholder}
+            />
+            {current ? <p className="neon-site__cat-blurb">{current.blurb}</p> : null}
+            {items.length === 0 ? (
+              <Empty title={cat.empty} />
+            ) : grouped ? (
+              en.categories
+                .filter((entry) => entry.value !== 'all')
+                .map((entry) => {
+                  const rows = en.skus.filter((sku) => sku.category === entry.value)
+                  if (rows.length === 0) return null
+                  return (
+                    <section className="neon-site__cat-section" key={entry.value}>
+                      <h3>{entry.label}</h3>
+                      <CatalogTable items={rows} caption={entry.label} />
+                    </section>
+                  )
+                })
+            ) : (
+              <CatalogTable items={items} caption={current?.label ?? cat.title} />
+            )}
+          </div>
+        </div>
+      </Panel>
       <Panel title={en.llc_panel.title} note={en.llc_panel.note}>
         <PricingGrid>
           {en.packages.map((plan) => (
@@ -198,72 +299,6 @@ function ServicesPage() {
             />
           ))}
         </PricingGrid>
-      </Panel>
-      <Panel title={cat.title} note={cat.note}>
-        <div className="neon-site__catalog">
-          <nav className="neon-site__categories" aria-label={en.shelf.category_label}>
-            {en.categories.map((entry) => (
-              <button
-                key={entry.value}
-                type="button"
-                className={
-                  category === entry.value ? 'neon-site__chip is-current' : 'neon-site__chip'
-                }
-                aria-pressed={category === entry.value}
-                onClick={() => setCategory(entry.value)}
-              >
-                {entry.label}
-              </button>
-            ))}
-          </nav>
-          <div>
-            <TextField
-              label={cat.search_label}
-              name="q"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={cat.search_placeholder}
-            />
-            {items.length === 0 ? (
-              <Empty title={cat.empty} />
-            ) : (
-              <Table caption={cat.title}>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{cat.item_header}</TableHead>
-                    <TableHead>{cat.name_header}</TableHead>
-                    <TableHead>{cat.status_header}</TableHead>
-                    <TableHead numeric>{cat.price_header}</TableHead>
-                    <TableHead>{cat.add}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {items.map((sku) => (
-                    <TableRow key={sku.id}>
-                      <TableCell>
-                        <Kbd>{sku.item}</Kbd>
-                      </TableCell>
-                      <TableCell>
-                        <strong>{sku.name}</strong>
-                        <p className="neon-site__sku-blurb">{sku.blurb}</p>
-                      </TableCell>
-                      <TableCell>{sku.status}</TableCell>
-                      <TableCell numeric>
-                        {sku.amount}
-                        <span className="neon-site__price-period"> {sku.period}</span>
-                      </TableCell>
-                      <TableCell>
-                        <LinkButton variant="primary" href={neonHref('checkout', sku.id)}>
-                          {cat.add}
-                        </LinkButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </div>
       </Panel>
       <Panel title={en.process.title} note={en.process.note}>
         <ActionList items={en.process.steps} />
@@ -340,12 +375,13 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
   const sku = skuById(skuId)
   const [sent, setSent] = useState(false)
   const copy = en.checkout
+  const related = relatedSkus(sku)
 
   return (
     <Stack>
       <Hero
         align="start"
-        eyebrow={`${en.catalog.item_header} ${sku.item}`}
+        eyebrow={`${en.catalog.details_for} #${sku.item}`}
         title={sku.name}
         lede={`${sku.amount} ${sku.period}. ${sku.blurb}`}
       />
@@ -403,6 +439,21 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
             <p>
               <Badge>{copy.state_fee_badge}</Badge>
             </p>
+          ) : null}
+          {related.length > 0 ? (
+            <div className="neon-site__related">
+              <h3>{en.catalog.related_header}</h3>
+              <p className="neon-site__sku-blurb">{en.catalog.related_note}</p>
+              <ul>
+                {related.map((item) => (
+                  <li key={item.id}>
+                    <Kbd>{item.item}</Kbd>{' '}
+                    <a href={neonHref('checkout', item.id)}>{item.name}</a>
+                    <span className="neon-site__price-period"> {item.amount}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : null}
         </Card>
       </div>
