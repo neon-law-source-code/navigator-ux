@@ -11,7 +11,9 @@ import {
   Card,
   ChoiceGroup,
   FormCard,
+  Empty,
   Hero,
+  Kbd,
   LegalDisclaimer,
   LinkButton,
   Panel,
@@ -163,8 +165,15 @@ function HomePage() {
 
 function ServicesPage() {
   const [category, setCategory] = useState<SkuCategory | 'all'>('all')
-  const items = en.skus.filter((sku) => category === 'all' || sku.category === category)
+  const [query, setQuery] = useState('')
+  const needle = query.trim().toLowerCase()
+  const items = en.skus.filter((sku) => {
+    if (category !== 'all' && sku.category !== category) return false
+    if (!needle) return true
+    return `${sku.item} ${sku.name} ${sku.blurb}`.toLowerCase().includes(needle)
+  })
   const doc = pages.services
+  const cat = en.catalog
 
   return (
     <Stack>
@@ -190,41 +199,70 @@ function ServicesPage() {
           ))}
         </PricingGrid>
       </Panel>
-      <Panel title={en.shelf.title} note={en.shelf.note}>
-        <div className="neon-site__chips" role="group" aria-label={en.shelf.category_label}>
-          {en.categories.map((entry) => (
-            <button
-              key={entry.value}
-              type="button"
-              className={category === entry.value ? 'neon-site__chip is-current' : 'neon-site__chip'}
-              aria-pressed={category === entry.value}
-              onClick={() => setCategory(entry.value)}
-            >
-              {entry.label}
-            </button>
-          ))}
-        </div>
-        <div className="neon-site__skus">
-          {items.map((sku) => (
-            <article className="neon-site__sku" key={sku.id}>
-              <div className="neon-site__sku-topline">
-                <h3>{sku.name}</h3>
-                <p className="neon-site__price">
-                  <strong>{sku.amount}</strong>
-                  <span> {sku.period}</span>
-                </p>
-              </div>
-              <p>{sku.blurb}</p>
-              <ul>
-                {sku.includes.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
-              <LinkButton variant="primary" href={neonHref('checkout', sku.id)}>
-                {en.shelf.start_filing}
-              </LinkButton>
-            </article>
-          ))}
+      <Panel title={cat.title} note={cat.note}>
+        <div className="neon-site__catalog">
+          <nav className="neon-site__categories" aria-label={en.shelf.category_label}>
+            {en.categories.map((entry) => (
+              <button
+                key={entry.value}
+                type="button"
+                className={
+                  category === entry.value ? 'neon-site__chip is-current' : 'neon-site__chip'
+                }
+                aria-pressed={category === entry.value}
+                onClick={() => setCategory(entry.value)}
+              >
+                {entry.label}
+              </button>
+            ))}
+          </nav>
+          <div>
+            <TextField
+              label={cat.search_label}
+              name="q"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={cat.search_placeholder}
+            />
+            {items.length === 0 ? (
+              <Empty title={cat.empty} />
+            ) : (
+              <Table caption={cat.title}>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{cat.item_header}</TableHead>
+                    <TableHead>{cat.name_header}</TableHead>
+                    <TableHead>{cat.status_header}</TableHead>
+                    <TableHead numeric>{cat.price_header}</TableHead>
+                    <TableHead>{cat.add}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {items.map((sku) => (
+                    <TableRow key={sku.id}>
+                      <TableCell>
+                        <Kbd>{sku.item}</Kbd>
+                      </TableCell>
+                      <TableCell>
+                        <strong>{sku.name}</strong>
+                        <p className="neon-site__sku-blurb">{sku.blurb}</p>
+                      </TableCell>
+                      <TableCell>{sku.status}</TableCell>
+                      <TableCell numeric>
+                        {sku.amount}
+                        <span className="neon-site__price-period"> {sku.period}</span>
+                      </TableCell>
+                      <TableCell>
+                        <LinkButton variant="primary" href={neonHref('checkout', sku.id)}>
+                          {cat.add}
+                        </LinkButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
         </div>
       </Panel>
       <Panel title={en.process.title} note={en.process.note}>
@@ -305,7 +343,12 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
 
   return (
     <Stack>
-      <Hero align="start" eyebrow={copy.eyebrow} title={sku.name} lede={`${sku.amount} ${sku.period}. ${sku.blurb}`} />
+      <Hero
+        align="start"
+        eyebrow={`${en.catalog.item_header} ${sku.item}`}
+        title={sku.name}
+        lede={`${sku.amount} ${sku.period}. ${sku.blurb}`}
+      />
       {sent ? <Callout tone="success">{copy.sent}</Callout> : null}
       <div className="neon-site__checkout">
         <FormCard
@@ -341,6 +384,12 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
           </ButtonRow>
         </FormCard>
         <Card header={copy.sku_header}>
+          <p>
+            {en.catalog.item_header} <Kbd>{sku.item}</Kbd>
+          </p>
+          <p>
+            {en.catalog.status_header}: {sku.status}
+          </p>
           <p className="neon-site__price">
             <strong>{sku.amount}</strong>
             <span> {sku.period}</span>

@@ -207,7 +207,7 @@ function Home() {
               <Badge tone="next">Client</Badge>
             </div>
             <h3>Services storefront</h3>
-            <p>Buy a filing: published prices, LLC packages, à la carte SKUs, checkout.</p>
+            <p>A parts-house catalog: item numbers, category index, kits, add-to-cart checkout.</p>
             <span className="showcase__page-meta">Marketing · services</span>
           </a>
         </div>
