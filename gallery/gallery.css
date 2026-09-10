@@ -630,3 +630,114 @@
   background: var(--nav-color-surface-subtle);
   font-weight: 700;
 }
+
+/* Public-site specimen. Layout only; every color is a token. */
+
+.neon-site__block {
+  max-width: 62ch;
+}
+
+.neon-site__block h2 {
+  margin-bottom: var(--nav-space-3);
+}
+
+.neon-site__doors,
+.neon-site__skus,
+.neon-site__checkout {
+  display: grid;
+  gap: var(--nav-space-4);
+}
+
+.neon-site__doors {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.neon-site__skus {
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-top: var(--nav-space-4);
+}
+
+.neon-site__checkout {
+  grid-template-columns: minmax(0, 1.4fr) minmax(14rem, 0.8fr);
+  align-items: start;
+}
+
+.nav-theme a.neon-site__door {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-theme a.neon-site__door:hover,
+.nav-theme a.neon-site__door:focus-visible {
+  text-decoration: none;
+}
+
+.neon-site__door .nav-card {
+  height: 100%;
+}
+
+.neon-site__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nav-space-2);
+}
+
+.neon-site__chip {
+  margin: 0;
+  padding: var(--nav-space-2) var(--nav-space-3);
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+  color: var(--nav-color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.neon-site__chip.is-current {
+  border-color: var(--nav-color-primary);
+  background: var(--nav-color-surface-subtle);
+  font-weight: 700;
+}
+
+.neon-site__sku {
+  display: grid;
+  gap: var(--nav-space-3);
+  padding: var(--nav-space-4);
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius);
+  background: var(--nav-color-surface);
+}
+
+.neon-site__sku-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nav-space-2);
+}
+
+.neon-site__sku h3,
+.neon-site__sku p,
+.neon-site__sku ul {
+  margin: 0;
+}
+
+.neon-site__sku ul,
+.neon-site__checkout ul {
+  padding-left: 1.1rem;
+}
+
+.neon-site__price {
+  margin: 0;
+}
+
+.neon-site__price span {
+  color: var(--nav-color-text-muted);
+}
+
+@media (max-width: 52rem) {
+  .neon-site__doors,
+  .neon-site__checkout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -4,11 +4,17 @@
  * warnings, and they already live in the library.
  */
 
-export type GalleryView = 'components' | 'home' | 'councils' | 'page'
+export type GalleryView = 'components' | 'home' | 'councils' | 'page' | 'neon'
 
-export function pageHref(view: Exclude<GalleryView, 'components'>, id?: string) {
+export function pageHref(view: Exclude<GalleryView, 'components' | 'neon'>, id?: string) {
   if (view === 'page' && id) return `?showcase=page&id=${id}`
   return `?showcase=${view}`
+}
+
+/** A public-site specimen: home, services, a door page, or checkout. */
+export function neonHref(id: string, sku?: string) {
+  const base = `?showcase=neon&id=${id}`
+  return sku ? `${base}&sku=${sku}` : base
 }
 
 export const COMPONENTS_HREF = './'
@@ -30,6 +36,7 @@ export function readGalleryLocation(): { view: GalleryView; pageId: string | nul
   const pageId = params.get('id')
   if (showcase === 'councils') return { view: 'councils', pageId: null }
   if (showcase === 'page') return { view: 'page', pageId }
+  if (showcase === 'neon') return { view: 'neon', pageId }
   if (showcase === 'home') return { view: 'home', pageId: null }
   if (showcase) return { view: 'home', pageId: null }
   return { view: 'components', pageId: null }
