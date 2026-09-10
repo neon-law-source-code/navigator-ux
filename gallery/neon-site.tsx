@@ -33,7 +33,7 @@ import {
   TextField,
   TextareaField,
 } from '../src/index'
-import { COMPONENTS_HREF, neonHref, pageHref } from './routes'
+import { neonHref, pageHref } from './routes'
 
 type NeonPage = 'home' | 'services' | 'litigation' | 'fractional-gc' | 'personal-plan' | 'checkout'
 type SkuCategory = 'company' | 'compliance' | 'identity' | 'estate' | 'contracts' | 'urgent'
@@ -287,11 +287,7 @@ function NeonFrame({ page, children }: { page: NeonPage; children: ReactNode }) 
           brand="Neon Law"
           brandHref={neonHref('home')}
           links={neonLinks(page)}
-          utility={[
-            { label: 'Catalog', href: pageHref('home') },
-            { label: 'Components', href: COMPONENTS_HREF },
-            { label: 'Contact', href: 'mailto:contact@neonlaw.com' },
-          ]}
+          utility={[{ label: 'Catalog', href: pageHref('home') }]}
         />
       }
       footer={
