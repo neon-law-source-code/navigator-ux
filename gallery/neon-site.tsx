@@ -33,6 +33,7 @@ import {
   TextField,
   TextareaField,
 } from '../src/index'
+import './gallery.css'
 import {
   en,
   pages,
