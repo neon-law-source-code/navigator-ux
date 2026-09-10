@@ -148,11 +148,11 @@ layer is what restyles everything without touching a component. A brand layer wi
 something else is injected after it.
 
 **No brand layer ships, and that is deliberate.** The library has one identity. Layer two is a
-stylesheet a consumer writes, and `gallery/brand-example-tokens.css` is the commented template plus
-the demo the gallery switch attaches. It lives in `gallery/` rather than `src/` precisely so it
-cannot be mistaken for something published. The library used to ship a client's orange as a second
-brand; shipping one adopter's color in an open-source package is how a design system acquires
-identities nobody maintains.
+stylesheet a consumer writes. `gallery/brand-example-tokens.css` is the commented template;
+`gallery/brands/` holds the compiled identities the gallery switch attaches. They live in `gallery/`
+rather than `src/` so they cannot be mistaken for something published. The library used to ship a
+client's orange as a second brand; shipping one adopter's color in an open-source package is how a
+design system acquires identities nobody maintains.
 
 **The neutrals are tinted, and that is the whole look.** Surfaces, borders, and text carry a trace of
 the same teal, so a card, its border, and the button on it read as designed together. A pure-grey
@@ -368,8 +368,7 @@ every word are not ours to touch. A typo fix in it is a license violation, not a
 built against `dist` is a page that silently shows you last build's components. It has its own
 `vite.gallery.config.ts` because `vite.config.ts` is a library build (`build.lib`, externalized React,
 `vite-plugin-dts`); one config doing both would emit the gallery into `dist` and publish it. Its
-brand-layer switch is **not** a theme toggle — it attaches and detaches
-`gallery/brand-example-tokens.css`, which is the only way to see the middle layer swap.
+brand-layer switch is **not** a theme toggle — it attaches a sheet from `gallery/brands/`.
 
 **pdf.js's worker cannot be resolved the same way in both builds.** The package emits ESM *and* CJS.
 `import.meta.url` is how a bundler is told to emit the worker as a same-origin asset — but in the CJS

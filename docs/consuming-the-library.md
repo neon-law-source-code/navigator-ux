@@ -97,7 +97,8 @@ import './styles/brand.css'
 ```
 
 `brand.css` redeclares the semantic aliases at `:root:root` — see *The three token layers* in the
-README, and `gallery/brand-example-tokens.css` for a complete commented template.
+README, `gallery/brand-example-tokens.css` for a commented template, and `gallery/brands/` for the
+compiled identities (including a self-hosted `@font-face`).
 The doubled selector matters: a brand layer wins on specificity, not source order, so it survives
 anything injected after it.
 

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 
 import { SiteFooter, SiteHeader } from '../src/index'
-import { COMPONENTS_HREF, neonHref, pageHref, readGalleryLocation } from './routes'
+import { BrandSwitch } from './BrandSwitch'
+import { componentsHref, neonHref, pageHref, readGalleryLocation } from './routes'
 
 /*
  * The GitHub Pages site is one site, not two: the component gallery and the
@@ -21,9 +22,9 @@ export function GalleryFrame({ children }: { children: ReactNode }) {
     <div className="public-shell nav-theme gallery-shell">
       <SiteHeader
         brand="Navigator UX"
-        brandHref={COMPONENTS_HREF}
+        brandHref={componentsHref()}
         links={[
-          { label: 'Components', href: COMPONENTS_HREF, current: view === 'components' },
+          { label: 'Components', href: componentsHref(), current: view === 'components' },
           { label: 'Sample pages', href: pageHref('home'), current: onPages },
           { label: 'Public site', href: neonHref('home'), current: view === 'neon' },
           { label: 'Councils', href: pageHref('councils'), current: view === 'councils' },
@@ -36,10 +37,11 @@ export function GalleryFrame({ children }: { children: ReactNode }) {
           },
         ]}
       />
+      <BrandSwitch />
       <main className="public-shell__main">{children}</main>
       <SiteFooter
         links={[
-          { label: 'Components', href: COMPONENTS_HREF },
+          { label: 'Components', href: componentsHref() },
           { label: 'Sample pages', href: pageHref('home') },
           { label: 'Public site', href: neonHref('home') },
           { label: 'Councils', href: pageHref('councils') },

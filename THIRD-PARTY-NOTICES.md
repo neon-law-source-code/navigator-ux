@@ -271,3 +271,7 @@ wins with no component touched. See the typography section of the [README](./REA
 
 Nothing in `dist` reaches off-origin for a font or for anything else; `pnpm check:bundle` fails the
 build on any reference that does.
+
+**Plus Jakarta Sans and Tinos are gallery-only.** The brand switch loads them from
+`@fontsource/plus-jakarta-sans` (OFL 1.1) and `@fontsource/tinos` (Apache-2.0). They are
+devDependencies, not in `src/` and not in the published `dist`.

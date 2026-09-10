@@ -3,7 +3,8 @@
  *   tokens.css   this file. The `--nav-*` contract at `:root`, and the Neon Law
  *                teal behind it.
  *   a brand layer  an app's override, at `:root:root`. None ships; the template
- *                is `gallery/brand-example-tokens.css`.
+ *                is `gallery/brand-example-tokens.css`, and the gallery switch
+ *                attaches the compiled sheets in `gallery/brands/`.
  *   theme.css    every component rule, reading `var(--nav-*)` and never a
  *                literal color.
  *
