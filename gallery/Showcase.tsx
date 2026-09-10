@@ -39,7 +39,7 @@ import { MOTION_SECTIONS, RECORD_CITATIONS } from './outline-specimen'
 import { NeonSite } from './neon-site'
 import { PageCardArt, PageFigurePanel } from './page-figures'
 import { PitchToPleadingsJourney } from './pitch-to-pleadings'
-import { neonHref, pageHref } from './routes'
+import { neonHref, pageHref, readGalleryLocation } from './routes'
 import { GalleryFrame } from './site-frame'
 
 type Council = 'Client Council' | 'Legal Council' | 'Engineering Council'
@@ -524,9 +524,8 @@ function SamplePageView({ page }: { page: SamplePage }) {
 }
 
 export function Showcase() {
-  const params = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
-  const view = params.get('showcase')
-  const page = SAMPLE_PAGES.find((candidate) => candidate.id === params.get('id'))
+  const { view, pageId } = readGalleryLocation()
+  const page = SAMPLE_PAGES.find((candidate) => candidate.id === pageId)
   if (view === 'neon') return <NeonSite />
   if (view === 'page' && page) return <GalleryFrame><SamplePageView page={page} /></GalleryFrame>
   if (view === 'councils') return <GalleryFrame><Councils /></GalleryFrame>

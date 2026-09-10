@@ -47,7 +47,7 @@ import {
   type Sku,
   type SkuCategory,
 } from './content/load'
-import { neonHref, pageHref } from './routes'
+import { neonHref, pageHref, readGalleryLocation } from './routes'
 
 const PAGE_IDS: readonly NeonPageId[] = [
   'home',
@@ -463,11 +463,8 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
 }
 
 export function NeonSite() {
-  const params =
-    typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
-  const requested = params.get('id')
-  const page: NeonPageId = isNeonPage(requested) ? requested : 'home'
-  const sku = params.get('sku')
+  const { pageId, sku } = readGalleryLocation()
+  const page: NeonPageId = isNeonPage(pageId) ? pageId : 'home'
 
   let body = <HomePage />
   if (page === 'services') body = <ServicesPage />

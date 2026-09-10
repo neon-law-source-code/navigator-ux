@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '../src/styles/fonts.css'
 import { Gallery } from './Gallery'
+import { replaceLegacyGalleryUrl } from './routes'
 
 /*
  * The gallery's entry point.
@@ -24,6 +25,8 @@ import { Gallery } from './Gallery'
  * The library build never sees this module. Consumers are unaffected either way:
  * they get the font from the `@import` that `emit-font-layer.mjs` prepends.
  */
+
+replaceLegacyGalleryUrl()
 
 const root = document.getElementById('root')
 if (!root) throw new Error('gallery: #root is missing from index.html')
