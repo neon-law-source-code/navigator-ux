@@ -1,12 +1,12 @@
 ---
-eyebrow: Filings · attorney-reviewed · notation-powered
-title: Speedy, affordable legal filings. Buy the one you need.
+eyebrow: Item numbers · attorney-reviewed · notation-powered
+title: Filings, listed like parts.
 lede: >
-  Answers become a notation a licensed attorney reviews, then we file. Government
-  fees pass through at cost. No membership required to start — a plan is cheaper
-  if you will be back.
+  Categories on the left. Item numbers in the table. Add the filing you need.
+  A licensed attorney reviews the notation, then we file. Government fees pass
+  through at cost.
 primary:
-  label: Start an LLC
+  label: Add item 1102
   href: checkout
   sku: llc-launch
 secondary:
@@ -14,6 +14,4 @@ secondary:
   href: fractional-gc
 ---
 
-## Why this is not a $0 form mill
-
-Bizee, LegalZoom, and Northwest sell speed and a published price. We want those too. What they cannot sell is a licensed attorney reading the packet, and a filing whose source is a notation — the same format Navigator uses for a brief — instead of a wizard that forgets why a box was checked.
+Kits are bundles (an LLC with its operating agreement and EIN). Everything else is a discrete item, the way a parts house sells a regulator instead of a whole robot.

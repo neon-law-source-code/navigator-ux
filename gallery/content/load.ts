@@ -31,6 +31,8 @@ export interface PageDoc {
 
 export interface Sku {
   id: string
+  item: string
+  status: string
   name: string
   blurb: string
   amount: string
@@ -64,6 +66,19 @@ export interface EnCopy {
     features: string[]
   }[]
   skus: Sku[]
+  catalog: {
+    title: string
+    note: string
+    search_label: string
+    search_placeholder: string
+    item_header: string
+    name_header: string
+    status_header: string
+    price_header: string
+    add: string
+    empty: string
+    status_active: string
+  }
   llc_panel: { title: string; note: string }
   shelf: { title: string; note: string; start_filing: string; category_label: string }
   process: { title: string; note: string; steps: { id: string; title: string; detail: string }[] }

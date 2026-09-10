@@ -13,10 +13,11 @@ interface EnCopy {
   brand: string
   doors: { title: string }[]
   packages: { name: string; amount: string }[]
-  skus: { id: string; name: string; amount: string }[]
+  skus: { id: string; item: string; name: string; amount: string }[]
   checkout: { sent: string; continue: string }
   fallback_sku: string
   categories: { value: string; label: string }[]
+  catalog: { title: string; add: string }
 }
 
 const gallery = (path: string) => `/?showcase=neon&${path}`
@@ -40,6 +41,7 @@ describe('Neon Law public-site specimen', () => {
       cy.task<PageDoc>('neonPage', 'services').then((page) => {
         cy.visit(gallery('id=services'))
         cy.contains('h1', page.matter.title)
+        cy.contains(en.catalog.title)
         for (const plan of en.packages) {
           cy.contains(plan.name)
           cy.contains(plan.amount)
@@ -48,9 +50,13 @@ describe('Neon Law public-site specimen', () => {
         if (!nda) throw new Error('en.yaml is missing the nda SKU')
         cy.contains('button', 'Contracts').click()
         cy.contains(nda.name)
+        cy.contains(nda.item)
         cy.contains(nda.amount)
+        cy.get('input[name=q]').clear().type(nda.item)
+        cy.contains(nda.name)
         cy.contains('button', 'All filings').click()
-        cy.contains(en.skus[0]?.name ?? '')
+        cy.get('input[name=q]').clear()
+        cy.contains(en.skus[0]?.item ?? '')
       })
     })
   })
@@ -61,6 +67,7 @@ describe('Neon Law public-site specimen', () => {
       if (!sku) throw new Error('en.yaml is missing the fallback SKU')
       cy.visit(gallery(`id=checkout&sku=${sku.id}`))
       cy.contains('h1', sku.name)
+      cy.contains(sku.item)
       cy.contains(sku.amount)
       cy.get('input[name=name]').type('Jordan Rivera')
       cy.get('input[name=email]').type('jordan@example.com')
