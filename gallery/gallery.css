@@ -667,7 +667,6 @@
 }
 
 .neon-site__doors,
-.neon-site__skus,
 .neon-site__checkout {
   display: grid;
   gap: var(--nav-space-4);
@@ -677,9 +676,62 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.neon-site__skus {
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+.neon-site__catalog {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: var(--nav-space-4);
+  align-items: start;
+}
+
+.neon-site__categories {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--nav-space-1);
+}
+
+.neon-site__categories .neon-site__chip {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--nav-space-2);
+  text-align: start;
+}
+
+.neon-site__cat-count {
+  color: var(--nav-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.neon-site__cat-blurb {
+  margin: var(--nav-space-3) 0;
+  max-width: 52ch;
+  color: var(--nav-color-text-muted);
+}
+
+.neon-site__cat-section {
+  margin-top: var(--nav-space-5);
+}
+
+.neon-site__cat-section h3 {
+  margin: 0 0 var(--nav-space-2);
+}
+
+.neon-site__related {
   margin-top: var(--nav-space-4);
+}
+
+.neon-site__related h3 {
+  margin: 0 0 var(--nav-space-2);
+}
+
+.neon-site__sku-blurb,
+.neon-site__price-period {
+  margin: 0.2rem 0 0;
+  color: var(--nav-color-text-muted);
+}
+
+.neon-site__sku-blurb {
+  max-width: 42ch;
 }
 
 .neon-site__checkout {
@@ -701,12 +753,6 @@
   height: 100%;
 }
 
-.neon-site__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--nav-space-2);
-}
-
 .neon-site__chip {
   margin: 0;
   padding: var(--nav-space-2) var(--nav-space-3);
@@ -724,36 +770,8 @@
   font-weight: 700;
 }
 
-.neon-site__sku {
-  display: grid;
-  gap: var(--nav-space-3);
-  padding: var(--nav-space-4);
-  border: 1px solid var(--nav-color-border);
-  border-radius: var(--nav-radius);
-  background: var(--nav-color-surface);
-}
-
-.neon-site__sku-topline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--nav-space-2);
-}
-
-.neon-site__sku h3,
-.neon-site__sku p,
-.neon-site__sku ul {
-  margin: 0;
-}
-
-.neon-site__sku ul,
 .neon-site__checkout ul {
   padding-left: 1.1rem;
-}
-
-.neon-site__price {
-  margin: 0;
 }
 
 .neon-site__price span {
@@ -762,7 +780,13 @@
 
 @media (max-width: 52rem) {
   .neon-site__doors,
-  .neon-site__checkout {
+  .neon-site__checkout,
+  .neon-site__catalog {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .neon-site__categories {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }
