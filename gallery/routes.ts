@@ -1,7 +1,8 @@
 /*
  * Gallery addresses: the view is the path, filters stay on the query.
  *
- *   /                              components landing (brand tokens)
+ *   /                              public-site home
+ *   /components                    components landing (brand tokens)
  *   /components/<id>               one component, or `all`
  *   /pages                         sample-page index
  *   /pages/<id>                    one sample page
@@ -127,7 +128,7 @@ export function parseGalleryLocation(pathname: string, search: string, base: str
       ...(legacy.view === 'neon' && legacy.pageId === 'services' && q ? { q } : {}),
     }
   }
-  return { view: 'components', componentId: LANDING_COMPONENT, pageId: null, sku: null, brand }
+  return { view: 'neon', componentId: LANDING_COMPONENT, pageId: 'home', sku: null, brand }
 }
 
 function queryString(location: GalleryLocation) {
@@ -142,8 +143,8 @@ function queryString(location: GalleryLocation) {
 /** Pure format: path + `?brand=` / `?sku=` when those filters are set. */
 export function formatGalleryHref(location: GalleryLocation, base: string): string {
   let path = '/'
-  if (location.view === 'components' && location.componentId !== LANDING_COMPONENT) {
-    path = `/components/${encodeURIComponent(location.componentId)}`
+  if (location.view === 'components') {
+    path = location.componentId === LANDING_COMPONENT ? '/components' : `/components/${encodeURIComponent(location.componentId)}`
   } else if (location.view === 'home') {
     path = '/pages'
   } else if (location.view === 'page' && location.pageId) {
@@ -151,7 +152,7 @@ export function formatGalleryHref(location: GalleryLocation, base: string): stri
   } else if (location.view === 'councils') {
     path = '/councils'
   } else if (location.view === 'neon') {
-    path = location.pageId && location.pageId !== 'home' ? `/neon/${encodeURIComponent(location.pageId)}` : '/neon'
+    path = location.pageId && location.pageId !== 'home' ? `/neon/${encodeURIComponent(location.pageId)}` : '/'
   }
 
   return `${joinBase(path, base)}${queryString(location)}`
@@ -199,11 +200,12 @@ export function neonHref(id: string, sku?: string) {
     view: 'neon',
     pageId: id,
     sku: sku ?? null,
+    q: undefined,
     componentId: LANDING_COMPONENT,
   })
 }
 
-/** Catalog find uses the same GET `q` a live /services can take. */
+/** Service search uses the same GET `q` a live /services can take. */
 export function neonFindHref(query: string) {
   return hrefFor({
     view: 'neon',

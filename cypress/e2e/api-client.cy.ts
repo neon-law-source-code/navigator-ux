@@ -9,14 +9,14 @@ const MATTER = { name: fakeCaption('e2e/matter'), code: fakeSlug('e2e/matter', 3
 
 describe('typed client against the fake OpenAPI backend', () => {
   it('refuses a listing without a session cookie', () => {
-    cy.visit('/')
+    cy.visit('/api-demo')
     cy.get('[data-testid=load-people]').click()
     cy.get('[data-testid=error]').should('contain', '401')
     cy.get('[data-testid=error]').should('contain', 'unauthenticated')
   })
 
   it('lists invented people after sign-in', () => {
-    cy.visit('/')
+    cy.visit('/api-demo')
     cy.get('[data-testid=sign-in]').click()
     cy.get('[data-testid=load-people]').click()
     cy.get('[data-testid=status]').should('contain', 'people loaded')
@@ -26,7 +26,7 @@ describe('typed client against the fake OpenAPI backend', () => {
   })
 
   it('lists the seeded matter through GET /app/api/projects', () => {
-    cy.visit('/')
+    cy.visit('/api-demo')
     cy.get('[data-testid=sign-in]').click()
     cy.get('[data-testid=load-projects]').click()
     cy.get('[data-testid=projects]').should('contain', MATTER.name)
@@ -34,7 +34,7 @@ describe('typed client against the fake OpenAPI backend', () => {
   })
 
   it('creates a person and shows them in the directory', () => {
-    cy.visit('/')
+    cy.visit('/api-demo')
     cy.get('[data-testid=sign-in]').click()
     cy.get('[data-testid=create-person]').click()
     cy.get('[data-testid=status]').should('contain', 'person created')
@@ -43,7 +43,7 @@ describe('typed client against the fake OpenAPI backend', () => {
   })
 
   it('lints a clean template and a broken one', () => {
-    cy.visit('/')
+    cy.visit('/api-demo')
     cy.get('[data-testid=sign-in]').click()
     cy.get('[data-testid=validate-clean]').click()
     cy.get('[data-testid=lint]').should('contain', 'trust.md is clean')
@@ -52,7 +52,7 @@ describe('typed client against the fake OpenAPI backend', () => {
   })
 
   it('posts a conversation message on the seeded matter', () => {
-    cy.visit('/')
+    cy.visit('/api-demo')
     cy.get('[data-testid=sign-in]').click()
     cy.get('[data-testid=post-message]').click()
     cy.get('[data-testid=status]').should('contain', 'message posted')

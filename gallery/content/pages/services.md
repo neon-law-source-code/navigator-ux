@@ -1,8 +1,5 @@
 ---
-eyebrow: Catalog
-title: Services
-lede: ""
-primary:
-  label: File something today
-  href: services
+eyebrow: Plans & services
+title: Find the help you need.
+lede: Choose a plan for regular help, or ask us about a single service.
 ---

@@ -1,507 +1,530 @@
-# English copy for the Neon Law public-site specimen.
-# Cypress reads this file (`cypress/e2e/neon-site.cy.ts`) and asserts the
-# gallery renders the same strings. Page prose lives beside it as Markdown.
-
+# Public-site copy. Page introductions live beside it in pages/.
 brand: Neon Law
-catalog_label: Catalog
 email: contact@neonlaw.com
 phone:
-  label: "+1 510 800 2080"
-  href: "tel:+15108002080"
+  label: +1 510 800 2080
+  href: tel:+15108002080
 office:
   label: Nevada
   address: 5150 Mae Anne Ave Ste 405-9002, Reno, NV 89523
 footer_cta: Email us
 legal:
-  - Shook Law PLLC d/b/a Neon Law. Nevada. 5150 Mae Anne Ave Ste 405-9002, Reno, NV 89523. This gallery page is a public specimen — it does not open a matter, take payment, or file anything.
+  - Neon Law is the name used by Shook Law PLLC in Nevada.
   - © 2026 Shook Law PLLC.
-
+specimen: This is a preview. No message is sent and no payment is taken here.
 nav:
-  - { id: litigation, label: Litigation }
-  - { id: fractional-gc, label: Fractional GC }
-  - { id: personal-plan, label: Personal Plan }
-  - { id: services, label: Services }
-
-doors:
-  - id: litigation
-    title: Litigation
-    body: Impact litigation, and every other dispute that walks in. Plaintiff and defense. We listen first.
-  - id: fractional-gc
-    title: Fractional GC
-    body: "Ongoing company counsel on one flat annual or daily fee: contracts, licences, financings, and the advice under them, at the pace the sales cycle already runs."
-  - id: personal-plan
-    title: Personal Plan
-    body: Tax filing, privacy protection, and credit monitoring (beta), on one flat annual or daily fee.
   - id: services
-    title: One-Time Services
-    body: A will, a trust, a formation, a trademark, an annual report. One scope and one flat fee, agreed before we start.
-
+    label: Plans & services
+  - id: fractional-gc
+    label: For your business
+  - id: personal-plan
+    label: For you
+  - id: litigation
+    label: Disputes
+find:
+  prompt: What is your legal need?
+  lede: Tell us what you need help with. It's okay if you're not sure where to start.
+  placeholder: A contract, my business, a will, a dispute…
+  submit: Find help
+  examples:
+    - label: My business
+      query: business
+    - label: A contract
+      query: contract
+    - label: My family
+      query: family
+    - label: A dispute
+      query: dispute
+  help: Would you rather talk?
+  help_cta: Email us
+subscriptions:
+  title: A lawyer you can turn to.
+  intro: Choose a plan for your business or for yourself.
+  forms: Forms are free with a subscription, or $50 each without one. Work outside your plan costs extra. Government fees are separate.
+  reviews: You need a plan for custom contract reviews and trademarks. These services cost extra.
+  cta: See the plan
+  join: Ask about joining
+  member_cta: Already have a plan? Email us to get started
+  member_title: Choose a plan to get started.
+  member_intro: This service requires a plan. The service fee is separate from your plan's price.
+  interest: What you need help with
+plans:
+  - id: fractional-gc
+    audience: For your business
+    name: Business plan
+    image:
+      src: https://www.neonlaw.com/assets/img/ten-dollar-bill/ten-dollar-bill.jpg
+      alt: Hamilton on a ten-dollar bill
+    amount: $3,650
+    period: per year · about $10 a day
+    summary: Help with the legal side of running your business.
+    keywords:
+      - business
+      - company
+      - LLC
+      - startup
+      - founder
+      - contracts
+      - NDA
+      - MSA
+      - annual
+      - compliance
+      - lawyer
+      - counsel
+      - subscription
+      - fractional
+      - gc
+      - general counsel
+    highlights:
+      - Help keeping your company records up to date
+      - Forms for hiring employees and contractors
+      - Answers from a lawyer within three business days
+    features:
+      - Help keeping track of who owns your company
+      - Forms for keeping business information private and working with customers
+      - Help with business taxes and state paperwork
+  - id: personal-plan
+    audience: For you
+    name: Personal plan
+    image:
+      src: https://www.neonlaw.com/assets/img/one-dollar-bill/one-dollar-bill.jpg
+      alt: Washington on a one-dollar bill
+    amount: $365
+    period: per year · about $1 a day
+    summary: Help with your taxes and personal information.
+    keywords:
+      - personal
+      - family
+      - taxes
+      - tax
+      - privacy
+      - data
+      - credit
+      - lawyer
+      - subscription
+      - contract
+      - employment
+    highlights:
+      - Preparing and filing your taxes
+      - Help asking companies to remove your personal information
+      - Optional credit monitoring
+    features: []
+litigation:
+  title: Tell us what's happened.
+  body: If you want to sue someone or someone is suing you, start with a free consultation. Tell us what happened and what you hope to change.
+  cta: Request a free consultation
+  note: We'll listen and explain whether we can help. If we can, we'll agree on the work and cost with you before we start.
+  keywords:
+    - litigation
+    - dispute
+    - sue
+    - sued
+    - lawsuit
+    - court
+    - claim
+    - defense
+    - eviction
+    - tenant
+    - demand
+    - consultation
 categories:
   - value: all
-    label: All filings
-    blurb: Every active item. Pick a category or search by item number.
+    label: All services
   - value: company
-    label: Start a company
-    blurb: Formations. A kit bundles the filing with the papers a bank actually asks for.
+    label: Start a business
   - value: compliance
-    label: Stay current
-    blurb: Annual list, licence renewal, and a Nevada street address for service.
+    label: Run a business
   - value: identity
-    label: Name and mark
-    blurb: One class of trademark, or an uncontested name change.
+    label: Names & brands
   - value: estate
-    label: Estate
-    blurb: A will, a package that agrees with itself, or a revocable trust.
+    label: Wills & family plans
   - value: contracts
-    label: Contracts
-    blurb: Review their paper, or send one of ours. Fees match the live site.
+    label: Contracts & forms
   - value: urgent
-    label: Need it now
-    blurb: A signed demand, or the answer in a Nevada summary eviction.
-
-packages:
-  - id: llc-file
-    name: File
-    amount: "$249"
-    period: "+ state fee"
-    summary: Make the entity official.
-    sku: llc-file
-    recommended: false
-    cta: Start File
-    href: checkout
-    features:
-      - Articles of organization
-      - Name check
-      - Attorney review before filing
-  - id: llc-launch
-    name: Launch
-    amount: "$449"
-    period: "+ state fee"
-    summary: File, then bank and hire.
-    sku: llc-launch
-    recommended: true
-    cta: Start Launch
-    href: checkout
-    features:
-      - Everything in File
-      - Operating agreement
-      - EIN
-  - id: counsel
-    name: Counsel
-    amount: "$10"
-    period: per day, billed annually, plus Launch
-    summary: The filing, then company counsel on call.
-    sku: null
-    recommended: false
-    cta: Start with counsel
-    href: fractional-gc
-    features:
-      - Everything in Launch
-      - Fractional GC at $3,650 / year
-      - Standard document library
-      - Redline of paper you bring us at $100
-
-find:
-  prompt: What legal need do you have today?
-  lede: Type a filing, an item number, or a few words. The list is the stock.
-  placeholder: "LLC, NDA, will, or 1501"
-  examples:
-    - { label: LLC, query: LLC }
-    - { label: Annual report, query: annual }
-    - { label: NDA, query: NDA }
-    - { label: Will, query: will }
-    - { label: "Item 1501", query: "1501" }
-
+    label: Disputes & housing
 catalog:
-  title: Products in this catalog
-  note: Item numbers stay put. The fee is ours; government fees pass through at cost.
-  item_header: Item #
-  name_header: Description
-  status_header: Status
-  price_header: Fee
-  add: Add
-  empty: No items match that search.
-  status_active: Active
-  details_for: Details for item
-  related_header: Compatible items
-  related_note: Not included. Add separately.
-
+  title: Need help with one thing?
+  note: Choose the help you need. We'll explain what it includes and what it costs.
+  category_label: Service category
+  fee_label: Legal fee
+  form_fee_label: Form fee
+  flat_fee: $50
+  form_fee_note: Free with a plan. Legal work costs extra.
+  member_fee_label: Service fee with a plan
+  members: Plan required
+  start: Get started
+  choose_plan: Choose a plan
+  empty: We couldn't find a match.
+  empty_help: Tell us what you need. We'll let you know whether we can help.
+  clear: Show all services
+  related_header: Other ways we can help
+  related_note: We'll help you choose what you need before you pay.
 skus:
   - id: llc-file
     item: "1101"
-    status: Active
-    name: LLC — File
-    blurb: Articles a licensed attorney reviews, then files. The state fee is billed at cost.
-    amount: "$249"
-    period: "+ state fee"
+    name: Start a company
+    blurb: We help you set up a limited liability company, also called an LLC. A lawyer checks your papers before we file them with the state.
+    flatFee: form
+    period: per form
     category: company
     stateFee: true
     includes:
-      - Name check
-      - Articles of organization
-      - Attorney review before filing
-    related: [llc-launch, nv-address, annual-report]
+      - Check that your business name is available
+      - Prepare the papers to create your company
+      - Have a lawyer check and file the papers
+    related:
+      - llc-launch
+      - nv-address
+      - annual-report
+    keywords:
+      - LLC
+      - articles of organization
+      - formation
+      - File
   - id: llc-launch
     item: "1102"
-    status: Active
-    name: LLC — Launch
-    blurb: The filing plus the papers a bank actually asks for.
-    amount: "$449"
-    period: "+ state fee"
+    name: Company setup package
+    blurb: Set up your limited liability company and get the ownership agreement and tax ID a bank will usually ask for.
+    flatFee: form
+    period: per form
     category: company
     stateFee: true
     includes:
-      - Everything in File
-      - Operating agreement
+      - Set up your limited liability company
+      - An agreement between the owners
+      - A federal tax ID for your business
+    related:
+      - nv-address
+      - annual-report
+      - nda
+    keywords:
+      - LLC
       - EIN
-    related: [nv-address, annual-report, nda]
+      - operating agreement
+      - formation
+      - Launch
   - id: nonprofit
     item: "1103"
-    status: Active
-    name: Nonprofit and 501(c)(3)
-    blurb: Articles, bylaws, a conflict policy, and Form 1023. IRS user fee at cost.
-    amount: Quoted
-    period: before we start
+    name: Start a nonprofit
+    blurb: Set up your nonprofit and apply for federal tax exemption. Government fees are separate.
+    flatFee: form
+    period: per form
     category: company
     stateFee: true
     includes:
-      - Articles and bylaws
-      - Conflict-of-interest policy
-      - Form 1023 through filing
-    related: [nv-address]
+      - Papers to set up the nonprofit and explain how it runs
+      - Rules for handling personal interests in nonprofit decisions
+      - Prepare and file the application for federal tax exemption
+    related:
+      - nv-address
+    keywords:
+      - 501(c)(3)
+      - Form 1023
+      - bylaws
+      - conflict-of-interest policy
   - id: annual-report
     item: "1201"
-    status: Active
-    name: Nevada annual report
-    blurb: The annual list and the state business licence renewal for one entity.
-    amount: "$99"
-    period: "+ state fee"
+    name: Renew your Nevada business paperwork
+    blurb: We file your company's yearly report and renew its state business license.
+    flatFee: form
+    period: per form
     category: compliance
     stateFee: true
     includes:
-      - Annual list
-      - Business licence renewal
-      - Filed after attorney review
-    related: [nv-address]
+      - Update the state's list of your company's officers or managers
+      - Renew your business license
+      - Have a lawyer check and file the papers
+    related:
+      - nv-address
+    keywords:
+      - annual report
+      - annual list
+      - licence
+      - compliance
   - id: nv-address
     item: "1202"
-    status: Active
     name: Nevada business address
-    blurb: A Nevada street address for service of process and mail, forwarded to you.
-    amount: "$350"
+    blurb: Get a Nevada street address to receive legal notices and mail. We forward them to you.
+    amount: $350
     period: per year
     category: compliance
     stateFee: false
     includes:
-      - Street address for service
-      - Mail forwarded
-    related: [annual-report]
+      - A street address for legal notices
+      - Your mail forwarded to you
+    related:
+      - annual-report
+    keywords:
+      - service of process
   - id: trademark
+    membersOnly: true
     item: "1301"
-    status: Active
-    name: Trademark application
-    blurb: A clearance search and one class of one application, through filing.
-    amount: "$399"
-    period: "+ USPTO fee"
+    name: Apply for a trademark
+    blurb: We check for similar names or logos and file your application for one group of goods or services.
+    flatFee: trademark
+    period: + government filing fee
     category: identity
     stateFee: true
     includes:
-      - Clearance search
-      - One class, one application
-      - Filed after attorney review
-    related: [name-change]
+      - Search for similar names or logos
+      - One name or logo in one group of goods or services
+      - Have a lawyer check and file the application
+    keywords:
+      - USPTO
+      - trademark application
+      - clearance search
+      - class
   - id: name-change
     item: "1302"
-    status: Active
-    name: Uncontested name change
-    blurb: The petition, the publication notice, and the hearing.
-    amount: "$399"
-    period: "+ court and publication costs"
+    name: Change your legal name
+    blurb: We prepare your request, arrange the required public notice, and attend the hearing. For name changes that no one is challenging.
+    flatFee: form
+    period: per form, plus court and publication costs
     category: identity
     stateFee: true
     includes:
-      - Petition
-      - Publication notice
-      - Hearing appearance
+      - Your request to the court
+      - The required public notice
+      - A lawyer at your hearing
+    keywords:
+      - uncontested
+      - petition
+      - publication
   - id: will
     item: "1401"
-    status: Active
-    name: Simple will
-    blurb: One will, drafted from your answers and reviewed by a licensed attorney.
-    amount: "$499"
-    period: one scope
+    name: Make a will
+    blurb: Tell us who you want to leave things to. A lawyer prepares and reviews your will.
+    flatFee: form
+    period: per form
     category: estate
     stateFee: false
     includes:
-      - Questionnaire to notation
-      - Attorney-reviewed will
-      - Signing and witnessing
-    related: [estate-package, trust]
+      - Questions about your wishes
+      - A will prepared and checked by a lawyer
+      - Help signing your will with witnesses
+    related:
+      - estate-package
+      - trust
+    keywords:
+      - simple will
+      - estate
   - id: estate-package
     item: "1402"
-    status: Active
-    name: Estate package
-    blurb: A will, a financial power of attorney, and a healthcare directive that agree with one another.
-    amount: "$899"
-    period: one scope
+    name: Plan for your family
+    blurb: Make a will and choose who can handle your money and healthcare decisions if you can't.
+    flatFee: form
+    period: per form
     category: estate
     stateFee: false
     includes:
-      - Will
-      - Financial power of attorney
-      - Healthcare directive
-    related: [trust]
+      - A will
+      - A document naming someone to handle your finances
+      - Your wishes for medical care and who can make decisions for you
+    related:
+      - trust
+    keywords:
+      - estate package
+      - financial power of attorney
+      - healthcare directive
   - id: trust
     item: "1403"
-    status: Active
-    name: Revocable living trust
-    blurb: The trust, a pour-over will, and the deed transferring one Nevada property into it.
-    amount: Quoted
-    period: before we start
+    name: Set up a living trust
+    blurb: Create a trust you can change during your lifetime, plus a will and the paperwork to put one Nevada property into the trust.
+    flatFee: form
+    period: per form
     category: estate
     stateFee: false
     includes:
-      - Trust
-      - Pour-over will
-      - One Nevada deed
-    related: [will]
+      - A living trust you can change
+      - A will that leaves property to the trust
+      - Paperwork to put one Nevada property into the trust
+    related:
+      - will
+    keywords:
+      - revocable living trust
+      - pour-over will
+      - deed
+      - estate
   - id: nda
+    membersOnly: true
     item: "1501"
-    status: Active
-    name: Mutual NDA review
-    blurb: One NDA, read end-to-end and redlined, with a short note on what changed and why.
-    amount: "$100"
+    name: Review a confidentiality agreement
+    blurb: We'll read your contract, suggest changes, and explain them. Covers one agreement where both sides promise to keep information private.
+    amount: $100
     period: per contract
     category: contracts
     stateFee: false
     includes:
-      - Full read
-      - Redline
-      - Cover note
-    related: [consulting, send-template]
+      - Read the whole agreement
+      - Show suggested changes
+      - Explain what changed and why
+    related:
+      - consulting
+      - send-template
+    keywords:
+      - mutual NDA
+      - non-disclosure
+      - confidentiality
+      - redline
   - id: consulting
+    membersOnly: true
     item: "1502"
-    status: Active
-    name: Consulting agreement review
-    blurb: One consulting or independent-contractor agreement, redlined against your interests.
-    amount: "$250"
+    name: Review a freelance or consulting contract
+    blurb: We'll read your contract and suggest changes to protect your interests.
+    amount: $250
     period: per contract
     category: contracts
     stateFee: false
     includes:
-      - Full read
-      - Redline
-      - Independent-contractor terms
-    related: [employment, nda]
+      - Read the whole contract
+      - Show suggested changes
+      - Check the terms for work as a contractor
+    related:
+      - employment
+      - nda
+    keywords:
+      - consulting agreement
+      - independent-contractor
+      - redline
   - id: employment
+    membersOnly: true
     item: "1503"
-    status: Active
-    name: Employment agreement review
-    blurb: One offer letter or employment agreement, including any equity or non-compete terms.
-    amount: "$350"
+    name: Review a job offer or employment contract
+    blurb: We'll check your offer, including any company shares you're offered and limits on where you can work next.
+    amount: $350
     period: per contract
     category: contracts
     stateFee: false
     includes:
-      - Offer or employment agreement
-      - Equity and non-compete review
-    related: [msa, nda]
+      - Review your job offer or employment contract
+      - Check any offer of company shares
+      - Check limits on working for another employer
+    related:
+      - msa
+      - nda
+    keywords:
+      - employment agreement
+      - equity
+      - stock options
+      - non-compete
   - id: msa
+    membersOnly: true
     item: "1504"
-    status: Active
-    name: MSA review
-    blurb: The counterparty's master services agreement, not one we drafted for you.
-    amount: "$500"
+    name: Review a business services contract
+    blurb: We review the main contract for ongoing work between your business and a customer or supplier.
+    amount: $500
     period: per contract
     category: contracts
     stateFee: false
     includes:
-      - Full read
-      - Redline of their paper
-    related: [consulting]
+      - Read the whole contract
+      - Show suggested changes you can share with the other side
+    related:
+      - consulting
+    keywords:
+      - MSA
+      - master services agreement
+      - redline
   - id: form-review
     item: "1505"
-    status: Active
-    name: Form review
-    blurb: Filling out and reviewing one government or intake form, returned by a licensed attorney.
-    amount: "$50"
-    period: "+ $5 per extra form in the same packet"
+    name: Get a legal form
+    blurb: Get the form you need. Any work by a lawyer is priced separately.
+    flatFee: form
+    period: per form
     category: contracts
     stateFee: false
     includes:
-      - One form reviewed
-      - Government fees at cost
-    related: [send-template]
+      - The form you need
+      - A separate price for any work by a lawyer
+    related:
+      - send-template
+    keywords:
+      - form review
   - id: send-template
     item: "1506"
-    status: Active
-    name: Send a template contract
-    blurb: One of our own template contracts, sent to your counterparty through DocuSign.
-    amount: "$5"
-    period: per contract sent
+    name: Send a contract to be signed
+    blurb: Send one of our contracts for someone to sign online, and see when they've signed.
+    amount: $5
+    period: per send, plus any form fee
     category: contracts
     stateFee: false
     includes:
-      - Firm template
-      - DocuSign send and track
-    related: [nda]
+      - Send the contract to be signed online
+      - See whether it has been signed
+    related:
+      - nda
+    keywords:
+      - template
+      - electronic signature
   - id: demand
     item: "1601"
-    status: Active
-    name: Demand letter
-    blurb: One letter over the firm's signature, after we read what you have. It is not a retainer to litigate.
-    amount: "$350"
-    period: one letter
+    name: Send a letter from a lawyer
+    blurb: We review what you send us, then write and sign one letter asking the other side to take action. Court work is not included.
+    amount: $350
+    period: for one letter
     category: urgent
     stateFee: false
     includes:
-      - Read the record you send
-      - One signed letter
-    related: [eviction]
+      - Review the information you send
+      - One letter signed by the firm
+    keywords:
+      - demand letter
+      - dispute
   - id: eviction
     item: "1602"
-    status: Active
-    name: Tenant eviction defense
-    blurb: The answer and one hearing in a Nevada summary eviction.
-    amount: "$750"
-    period: one hearing
+    name: Get help with an eviction
+    blurb: For tenants in Nevada's shorter eviction process. We prepare your response to the court and speak for you at one hearing.
+    amount: $750
+    period: for one hearing
     category: urgent
     stateFee: false
     includes:
-      - Answer
-      - One summary-eviction hearing
-    related: [demand]
-
-llc_panel:
-  title: LLC kits
-  note: A kit is item 1101 plus the papers a bank asks for — one add, several parts.
-
-shelf:
-  title: The rest of the shelf
-  note: Pick a category, then start. One scope, one price.
-  start_filing: Start this filing
-  category_label: Filing category
-
+      - Your written response to the court
+      - A lawyer to speak for you at one hearing
+    keywords:
+      - tenant eviction defense
+      - summary eviction
+      - answer
 process:
-  title: How a filing actually moves
-  note: Four steps. The notation is step two.
+  title: How we help.
   steps:
-    - id: account
-      title: Create an account
-      detail: Everything about the matter lives in one place.
-    - id: answers
-      title: Answer some questions
-      detail: A short questionnaire, scoped to the filing. Your answers become a notation — Markdown under YAML that names the source — not a trapped form.
-    - id: docs
-      title: Upload what we ask for
-      detail: We tell you which documents the matter actually needs.
-    - id: file
-      title: We file it, expeditiously
-      detail: A licensed attorney reviews the notation, then we file and send the confirmation when it comes back.
-
-compare:
-  title: What you are actually buying
-  note: Speed and a sticker price, without pretending a form is a lawyer.
-  caption: Attorney-reviewed filing compared with an automated form
-  headers:
-    - What you are buying
-    - Automated form
-    - This specimen
-  rows:
-    - ["Who reads the packet", "A wizard, then a filing clerk", "A licensed attorney, every time"]
-    - ["Where the answers live", "A vendor form you cannot quote from", "A notation you can reuse in the next filing"]
-    - ["Government fees", "Often bundled until checkout", "Pass-through at cost, named on the card"]
-    - ["Headline price", "$0 plus add-ons", "The attorney fee, published up front"]
-    - ["Membership to buy a filing", "Upsells after you start", "Optional. Start à la carte."]
-
-testimonials:
-  heading: What people came in for
-  intro: Invented quotes on generated names. A specimen, not a review wall.
-  items:
-    - key: neon-site/review-founder
-      label: LLC — Launch
-      quote: I needed articles, an operating agreement, and an EIN before the bank appointment. The price was on the card.
-      title: First-time founder
-    - key: neon-site/review-filer
-      label: Nevada annual report
-      quote: Deadline on the calendar, fee on the page, filed after someone actually read it.
-      title: One-person company
-    - key: neon-site/review-tenant
-      label: Tenant eviction defense
-      quote: A five-day notice is not a newsletter signup. I could start the answer the same night.
-      title: Nevada tenant
-
+    - id: need
+      title: Tell us what you need
+      detail: Choose a plan or a service. If you have a dispute, start with a free consultation.
+    - id: scope
+      title: Know what happens next
+      detail: We'll explain what we can do and what it costs before you decide.
+    - id: work
+      title: Get help from your lawyer
+      detail: We'll ask for the information we need, do the agreed work, and keep you updated.
 faq:
   - id: plan-required
-    trigger: Do I need a Fractional GC or Personal Plan?
-    body: Not to buy a filing on this page. The live neonlaw.com services page still requires a plan; this specimen is the storefront rewrite — à la carte first, plan as the better value if you will be back.
-  - id: state-fees
-    trigger: Who sets the state or USPTO fee?
-    body: The government body. We pass it through at cost. We cannot control it, and we do not mark it up.
-  - id: notation
-    trigger: What does “powered by notation” mean?
-    body: Your answers are stored as Markdown with YAML front matter — the same format a brief cites. Counsel reviews that source, not a screenshot of a wizard. A later annual report or amendment starts from the same file.
-  - id: speed
-    trigger: How fast is it, really?
-    body: A document from the firm library can go out the same business day. A filing is as fast as the agency. We do not promise a result, and we do not pretend the Secretary of State works on our clock.
-
-disclaimer: Attorney advertising. This page is a design specimen, not an offer to represent you, not a guarantee of a result, and not a substitute for advice on your facts. Engagement starts only after a conflicts check and a signed scope.
-
-callout: Specimen storefront. Prices marked quoted stay quoted; published contract-review fees match neonlaw.com. Nothing here charges a card or files with a state.
-
-gc:
-  name: Base package
-  amount: "$3,650"
-  period: per year · $10 a day
-  summary: Standard document library, covered by one flat annual fee.
-  cta: Email to start
-  features:
-    - Cap table management
-    - Standard employee and contractor agreements
-    - NDAs and standard commercial forms
-    - Basic taxes and state filings
-    - Corporate housekeeping
-    - Counsel on call, answered within three business days
-    - Redline of a document you bring us at $100, up to 100 pages
-    - DocuSign sent and tracked at $5 per contract
-
-personal:
-  name: Personal Legal Plan
-  amount: "$365"
-  period: per year · $1 a day
-  summary: We take on a limited number of members at a time.
-  cta: Email to start
-  features:
-    - Tax filing and preparation
-    - Privacy protection requests
-    - Credit monitoring (beta)
-
+    trigger: Do I need a subscription?
+    body: You need a plan for custom contract reviews and trademarks. You can ask for other services without one. The first consultation about a dispute is free.
+  - id: fees
+    trigger: What costs extra?
+    body: Work that your plan doesn't include costs extra. We'll tell you the price before we start. Government fees are separate.
+  - id: timing
+    trigger: What happens when I contact you?
+    body: We'll listen, check whether we can help, and explain the next step. Please tell us if you have a deadline.
 checkout:
-  eyebrow: Start a filing
-  sent: Specimen only — nothing was charged or filed. A production app would run a conflicts check next, then open the questionnaire that emits the notation.
-  form_title: Who is this filing for?
-  form_intro: Short on purpose. The questionnaire for this SKU comes after a conflicts check — this page only captures who to email.
+  eyebrow: Your next step
+  sent: This is a preview. Your message has not been sent and you have not been charged.
+  form_title: How can we reach you?
+  form_intro: We'll explain what we can do and the total cost before you decide.
   name: Your name
   email: Email address
-  jurisdiction: Where should we file?
+  jurisdiction: Where do you need legal help?
   jurisdiction_placeholder: Choose one
   jurisdictions:
-    - { value: nv, label: Nevada }
-    - { value: other, label: Another state — we will say if we can }
-  plan_legend: Add Fractional GC at $10 a day?
-  plans:
-    - value: filing-only
-      label: Just this filing
-      description: À la carte. You can add a plan later.
-    - value: with-gc
-      label: Filing plus Fractional GC
-      description: $3,650 / year after this filing.
-  notes: Anything we should know before the questionnaire?
-  notes_help: Do not include account passwords or payment card numbers.
-  continue: Continue
-  back: Back to services
-  sku_header: This SKU
-  state_fee_badge: Government fee at cost
-  disclaimer: Submitting this specimen does not create an attorney-client relationship and does not start a filing.
-
+    - value: nv
+      label: Nevada
+    - value: other
+      label: Another state
+  notes: What would you like help with?
+  notes_help: A few words are enough. Tell us about any deadline. Please leave out private documents, passwords, and bank details.
+  continue: Try this form
+  back: Back to plans & services
+  sku_header: What this service covers
+  state_fee_badge: Government fees cost extra
 fallback_sku: llc-launch
