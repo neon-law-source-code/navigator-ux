@@ -4,8 +4,8 @@ import { en } from './content/load'
 import { neonFindHref, readBrandId } from './routes'
 
 /**
- * The McMaster-style find strip. Copy is `find` in `gallery/content/en.yaml` —
- * lift both when a consuming app takes this layout.
+ * Catalog find strip. Copy is `find` in `gallery/content/en.yaml` — lift both
+ * when a consuming app takes this layout.
  */
 export function FindNeed({
   headingLevel = 1,

@@ -4,6 +4,8 @@
  * files the page loads. Change the copy there, this spec follows.
  */
 
+import { fakePerson } from '../../fixtures/fake.mjs'
+
 interface PageDoc {
   matter: { title: string; lede: string }
   body: string
@@ -22,6 +24,7 @@ interface EnCopy {
 }
 
 const gallery = (path: string) => `/?showcase=neon&${path}`
+const FILER = fakePerson('e2e/neon-site/filer')
 
 describe('Neon Law public-site specimen', () => {
   it('renders home copy from the Markdown notation', () => {
@@ -72,8 +75,8 @@ describe('Neon Law public-site specimen', () => {
       cy.contains(sku.amount)
       cy.contains(en.catalog.related_header)
       cy.contains('Nevada business address')
-      cy.get('input[name=name]').type('Jordan Rivera')
-      cy.get('input[name=email]').type('jordan@example.com')
+      cy.get('input[name=name]').type(FILER.name)
+      cy.get('input[name=email]').type(FILER.email)
       cy.get('select[name=jurisdiction]').select('nv')
       cy.contains('button', en.checkout.continue).click()
       cy.contains(en.checkout.sent)

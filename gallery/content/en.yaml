@@ -39,7 +39,7 @@ doors:
 categories:
   - value: all
     label: All filings
-    blurb: Every active item. Pick a category or search by item number, the way a parts house is browsed.
+    blurb: Every active item. Pick a category or search by item number.
   - value: company
     label: Start a company
     blurb: Formations. A kit bundles the filing with the papers a bank actually asks for.
@@ -114,7 +114,7 @@ find:
 
 catalog:
   title: Products in this catalog
-  note: Item numbers stay put, like a parts list. The fee is ours; government fees pass through at cost.
+  note: Item numbers stay put. The fee is ours; government fees pass through at cost.
   item_header: Item #
   name_header: Description
   status_header: Status
@@ -400,12 +400,12 @@ process:
       detail: A licensed attorney reviews the notation, then we file and send the confirmation when it comes back.
 
 compare:
-  title: Against the mills
+  title: What you are actually buying
   note: Speed and a sticker price, without pretending a form is a lawyer.
-  caption: How this storefront differs from a typical online formation mill
+  caption: Attorney-reviewed filing compared with an automated form
   headers:
     - What you are buying
-    - Typical mill
+    - Automated form
     - This specimen
   rows:
     - ["Who reads the packet", "A wizard, then a filing clerk", "A licensed attorney, every time"]

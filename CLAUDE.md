@@ -345,7 +345,9 @@ What generating a name **does not** buy is a guarantee it belongs to nobody: fak
 given and family names, and at this many draws a collision is expected. That is tolerable because the
 datum carries no facts. `example.com` is the part that is actually reserved — RFC 2606 — which is why
 every address is forced onto it rather than taking faker's default of a live consumer domain. A
-fixture is read by everyone who clones the repository; it is not a scratch pad.
+fixture is read by everyone who clones the repository; it is not a scratch pad. **Public copy does
+not name other vendors** — the pass is
+[`.agents/skills/specimen-copy/SKILL.md`](./.agents/skills/specimen-copy/SKILL.md).
 
 **The provenance is neonlaw.com, and that is settled.** `theme.css`, `matter.css`, and
 `icon-glyphs.tsx` used to cite a client's domain as the source of the ported stylesheet and the icon
