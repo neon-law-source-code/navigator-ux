@@ -4,7 +4,7 @@
  * Both servers are child processes of this script so a failed spec still
  * tears them down. Cypress is given the harness origin as baseUrl.
  * neon-site.cy.ts renders the public-site specimen on that same origin
- * (`?showcase=neon`) against gallery/content.
+ * (`/neon` or the legacy `?showcase=neon` query) against gallery/content.
  */
 
 import { spawn } from 'node:child_process'

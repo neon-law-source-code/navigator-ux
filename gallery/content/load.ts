@@ -70,8 +70,6 @@ export interface EnCopy {
   catalog: {
     title: string
     note: string
-    search_label: string
-    search_placeholder: string
     item_header: string
     name_header: string
     status_header: string
@@ -118,6 +116,12 @@ export interface EnCopy {
     disclaimer: string
   }
   fallback_sku: string
+  find: {
+    prompt: string
+    lede: string
+    placeholder: string
+    examples: { label: string; query: string }[]
+  }
 }
 
 function splitNotation(raw: string): PageDoc {

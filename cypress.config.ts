@@ -5,7 +5,7 @@ import { defineConfig } from 'cypress'
 
 /*
  * Specs share one origin: the fake OpenAPI harness (CYPRESS_BASE_URL, :5175).
- * neon-site.cy.ts visits `?showcase=neon` on that origin and asserts copy from
+ * neon-site.cy.ts visits `/neon` (legacy `?showcase=neon` still parses) on that origin and asserts copy from
  * gallery/content/en.yaml plus the Markdown page files.
  */
 

@@ -39,7 +39,7 @@ doors:
 categories:
   - value: all
     label: All filings
-    blurb: Every active item. Pick a category or search by item number, the way a parts house is browsed.
+    blurb: Every active item. Pick a category or search by item number.
   - value: company
     label: Start a company
     blurb: Formations. A kit bundles the filing with the papers a bank actually asks for.
@@ -101,11 +101,20 @@ packages:
       - Standard document library
       - Redline of paper you bring us at $100
 
+find:
+  prompt: What legal need do you have today?
+  lede: Type a filing, an item number, or a few words. The list is the stock.
+  placeholder: "LLC, NDA, will, or 1501"
+  examples:
+    - { label: LLC, query: LLC }
+    - { label: Annual report, query: annual }
+    - { label: NDA, query: NDA }
+    - { label: Will, query: will }
+    - { label: "Item 1501", query: "1501" }
+
 catalog:
   title: Products in this catalog
-  note: Item numbers stay put, like a parts list. The fee is ours; government fees pass through at cost.
-  search_label: Search
-  search_placeholder: Item # or name
+  note: Item numbers stay put. The fee is ours; government fees pass through at cost.
   item_header: Item #
   name_header: Description
   status_header: Status
@@ -391,12 +400,12 @@ process:
       detail: A licensed attorney reviews the notation, then we file and send the confirmation when it comes back.
 
 compare:
-  title: Against the mills
+  title: What you are actually buying
   note: Speed and a sticker price, without pretending a form is a lawyer.
-  caption: How this storefront differs from a typical online formation mill
+  caption: Attorney-reviewed filing compared with an automated form
   headers:
     - What you are buying
-    - Typical mill
+    - Automated form
     - This specimen
   rows:
     - ["Who reads the packet", "A wizard, then a filing clerk", "A licensed attorney, every time"]

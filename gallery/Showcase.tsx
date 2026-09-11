@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { fakePerson } from '../fixtures/fake.mjs'
 import { CAPTION } from '../fixtures/matter.mjs'
 import {
   Accordion,
@@ -207,7 +208,7 @@ function Home() {
               <Badge tone="next">Client</Badge>
             </div>
             <h3>Services storefront</h3>
-            <p>A parts-house catalog: item numbers, category index, kits, add-to-cart checkout.</p>
+            <p>Search first, then an item table: numbers, categories, add on the row.</p>
             <span className="showcase__page-meta">Marketing · services</span>
           </a>
         </div>
@@ -281,6 +282,7 @@ function CouncilSection({ title, note, personas }: { title: Council; note: strin
 function PageForm({ page }: { page: SamplePage }) {
   const asylum = page.id === 'asylum-i589'
   const emergency = page.id === 'restraining-order'
+  const person = fakePerson(asylum ? 'gallery/page-form/applicant' : 'gallery/page-form/filer')
   return (
     <FormCard
       title={asylum ? 'Part 1 · Applicant information' : 'Start with the facts we can act on'}
@@ -288,8 +290,8 @@ function PageForm({ page }: { page: SamplePage }) {
       notice={emergency ? 'If anyone is in immediate danger, contact emergency services first. This page is not an emergency response service.' : undefined}
       onSubmit={(event) => event.preventDefault()}
     >
-      <TextField label={asylum ? 'Full legal name' : 'Your name'} name="name" defaultValue={asylum ? 'Sample Applicant' : 'Jordan Rivera'} required />
-      <TextField label="Email address" name="email" type="email" defaultValue="sample@example.test" required />
+      <TextField label={asylum ? 'Full legal name' : 'Your name'} name="name" defaultValue={person.name} required />
+      <TextField label="Email address" name="email" type="email" defaultValue={person.email} required />
       <SelectField label={asylum ? 'Current country of residence' : 'What kind of help do you need?'} name="category" placeholder="Choose one" options={asylum ? [{ value: 'us', label: 'United States' }, { value: 'other', label: 'Another country' }] : [{ value: 'advice', label: 'Advice and planning' }, { value: 'court', label: 'A court or agency matter' }, { value: 'document', label: 'A document or form' }]} required />
       <RadioGroup legend="How should we follow up?" name="contact" defaultValue="email" choices={[{ value: 'email', label: 'Email' }, { value: 'call', label: 'Phone call' }, { value: 'unsure', label: 'I am not sure yet' }]} />
       <DatePicker label={asylum ? 'Date of last arrival' : 'Important date'} name="date" help="Use the date you know; leave a note below if you are unsure." />

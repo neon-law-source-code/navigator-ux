@@ -28,6 +28,6 @@ already on the VM.
   `dist/` is gitignored and absent.
 - Non-obvious lint expectation: exactly **three** oxlint warnings are intentional (see `CLAUDE.md`).
   Warnings do not fail CI; errors do.
-- Agent skills live under `.agents/skills/` (the same three zodiac councils and `/cut-release` as
-  Navigator). `.claude/skills` and `.codex/skills` are symlinks to those directories. Releases use
+- Agent skills live under `.agents/skills/` (councils, `/cut-release`, `/once`, `/specimen-copy`).
+  `.claude/skills` and `.codex/skills` are per-skill symlinks to those directories. Releases use
   Navigator's `YY.M.D` cadence; see [docs/releasing.md](./docs/releasing.md).

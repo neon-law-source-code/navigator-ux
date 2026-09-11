@@ -26,6 +26,7 @@ export interface GalleryLocation {
   componentId: string
   pageId: string | null
   sku: string | null
+  q?: string
   brand: GalleryBrandId
 }
 
@@ -91,6 +92,7 @@ export function parseGalleryLocation(pathname: string, search: string, base: str
   const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
   const brand = parseBrand(params)
   const sku = params.get('sku')
+  const q = params.get('q')
   const segments = pathAfterBase(pathname, base)
   const head = segments[0]
   const rest = segments[1]
@@ -113,11 +115,18 @@ export function parseGalleryLocation(pathname: string, search: string, base: str
       pageId: rest ?? 'home',
       sku,
       brand,
+      ...(rest === 'services' && q ? { q } : {}),
     }
   }
 
   const legacy = parseLegacy(params)
-  if (legacy) return { ...legacy, brand }
+  if (legacy) {
+    return {
+      ...legacy,
+      brand,
+      ...(legacy.view === 'neon' && legacy.pageId === 'services' && q ? { q } : {}),
+    }
+  }
   return { view: 'components', componentId: LANDING_COMPONENT, pageId: null, sku: null, brand }
 }
 
@@ -125,6 +134,7 @@ function queryString(location: GalleryLocation) {
   const params = new URLSearchParams()
   if (location.brand !== DEFAULT_BRAND_ID) params.set('brand', location.brand)
   if (location.view === 'neon' && location.sku) params.set('sku', location.sku)
+  if (location.view === 'neon' && location.pageId === 'services' && location.q) params.set('q', location.q)
   const query = params.toString()
   return query ? `?${query}` : ''
 }
@@ -193,6 +203,17 @@ export function neonHref(id: string, sku?: string) {
   })
 }
 
+/** Catalog find uses the same GET `q` a live /services can take. */
+export function neonFindHref(query: string) {
+  return hrefFor({
+    view: 'neon',
+    pageId: 'services',
+    sku: null,
+    componentId: LANDING_COMPONENT,
+    q: query,
+  })
+}
+
 /** One component's own page. The first one is the components landing itself. */
 export function componentHref(id: string) {
   return hrefFor({ view: 'components', componentId: id, pageId: null, sku: null })
@@ -210,9 +231,9 @@ export function readBrandId(): GalleryBrandId {
   return currentLocation().brand
 }
 
-export function readGalleryLocation(): { view: GalleryView; pageId: string | null; sku: string | null } {
-  const { view, pageId, sku } = currentLocation()
-  return { view, pageId, sku }
+export function readGalleryLocation(): Pick<GalleryLocation, 'view' | 'pageId' | 'sku' | 'q'> {
+  const { view, pageId, sku, q } = currentLocation()
+  return { view, pageId, sku, q }
 }
 
 /** Rewrite query-only bookmarks to path + query before the tree mounts. */
