@@ -1,18 +1,20 @@
 ---
-eyebrow: Litigation
-title: Litigation built for speed.
+eyebrow: Help with a dispute
+title: Your story deserves to be heard.
 lede: >
-  Come in with the case you have. We do as much as we can, as early as we can,
-  and we work as a team. That is not the right approach for every case. It could
-  be the right one for yours.
+  Start with a free consultation. Tell us what happened, what you need,
+  and whether you have a deadline.
 primary:
-  label: Email the firm
-  href: mailto:contact@neonlaw.com
-secondary:
-  label: All doors
-  href: home
+  label: Request a free consultation
+  href: mailto:contact@neonlaw.com?subject=Free%20consultation%20about%20a%20dispute
 ---
 
-We represent those who haven't been justly seen. We take cases of every kind, for people and for companies. We focus on impact litigation: work whose point is to make a person's life better, and the lives of people in the same position. As long as we are not conflicted out, we will listen to your story and bring in the specialists it needs.
+## We'll listen.
 
-All litigation matters run on Neon Law Navigator. Filings land on the matter by kind. Speed is how we work. It is not a promise about your result.
+If you want to sue someone or someone is suing you, tell us your story. We'll talk about what you want to change and whether we can help. You don't need a subscription for this first conversation.
+
+## Your case can help others, too.
+
+We care about cases that can make life better for you and for others facing the same problem.
+
+If we can take your case, we'll explain what we can do and what it costs before you decide.

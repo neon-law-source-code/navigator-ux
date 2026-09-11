@@ -1,12 +1,10 @@
-import { useId, type ChangeEvent } from 'react'
+import { useId } from 'react'
 
+import { NavButton } from '../src/index'
 import { en } from './content/load'
 import { neonFindHref, readBrandId } from './routes'
 
-/**
- * Catalog find strip. Copy is `find` in `gallery/content/en.yaml` — lift both
- * when a consuming app takes this layout.
- */
+/** One question shared by the public home and the service search. */
 export function FindNeed({
   headingLevel = 1,
   query,
@@ -37,10 +35,11 @@ export function FindNeed({
           {...(live
             ? {
                 value: query ?? '',
-                onChange: (event: ChangeEvent<HTMLInputElement>) => onQueryChange(event.target.value),
+                onChange: (event) => onQueryChange(event.target.value),
               }
             : { defaultValue: query })}
         />
+        <NavButton size="lg" variant="primary" type="submit">{copy.submit}</NavButton>
       </form>
       <p className="neon-site__find-examples">
         {copy.examples.map((example) =>
@@ -59,6 +58,9 @@ export function FindNeed({
             </a>
           ),
         )}
+      </p>
+      <p className="neon-site__find-help">
+        {copy.help} <a href={`mailto:${en.email}`}>{copy.help_cta}</a>
       </p>
     </section>
   )

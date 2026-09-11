@@ -20,7 +20,7 @@ export interface PageMatter {
   eyebrow: string
   title: string
   lede: string
-  primary: PageAction
+  primary?: PageAction
   secondary?: PageAction
 }
 
@@ -29,72 +29,78 @@ export interface PageDoc {
   body: string
 }
 
-export interface Sku {
+export type Sku = {
   id: string
   item: string
-  status: string
+  membersOnly?: boolean
+  keywords?: string[]
   name: string
   blurb: string
-  amount: string
   period: string
   category: SkuCategory
   includes: string[]
   stateFee: boolean
   related?: string[]
+} & ({ flatFee: 'form' | 'trademark'; amount?: never } | { flatFee?: never; amount: string })
+
+export interface SubscriptionPlan {
+  id: 'fractional-gc' | 'personal-plan'
+  audience: string
+  name: string
+  image: { src: string; alt: string }
+  amount: string
+  period: string
+  summary: string
+  keywords: string[]
+  highlights: string[]
+  features: string[]
 }
 
 export interface EnCopy {
   brand: string
-  catalog_label: string
   email: string
   phone: { label: string; href: string }
   office: { label: string; address: string }
   footer_cta: string
   legal: string[]
+  specimen: string
   nav: { id: NeonPageId; label: string }[]
-  doors: { id: NeonPageId; title: string; body: string }[]
-  categories: { value: SkuCategory | 'all'; label: string; blurb: string }[]
-  packages: {
-    id: string
-    name: string
-    amount: string
-    period: string
-    summary: string
-    sku: string | null
-    recommended: boolean
-    cta: string
-    href: 'checkout' | NeonPageId
-    features: string[]
-  }[]
+  categories: { value: SkuCategory | 'all'; label: string }[]
   skus: Sku[]
+  plans: SubscriptionPlan[]
+  subscriptions: {
+    title: string
+    intro: string
+    forms: string
+    reviews: string
+    cta: string
+    join: string
+    member_cta: string
+    member_title: string
+    member_intro: string
+    interest: string
+  }
+  litigation: { title: string; body: string; cta: string; note: string; keywords: string[] }
   catalog: {
     title: string
     note: string
-    item_header: string
-    name_header: string
-    status_header: string
-    price_header: string
-    add: string
+    category_label: string
+    fee_label: string
+    form_fee_label: string
+    flat_fee: string
+    form_fee_note: string
+    member_fee_label: string
+    members: string
+    start: string
+    choose_plan: string
     empty: string
-    status_active: string
-    details_for: string
+    empty_help: string
+    clear: string
     related_header: string
     related_note: string
   }
-  llc_panel: { title: string; note: string }
-  shelf: { title: string; note: string; start_filing: string; category_label: string }
-  process: { title: string; note: string; steps: { id: string; title: string; detail: string }[] }
-  compare: { title: string; note: string; caption: string; headers: string[]; rows: string[][] }
-  testimonials: {
-    heading: string
-    intro: string
-    items: { key: string; label: string; quote: string; title: string }[]
-  }
+  process: { title: string; steps: { id: string; title: string; detail: string }[] }
   faq: { id: string; trigger: string; body: string }[]
-  disclaimer: string
-  callout: string
-  gc: { name: string; amount: string; period: string; summary: string; cta: string; features: string[] }
-  personal: { name: string; amount: string; period: string; summary: string; cta: string; features: string[] }
   checkout: {
     eyebrow: string
     sent: string
@@ -105,22 +111,22 @@ export interface EnCopy {
     jurisdiction: string
     jurisdiction_placeholder: string
     jurisdictions: { value: string; label: string }[]
-    plan_legend: string
-    plans: { value: string; label: string; description: string }[]
     notes: string
     notes_help: string
     continue: string
     back: string
     sku_header: string
     state_fee_badge: string
-    disclaimer: string
   }
   fallback_sku: string
   find: {
     prompt: string
     lede: string
     placeholder: string
+    submit: string
     examples: { label: string; query: string }[]
+    help: string
+    help_cta: string
   }
 }
 

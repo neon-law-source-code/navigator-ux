@@ -5,6 +5,15 @@ const ROOT = '/'
 const PAGES = '/navigator-ux/'
 
 describe('parseGalleryLocation', () => {
+  it('opens the public home at the root and keeps the component gallery addressable', () => {
+    for (const base of [ROOT, PAGES]) {
+      expect(parseGalleryLocation(base, '', base)).toMatchObject({ view: 'neon', pageId: 'home' })
+      expect(canonicalizeGalleryHref(`${base}neon`, '', base)).toBe(base)
+      expect(canonicalizeGalleryHref(`${base}components`, '', base)).toBe(`${base}components`)
+      expect(parseGalleryLocation(`${base}components`, '', base).view).toBe('components')
+    }
+  })
+
   it('reads the view from the path and filters from the query', () => {
     expect(parseGalleryLocation('/components/buttons-and-badges', '?brand=delete-your-data', ROOT)).toEqual({
       view: 'components',

@@ -1,66 +1,21 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
-import { fakePerson } from '../fixtures/fake.mjs'
 import {
-  Accordion,
-  ActionList,
-  Badge,
-  Button,
-  ButtonRow,
-  Callout,
-  Card,
-  ChoiceGroup,
-  FormCard,
-  Empty,
-  Hero,
-  Kbd,
-  LegalDisclaimer,
-  LinkButton,
-  Panel,
-  PricingCard,
-  PricingGrid,
-  PublicShell,
-  SelectField,
-  SiteFooter,
-  SiteHeader,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TestimonialCard,
-  TestimonialSection,
-  TextField,
-  TextareaField,
+  Accordion, ActionList, Badge, NavButton, ButtonRow, Callout, Card, Empty,
+  FormCard, Hero, NavLinkButton, PricingCard, PricingGrid,
+  PublicShell, SelectField, SiteFooter, SiteHeader, TextField, TextareaField,
 } from '../src/index'
 import './gallery.css'
 import { FindNeed } from './find-need'
 import {
-  en,
-  pages,
-  relatedSkus,
-  skuById,
-  type NeonPageId,
-  type PageAction,
-  type PageDoc,
-  type Sku,
-  type SkuCategory,
+  en, pages, relatedSkus, skuById,
+  type NeonPageId, type PageAction, type PageDoc, type Sku, type SkuCategory,
+  type SubscriptionPlan,
 } from './content/load'
 import { neonHref, pageHref, readGalleryLocation } from './routes'
 
-const PAGE_IDS: readonly NeonPageId[] = [
-  'home',
-  'services',
-  'litigation',
-  'fractional-gc',
-  'personal-plan',
-  'checkout',
-]
-
-function isNeonPage(value: string | null): value is NeonPageId {
-  return PAGE_IDS.includes(value as NeonPageId)
+function emailHref(subject: string) {
+  return `mailto:${en.email}?subject=${encodeURIComponent(subject)}`
 }
 
 function actionHref(action: PageAction): string {
@@ -71,15 +26,11 @@ function actionHref(action: PageAction): string {
 function Blocks({ body }: { body: string }) {
   if (!body) return null
   return (
-    <section className="neon-site__block">
+    <div className="neon-site__block">
       {body.split(/\n\n+/).map((block) =>
-        block.startsWith('## ') ? (
-          <h2 key={block}>{block.slice(3)}</h2>
-        ) : (
-          <p key={block}>{block.replace(/\n/g, ' ')}</p>
-        ),
+        block.startsWith('## ') ? <h2 key={block}>{block.slice(3)}</h2> : <p key={block}>{block.replace(/\n/g, ' ')}</p>,
       )}
-    </section>
+    </div>
   )
 }
 
@@ -91,35 +42,35 @@ function PageHero({ doc }: { doc: PageDoc }) {
       eyebrow={matter.eyebrow}
       title={matter.title}
       lede={matter.lede.trim()}
-      actions={
+      actions={matter.primary ? (
         <ButtonRow>
-          <LinkButton variant="primary" href={actionHref(matter.primary)}>
-            {matter.primary.label}
-          </LinkButton>
-          {matter.secondary ? <LinkButton href={actionHref(matter.secondary)}>{matter.secondary.label}</LinkButton> : null}
+          <NavLinkButton size="lg" variant="primary" href={actionHref(matter.primary)}>{matter.primary.label}</NavLinkButton>
+          {matter.secondary ? <NavLinkButton size="lg" href={actionHref(matter.secondary)}>{matter.secondary.label}</NavLinkButton> : null}
         </ButtonRow>
-      }
+      ) : undefined}
     />
   )
 }
 
-function neonLinks(current: NeonPageId) {
-  return en.nav.map((link) => ({
-    label: link.label,
-    href: neonHref(link.id),
-    current: link.id === current || (link.id === 'services' && current === 'checkout'),
-  }))
-}
-
 function NeonFrame({ page, children }: { page: NeonPageId; children: ReactNode }) {
+  useEffect(() => {
+    const previous = document.title
+    const title = page === 'home' ? en.find.prompt : page === 'checkout' ? en.checkout.eyebrow : pages[page].matter.eyebrow
+    document.title = `${title} | ${en.brand}`
+    return () => { document.title = previous }
+  }, [page])
+
   return (
     <PublicShell
       header={
         <SiteHeader
           brand={en.brand}
           brandHref={neonHref('home')}
-          links={neonLinks(page)}
-          utility={[{ label: en.catalog_label, href: pageHref('home') }]}
+          links={en.nav.map((link) => ({
+            label: link.label,
+            href: neonHref(link.id),
+            current: link.id === page || (link.id === 'services' && page === 'checkout'),
+          }))}
         />
       }
       footer={
@@ -129,239 +80,225 @@ function NeonFrame({ page, children }: { page: NeonPageId; children: ReactNode }
           links={[
             { label: 'Home', href: neonHref('home') },
             ...en.nav.map((link) => ({ label: link.label, href: neonHref(link.id) })),
-            { label: 'Sample pages', href: pageHref('home') },
+            { label: 'Design gallery', href: pageHref('home') },
           ]}
           offices={[{ label: en.office.label, address: en.office.address }]}
-          legal={
-            <>
-              {en.legal.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </>
-          }
+          legal={<>{en.legal.map((line) => <p key={line}>{line}</p>)}<p>{en.specimen}</p></>}
         />
       }
     >
-      {children}
+      <div className="neon-site">{children}</div>
     </PublicShell>
+  )
+}
+
+function PlanHeader({ plan, showPhoto = false }: { plan: SubscriptionPlan; showPhoto?: boolean }) {
+  return (
+    <div className="neon-site__plan-heading">
+      <div>
+        <span className="neon-site__eyebrow">{plan.audience}</span>
+        <h3>{plan.name}</h3>
+      </div>
+      {showPhoto ? <img className="neon-site__plan-photo" src={plan.image.src} alt={plan.image.alt} loading="lazy" decoding="async" /> : null}
+    </div>
+  )
+}
+
+function PlanCards({ plans = en.plans, service }: { plans?: SubscriptionPlan[]; service?: Sku }) {
+  return (
+    <PricingGrid columns={plans.length}>
+      {plans.map((plan) => (
+        <PricingCard
+          key={plan.id}
+          name={<PlanHeader plan={plan} />}
+          amount={plan.amount}
+          period={plan.period}
+          summary={plan.summary}
+          features={plan.highlights}
+          cta={{ label: en.subscriptions.cta, href: neonHref(plan.id, service?.id) }}
+        />
+      ))}
+    </PricingGrid>
+  )
+}
+
+function PlanTerms() {
+  return (
+    <div className="neon-site__terms">
+      <p>{en.subscriptions.forms}</p>
+      <p>{en.subscriptions.reviews}</p>
+    </div>
+  )
+}
+
+function Subscriptions({ showHeading = true }: { showHeading?: boolean }) {
+  return (
+    <section className="neon-site__section" aria-label={showHeading ? undefined : en.subscriptions.title} aria-labelledby={showHeading ? 'plans-title' : undefined} id="plans">
+      {showHeading ? <div className="neon-site__section-head">
+        <h2 id="plans-title">{en.subscriptions.title}</h2>
+        <p>{en.subscriptions.intro}</p>
+      </div> : null}
+      <PlanCards />
+      <PlanTerms />
+    </section>
+  )
+}
+
+function LitigationOffer() {
+  return (
+    <section className="neon-site__litigation" aria-labelledby="litigation-title">
+      <div>
+        <span className="neon-site__eyebrow">{pages.litigation.matter.eyebrow}</span>
+        <h2 id="litigation-title">{en.litigation.title}</h2>
+        <p>{en.litigation.body}</p>
+      </div>
+      <div>
+        <NavLinkButton size="lg" href={neonHref('litigation')}>{en.litigation.cta}</NavLinkButton>
+        <p className="neon-site__muted">{en.litigation.note}</p>
+      </div>
+    </section>
   )
 }
 
 function HomePage() {
   const doc = pages.home
   return (
-    <Stack>
-      <PageHero doc={doc} />
-      <Blocks body={doc.body} />
-      <FindNeed headingLevel={2} />
-      <div className="neon-site__doors">
-        {en.doors.map((door) => (
-          <a className="neon-site__door" href={neonHref(door.id)} key={door.id}>
-            <Card header={door.title}>
-              <p>{door.body}</p>
-            </Card>
-          </a>
-        ))}
-      </div>
-    </Stack>
+    <>
+      <div className="neon-site__opening"><FindNeed /></div>
+      <section className="neon-site__mission" aria-labelledby="mission-title">
+        <h2 id="mission-title">{doc.matter.title}</h2>
+        <div>
+          <p className="neon-site__north-star">{doc.matter.lede.trim()}</p>
+          <Blocks body={doc.body} />
+        </div>
+      </section>
+      <Subscriptions />
+      <LitigationOffer />
+      <section className="neon-site__browse">
+        <div><h2>{en.catalog.title}</h2><p>{en.catalog.note}</p></div>
+        <NavLinkButton size="lg" href={neonHref('services')}>{pages.services.matter.eyebrow}</NavLinkButton>
+      </section>
+    </>
   )
 }
 
-function skuNeedle(sku: Sku, needle: string) {
+function matches(needle: string, text: string) {
+  const terms = needle.toLowerCase().split(/[^\p{L}\p{N}]+/u)
+    .filter((term) => term && !/^(i|a|an|the|my|our|need|help|with|for|to|me|about|have|want|am|is)$/.test(term))
+  return terms.every((term) => text.toLowerCase().includes(term))
+}
+
+function matchesService(sku: Sku, needle: string) {
   const category = en.categories.find((entry) => entry.value === sku.category)?.label ?? ''
-  return `${sku.item} ${sku.name} ${sku.blurb} ${category}`.toLowerCase().includes(needle)
+  const audience = sku.category === 'estate' ? 'personal family legacy' : ''
+  return matches(needle, `${sku.item} ${sku.name} ${sku.blurb} ${category} ${audience} ${(sku.keywords ?? []).join(' ')}`)
 }
 
-function categoryCount(value: SkuCategory | 'all') {
-  if (value === 'all') return en.skus.length
-  return en.skus.filter((sku) => sku.category === value).length
-}
-
-function CatalogTable({ items, caption }: { items: readonly Sku[]; caption: string }) {
-  const cat = en.catalog
+function ServiceFee({ sku }: { sku: Sku }) {
+  const label = sku.membersOnly ? en.catalog.member_fee_label
+    : sku.flatFee === 'form' ? en.catalog.form_fee_label : en.catalog.fee_label
   return (
-    <Table caption={caption}>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{cat.item_header}</TableHead>
-          <TableHead>{cat.name_header}</TableHead>
-          <TableHead>{cat.status_header}</TableHead>
-          <TableHead numeric>{cat.price_header}</TableHead>
-          <TableHead>{cat.add}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {items.map((sku) => (
-          <TableRow key={sku.id}>
-            <TableCell>
-              <Kbd>{sku.item}</Kbd>
-            </TableCell>
-            <TableCell>
-              <a href={neonHref('checkout', sku.id)}>{sku.name}</a>
-              <p className="neon-site__sku-blurb">{sku.blurb}</p>
-            </TableCell>
-            <TableCell>{sku.status}</TableCell>
-            <TableCell numeric>
-              {sku.amount}
-              <span className="neon-site__price-period"> {sku.period}</span>
-            </TableCell>
-            <TableCell>
-              <LinkButton variant="primary" href={neonHref('checkout', sku.id)}>
-                {cat.add}
-              </LinkButton>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <p className="neon-site__service-fee">
+      <span className="neon-site__eyebrow">{label}</span>
+      <strong>{sku.flatFee ? en.catalog.flat_fee : sku.amount}</strong> <span>{sku.period}</span>
+      {sku.flatFee === 'form' ? <span className="neon-site__fee-note">{en.catalog.form_fee_note}</span> : null}
+    </p>
+  )
+}
+
+function ServiceList({ items }: { items: Sku[] }) {
+  return (
+    <ul className="neon-site__services">
+      {items.map((sku) => (
+        <li key={sku.id}>
+          <div>
+            <h3><a href={neonHref('checkout', sku.id)}>{sku.name}</a></h3>
+            <p>{sku.blurb}</p>
+            {sku.membersOnly ? <Badge>{en.catalog.members}</Badge> : null}
+          </div>
+          <ServiceFee sku={sku} />
+          <NavLinkButton size="lg" href={neonHref('checkout', sku.id)}>
+            {sku.membersOnly ? en.catalog.choose_plan : en.catalog.start}
+          </NavLinkButton>
+        </li>
+      ))}
+    </ul>
   )
 }
 
 function ServicesPage({ initialQuery }: { initialQuery: string }) {
   const [category, setCategory] = useState<SkuCategory | 'all'>('all')
   const [query, setQuery] = useState(initialQuery)
-  const needle = query.trim().toLowerCase()
-  const items = en.skus.filter((sku) => {
-    if (category !== 'all' && sku.category !== category) return false
-    if (!needle) return true
-    return skuNeedle(sku, needle)
-  })
-  const cat = en.catalog
-  const current = en.categories.find((entry) => entry.value === category)
-  const grouped = category === 'all' && !needle
+  const needle = query.trim()
+  const items = en.skus.filter((sku) => (category === 'all' || sku.category === category) && matchesService(sku, needle))
+  const plans = needle && category === 'all'
+    ? en.plans.filter((plan) => matches(needle, `${plan.name} ${plan.summary} ${plan.keywords.join(' ')}`)) : []
+  const litigation = !!needle && (category === 'all' || category === 'urgent')
+    && matches(needle, `${en.litigation.body} ${en.litigation.keywords.join(' ')}`)
+  const noResults = !items.length && !plans.length && !litigation
+
+  function changeQuery(value: string) {
+    setQuery(value)
+    setCategory('all')
+  }
 
   return (
-    <Stack>
-      <FindNeed headingLevel={1} query={query} onQueryChange={setQuery} />
-      <Callout tone="info">{en.callout}</Callout>
-      <Panel title={cat.title} note={cat.note}>
-        <div className="neon-site__catalog">
-          <nav className="neon-site__categories" aria-label={en.shelf.category_label}>
-            {en.categories.map((entry) => (
-              <button
-                key={entry.value}
-                type="button"
-                className={
-                  category === entry.value ? 'neon-site__chip is-current' : 'neon-site__chip'
-                }
-                aria-pressed={category === entry.value}
-                onClick={() => setCategory(entry.value)}
-              >
-                <span>{entry.label}</span>
-                <span className="neon-site__cat-count">{categoryCount(entry.value)}</span>
-              </button>
-            ))}
-          </nav>
-          <div>
-            {current ? <p className="neon-site__cat-blurb">{current.blurb}</p> : null}
-            {items.length === 0 ? (
-              <Empty title={cat.empty} />
-            ) : grouped ? (
-              en.categories
-                .filter((entry) => entry.value !== 'all')
-                .map((entry) => {
-                  const rows = en.skus.filter((sku) => sku.category === entry.value)
-                  if (rows.length === 0) return null
-                  return (
-                    <section className="neon-site__cat-section" key={entry.value}>
-                      <h3>{entry.label}</h3>
-                      <CatalogTable items={rows} caption={entry.label} />
-                    </section>
-                  )
-                })
-            ) : (
-              <CatalogTable items={items} caption={current?.label ?? cat.title} />
-            )}
-          </div>
-        </div>
-      </Panel>
-      <Panel title={en.llc_panel.title} note={en.llc_panel.note}>
-        <PricingGrid>
-          {en.packages.map((plan) => (
-            <PricingCard
-              key={plan.id}
-              name={plan.name}
-              amount={plan.amount}
-              period={plan.period}
-              summary={plan.summary}
-              features={plan.features}
-              recommended={plan.recommended}
-              cta={{
-                label: plan.cta,
-                href: plan.sku ? neonHref('checkout', plan.sku) : neonHref(plan.href),
-              }}
-            />
+    <>
+      <PageHero doc={pages.services} />
+      {!needle ? <><Subscriptions showHeading={false} /><LitigationOffer /></> : null}
+      <section className="neon-site__section" aria-label={en.catalog.title}>
+        <FindNeed headingLevel={2} query={query} onQueryChange={changeQuery} />
+        <nav className="neon-site__categories" aria-label={en.catalog.category_label}>
+          {en.categories.map((entry) => (
+            <button
+              key={entry.value} type="button"
+              className={category === entry.value ? 'neon-site__chip is-current' : 'neon-site__chip'}
+              aria-pressed={category === entry.value}
+              onClick={() => setCategory(entry.value)}
+            >{entry.label}</button>
           ))}
-        </PricingGrid>
-      </Panel>
-      <Panel title={en.process.title} note={en.process.note}>
+        </nav>
+        {needle ? <PlanTerms /> : null}
+        {plans.length ? <PlanCards plans={plans} /> : null}
+        {litigation ? <LitigationOffer /> : null}
+        <div aria-live="polite" aria-atomic="true">
+          {noResults ? (
+            <Empty
+              title={en.catalog.empty} description={en.catalog.empty_help}
+              action={<ButtonRow>
+                <NavLinkButton size="lg" href={`mailto:${en.email}`}>{en.find.help_cta}</NavLinkButton>
+                <NavButton size="lg" onClick={() => changeQuery('')}>{en.catalog.clear}</NavButton>
+              </ButtonRow>}
+            />
+          ) : null}
+        </div>
+        {items.length ? <ServiceList items={items} /> : null}
+      </section>
+      <section className="neon-site__section" aria-labelledby="process-title">
+        <h2 id="process-title">{en.process.title}</h2>
         <ActionList items={en.process.steps} />
-      </Panel>
-      <Panel title={en.compare.title} note={en.compare.note}>
-        <Table caption={en.compare.caption}>
-          <TableHeader>
-            <TableRow>
-              {en.compare.headers.map((header) => (
-                <TableHead key={header}>{header}</TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {en.compare.rows.map((row) => (
-              <TableRow key={row[0]}>
-                {row.map((cell) => (
-                  <TableCell key={cell}>{cell}</TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Panel>
-      <TestimonialSection heading={en.testimonials.heading} intro={en.testimonials.intro}>
-        {en.testimonials.items.map((item) => (
-          <TestimonialCard
-            key={item.key}
-            label={item.label}
-            quote={item.quote}
-            name={fakePerson(item.key).name}
-            title={item.title}
-          />
-        ))}
-      </TestimonialSection>
-      <Accordion
-        exclusive
-        items={en.faq.map((item) => ({
-          id: item.id,
-          trigger: item.trigger,
-          children: <p>{item.body}</p>,
-        }))}
-      />
-      <LegalDisclaimer>{en.disclaimer}</LegalDisclaimer>
-    </Stack>
+      </section>
+      <Accordion exclusive items={en.faq.map((item) => ({ id: item.id, trigger: item.trigger, children: <p>{item.body}</p> }))} />
+    </>
   )
 }
 
-function DoorPage({ id }: { id: Exclude<NeonPageId, 'home' | 'services' | 'checkout'> }) {
-  const doc = pages[id]
-  const plan = id === 'fractional-gc' ? en.gc : id === 'personal-plan' ? en.personal : null
+function PlanPage({ plan, skuId }: { plan: SubscriptionPlan; skuId: string | null }) {
+  const service = en.skus.find((sku) => sku.id === skuId)
+  const subject = `${plan.name} membership${service ? ` — ${service.name}` : ''}`
   return (
-    <Stack>
-      <PageHero doc={doc} />
-      <Blocks body={doc.body} />
-      {plan ? (
-        <PricingGrid columns={1}>
-          <PricingCard
-            name={plan.name}
-            amount={plan.amount}
-            period={plan.period}
-            summary={plan.summary}
-            features={plan.features}
-            cta={{ label: plan.cta, href: `mailto:${en.email}` }}
-            recommended
-          />
-        </PricingGrid>
-      ) : null}
-    </Stack>
+    <>
+      <PageHero doc={pages[plan.id]} />
+      {service ? <p>{en.subscriptions.interest}: <strong>{service.name}</strong></p> : null}
+      <div className="neon-site__plan-detail">
+        <PricingCard
+          name={<PlanHeader plan={plan} showPhoto />} amount={plan.amount} period={plan.period}
+          summary={plan.summary} features={[...plan.highlights, ...plan.features]}
+          cta={{ label: en.subscriptions.join, href: emailHref(subject) }}
+        />
+        <div className="neon-site__stack"><PlanTerms />{service?.membersOnly ? <ServiceFee sku={service} /> : null}</div>
+      </div>
+    </>
   )
 }
 
@@ -372,99 +309,57 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
   const related = relatedSkus(sku)
 
   return (
-    <Stack>
-      <Hero
-        align="start"
-        eyebrow={`${en.catalog.details_for} #${sku.item}`}
-        title={sku.name}
-        lede={`${sku.amount} ${sku.period}. ${sku.blurb}`}
-      />
+    <>
+      <Hero align="start" eyebrow={copy.eyebrow} title={sku.name} lede={sku.blurb} />
       {sent ? <Callout tone="success">{copy.sent}</Callout> : null}
-      <div className="neon-site__checkout">
-        <FormCard
-          title={copy.form_title}
-          intro={copy.form_intro}
-          onSubmit={(event) => {
-            event.preventDefault()
-            setSent(true)
-          }}
-        >
+      <Card header={copy.sku_header}>
+        <div className="neon-site__stack">
+          <ServiceFee sku={sku} />
+          <ul>{sku.includes.map((line) => <li key={line}>{line}</li>)}</ul>
+          {sku.stateFee ? <p><Badge>{copy.state_fee_badge}</Badge></p> : null}
+          <PlanTerms />
+          {!sku.membersOnly ? <NavLinkButton size="lg" href={`${neonHref('services')}#plans`}>{en.subscriptions.cta}</NavLinkButton> : null}
+          {related.length ? (
+            <div className="neon-site__related">
+              <h2>{en.catalog.related_header}</h2>
+              <p>{en.catalog.related_note}</p>
+              <ul>{related.map((item) => <li key={item.id}><a href={neonHref('checkout', item.id)}>{item.name}</a></li>)}</ul>
+            </div>
+          ) : null}
+        </div>
+      </Card>
+      {sku.membersOnly ? (
+        <section className="neon-site__section" aria-labelledby="membership-title">
+          <div className="neon-site__section-head">
+            <h2 id="membership-title">{en.subscriptions.member_title}</h2>
+            <p>{en.subscriptions.member_intro}</p>
+          </div>
+          <PlanCards service={sku} />
+          <a href={emailHref(`Subscriber request — ${sku.name}`)}>{en.subscriptions.member_cta}</a>
+        </section>
+      ) : (
+        <FormCard title={copy.form_title} intro={copy.form_intro} onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
           <input type="hidden" name="sku" value={sku.id} />
           <TextField label={copy.name} name="name" required />
           <TextField label={copy.email} name="email" type="email" required />
-          <SelectField
-            label={copy.jurisdiction}
-            name="jurisdiction"
-            placeholder={copy.jurisdiction_placeholder}
-            options={copy.jurisdictions}
-            required
-          />
-          <ChoiceGroup
-            legend={copy.plan_legend}
-            name="plan"
-            defaultValue="filing-only"
-            choices={copy.plans}
-          />
-          <TextareaField label={copy.notes} name="notes" rows={4} help={copy.notes_help} />
-          <ButtonRow>
-            <Button variant="primary" type="submit">
-              {copy.continue}
-            </Button>
-            <LinkButton href={neonHref('services')}>{copy.back}</LinkButton>
-          </ButtonRow>
+          <SelectField label={copy.jurisdiction} name="jurisdiction" placeholder={copy.jurisdiction_placeholder} options={copy.jurisdictions} required />
+          <TextareaField label={copy.notes} name="notes" rows={3} help={copy.notes_help} />
+          <NavButton size="lg" variant="primary" type="submit">{copy.continue}</NavButton>
         </FormCard>
-        <Card header={copy.sku_header}>
-          <p>
-            {en.catalog.item_header} <Kbd>{sku.item}</Kbd>
-          </p>
-          <p>
-            {en.catalog.status_header}: {sku.status}
-          </p>
-          <p className="neon-site__price">
-            <strong>{sku.amount}</strong>
-            <span> {sku.period}</span>
-          </p>
-          <ul>
-            {sku.includes.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-          {sku.stateFee ? (
-            <p>
-              <Badge>{copy.state_fee_badge}</Badge>
-            </p>
-          ) : null}
-          {related.length > 0 ? (
-            <div className="neon-site__related">
-              <h3>{en.catalog.related_header}</h3>
-              <p className="neon-site__sku-blurb">{en.catalog.related_note}</p>
-              <ul>
-                {related.map((item) => (
-                  <li key={item.id}>
-                    <Kbd>{item.item}</Kbd>{' '}
-                    <a href={neonHref('checkout', item.id)}>{item.name}</a>
-                    <span className="neon-site__price-period"> {item.amount}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </Card>
-      </div>
-      <LegalDisclaimer>{copy.disclaimer}</LegalDisclaimer>
-    </Stack>
+      )}
+      <NavLinkButton size="lg" href={neonHref('services')}>{copy.back}</NavLinkButton>
+    </>
   )
 }
 
 export function NeonSite() {
-  const { pageId, sku, q: findQuery = '' } = readGalleryLocation()
-  const page: NeonPageId = isNeonPage(pageId) ? pageId : 'home'
-
-  let body = <HomePage />
-  if (page === 'services') body = <ServicesPage initialQuery={findQuery} />
-  else if (page === 'litigation' || page === 'fractional-gc' || page === 'personal-plan') {
-    body = <DoorPage id={page} />
-  } else if (page === 'checkout') body = <CheckoutPage skuId={sku} />
-
+  const { pageId, sku, q = '' } = readGalleryLocation()
+  const page: NeonPageId = pageId === 'checkout' || (pageId && pageId in pages) ? pageId as NeonPageId : 'home'
+  const plan = en.plans.find((entry) => entry.id === page)
+  const body = page === 'services' ? <ServicesPage initialQuery={q} />
+    : page === 'checkout' ? <CheckoutPage skuId={sku} />
+    : plan ? <PlanPage plan={plan} skuId={sku} />
+    : page === 'litigation' ? <><PageHero doc={pages.litigation} /><Blocks body={pages.litigation.body} /></>
+    : <HomePage />
   return <NeonFrame page={page}>{body}</NeonFrame>
 }

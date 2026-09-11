@@ -1,10 +1,6 @@
 ---
-eyebrow: Fractional GC
-title: Accurate. Efficient. Speedy.
+eyebrow: Business plan
+title: A lawyer for your business.
 lede: >
-  One simple flat annual fee for just $10 a day that includes all your company
-  basics, with predictable flat fees for the rest.
-primary:
-  label: Ask about a plan
-  href: mailto:contact@neonlaw.com
+  Get help with contracts, hiring, and the paperwork that comes with running a business.
 ---

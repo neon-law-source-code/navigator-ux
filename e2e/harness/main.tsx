@@ -13,5 +13,5 @@ if (!root) throw new Error('missing #root')
 const location = parseGalleryLocation(window.location.pathname, window.location.search, galleryBase())
 
 createRoot(root).render(
-  <StrictMode>{location.view === 'neon' ? <NeonSite /> : <App />}</StrictMode>,
+  <StrictMode>{window.location.pathname !== '/api-demo' && location.view === 'neon' ? <NeonSite /> : <App />}</StrictMode>,
 )

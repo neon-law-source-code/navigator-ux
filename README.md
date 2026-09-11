@@ -44,6 +44,9 @@ navigation run on the gallery views, including the side-by-side
 [verify-the-record](https://neon-law-source-code.github.io/navigator-ux/pages/verify-the-record)
 page. The public-site specimen uses its own marketing chrome.
 
+The root opens the public-site home; `/components` opens the component gallery. Existing `/neon`
+links still reach the public home, with its service and plan pages under `/neon/`.
+
 The sample site includes twelve Client Council voices, twelve Legal Council voices, and addressable
 pages covering discovery, enforcement, company formation, immigration forms, and planning. It is
 fictional sample data, not legal advice. The GitHub Pages workflow builds `gallery/` into the static
