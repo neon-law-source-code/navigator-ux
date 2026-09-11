@@ -1,11 +1,17 @@
 import { parse } from 'yaml'
 
+import { resolveShared } from './catalog'
 import enRaw from './en.yaml?raw'
 import fractionalGcMd from './pages/fractional-gc.md?raw'
 import homeMd from './pages/home.md?raw'
 import litigationMd from './pages/litigation.md?raw'
 import personalPlanMd from './pages/personal-plan.md?raw'
 import servicesMd from './pages/services.md?raw'
+
+export {
+  canonicalPayload, catalogIntegrity, catalogPayload, catalogSource, referencedKeys,
+  resolveShared, shared, sharedKeys, SUPPORTED_CATALOG_VERSION,
+} from './catalog'
 
 export type NeonPageId = 'home' | 'services' | 'litigation' | 'fractional-gc' | 'personal-plan' | 'checkout'
 export type SkuCategory = 'company' | 'compliance' | 'identity' | 'estate' | 'contracts' | 'urgent'
@@ -130,13 +136,20 @@ export interface EnCopy {
   }
 }
 
+/*
+ * Shared copy resolves before either file is parsed, exactly as Navigator
+ * resolves the same token in its own catalogs. Doing it on the raw text means
+ * a `{shared:<key>}` works in any field — front matter, a list item, a
+ * Markdown paragraph — without this schema knowing the token exists, and it
+ * keeps every consumer below reading plain strings.
+ */
 function splitNotation(raw: string): PageDoc {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+  const match = resolveShared(raw).match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
   if (!match?.[1]) throw new Error('neon content: missing YAML front matter')
   return { matter: parse(match[1]) as PageMatter, body: (match[2] ?? '').trim() }
 }
 
-export const en = parse(enRaw) as EnCopy
+export const en = parse(resolveShared(enRaw)) as EnCopy
 
 export const pages: Record<Exclude<NeonPageId, 'checkout'>, PageDoc> = {
   home: splitNotation(homeMd),

@@ -1,11 +1,9 @@
 ---
-eyebrow: Help with a dispute
-title: Your story deserves to be heard.
-lede: >
-  Start with a free consultation. Tell us what happened, what you need,
-  and whether you have a deadline.
+eyebrow: "{shared:litigation.eyebrow}"
+title: "{shared:litigation.title}"
+lede: "{shared:litigation.lede}"
 primary:
-  label: Request a free consultation
+  label: "{shared:litigation.cta}"
   href: mailto:contact@neonlaw.com?subject=Free%20consultation%20about%20a%20dispute
 ---
 
@@ -15,6 +13,6 @@ If you want to sue someone or someone is suing you, tell us your story. We'll ta
 
 ## Your case can help others, too.
 
-We care about cases that can make life better for you and for others facing the same problem.
+{shared:litigation.cases_help_others}
 
 If we can take your case, we'll explain what we can do and what it costs before you decide.

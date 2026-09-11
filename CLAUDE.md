@@ -55,6 +55,7 @@ pnpm check:type         # two font weights, and no literal corner radius (source
 pnpm check:contrast     # every palette pairing clears its WCAG floor (source)
 pnpm check:api          # generated types match the pinned OpenAPI snapshot
 pnpm generate:api       # refresh src/api/schema.d.ts from spec/openapi.json
+pnpm check:catalog      # the vendored marketing catalog matches its digest and its references
 pnpm check:bundle       # no off-origin reference in the built bundle (needs dist)
 pnpm test               # vitest, once
 pnpm test:coverage      # coverage report + threshold gate
@@ -408,6 +409,13 @@ URL would appear.
 The first four are source-level, so they run in the `lint` job and report in seconds rather than
 behind a full build. `check:api` needs `openapi-typescript` (a devDependency) to regenerate and
 diff; it does not fetch the live origin.
+
+**`pnpm check:catalog` guards the shared marketing copy.** The public pages' shared sentences are
+authored in Navigator and vendored here as `gallery/content/marketing-catalog.json`, pinned to one
+immutable revision. The gate recomputes the exporter's SHA-256 over the canonical payload, so an
+artifact someone edited by hand fails rather than quietly publishing different words; it also
+refuses an unsupported catalog version, a pin that is not a commit, and a `{shared:…}` reference
+naming a key the catalog does not define. See [docs/marketing-catalog.md](./docs/marketing-catalog.md).
 
 `check:tokens` blanks numeric character references before it scans. `&#8249;` is a left angle quote
 and `&#8722;` a minus sign — both routine in a control that draws its own chevrons — and the hex

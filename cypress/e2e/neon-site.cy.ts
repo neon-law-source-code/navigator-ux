@@ -1,9 +1,42 @@
 import { fakePerson } from '../../fixtures/fake.mjs'
+import type { CatalogDocument } from '../../gallery/content/catalog'
 import type { EnCopy } from '../../gallery/content/load'
 
 const FILER = fakePerson('e2e/neon-site/filer')
 
 describe('Neon Law public-site journeys', () => {
+  /*
+   * The shared sentences are authored in Navigator and vendored here as a
+   * pinned artifact. This walks the real pages in a real browser and asserts
+   * each one publishes the wording that artifact carries — so a re-export that
+   * changes a sentence is visible here, and an unresolved reference is not
+   * mistaken for copy.
+   */
+  it('publishes the copy the pinned marketing catalog authors', () => {
+    cy.task<CatalogDocument>('neonCatalog').then((catalog) => {
+      const shared = (key: string) => {
+        const value = catalog.payload.entries[key]
+        expect(value, `the pinned catalog must author ${key}`).to.be.a('string')
+        return value as string
+      }
+      expect(catalog.payload.catalog_version).to.eq(1)
+      expect(catalog.payload.source.revision).to.match(/^[0-9a-f]{40}$/)
+
+      const pages: [string, string[]][] = [
+        ['/', ['home.need_prompt', 'home.mission_heading', 'home.mission_north_star', 'home.mission_promise']],
+        ['/neon/services', ['services.eyebrow', 'services.title', 'services.lede']],
+        ['/neon/litigation', ['litigation.title', 'litigation.lede', 'litigation.cta', 'litigation.cases_help_others']],
+        ['/neon/fractional-gc', ['fractional_gc.title', 'fractional_gc.lede', 'fractional_gc.price']],
+        ['/neon/personal-plan', ['personal_plan.title', 'personal_plan.price']],
+      ]
+      for (const [path, keys] of pages) {
+        cy.visit(path)
+        for (const key of keys) cy.contains(shared(key))
+        cy.get('body').should('not.contain.text', '{shared:')
+      }
+    })
+  })
+
   it('starts at the legal need, then introduces the mission and subscriptions', () => {
     cy.visit('/')
     cy.contains('h1', 'What is your legal need?')
