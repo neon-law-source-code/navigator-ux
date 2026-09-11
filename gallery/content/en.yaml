@@ -1,4 +1,9 @@
 # Public-site copy. Page introductions live beside it in pages/.
+#
+# `{shared:<key>}` reads the marketing catalog Navigator authors, vendored as
+# marketing-catalog.json and pinned to one immutable revision. Copy that
+# differs between the two renderers stays here; copy both publish lives there.
+# See docs/marketing-catalog.md.
 brand: Neon Law
 email: contact@neonlaw.com
 phone:
@@ -14,7 +19,7 @@ legal:
 specimen: This is a preview. No message is sent and no payment is taken here.
 nav:
   - id: services
-    label: Plans & services
+    label: "{shared:services.eyebrow}"
   - id: fractional-gc
     label: For your business
   - id: personal-plan
@@ -22,7 +27,7 @@ nav:
   - id: litigation
     label: Disputes
 find:
-  prompt: What is your legal need?
+  prompt: "{shared:home.need_prompt}"
   lede: Tell us what you need help with. It's okay if you're not sure where to start.
   placeholder: A contract, my business, a will, a dispute…
   submit: Find help
@@ -38,7 +43,7 @@ find:
   help: Would you rather talk?
   help_cta: Email us
 subscriptions:
-  title: A lawyer you can turn to.
+  title: "{shared:services.subscriptions_heading}"
   intro: Choose a plan for your business or for yourself.
   forms: Forms are free with a subscription, or $50 each without one. Work outside your plan costs extra. Government fees are separate.
   reviews: You need a plan for custom contract reviews and trademarks. These services cost extra.
@@ -51,11 +56,11 @@ subscriptions:
 plans:
   - id: fractional-gc
     audience: For your business
-    name: Business plan
+    name: "{shared:fractional_gc.eyebrow}"
     image:
       src: https://www.neonlaw.com/assets/img/ten-dollar-bill/ten-dollar-bill.jpg
       alt: Hamilton on a ten-dollar bill
-    amount: $3,650
+    amount: "{shared:fractional_gc.price}"
     period: per year · about $10 a day
     summary: Help with the legal side of running your business.
     keywords:
@@ -76,20 +81,20 @@ plans:
       - gc
       - general counsel
     highlights:
-      - Help keeping your company records up to date
-      - Forms for hiring employees and contractors
-      - Answers from a lawyer within three business days
+      - "{shared:fractional_gc.included.records}"
+      - "{shared:fractional_gc.included.hiring_forms}"
+      - "{shared:fractional_gc.included.response_window}"
     features:
-      - Help keeping track of who owns your company
-      - Forms for keeping business information private and working with customers
-      - Help with business taxes and state paperwork
+      - "{shared:fractional_gc.included.ownership}"
+      - "{shared:fractional_gc.included.privacy_forms}"
+      - "{shared:fractional_gc.included.tax_and_state}"
   - id: personal-plan
     audience: For you
-    name: Personal plan
+    name: "{shared:personal_plan.eyebrow}"
     image:
       src: https://www.neonlaw.com/assets/img/one-dollar-bill/one-dollar-bill.jpg
       alt: Washington on a one-dollar bill
-    amount: $365
+    amount: "{shared:personal_plan.price}"
     period: per year · about $1 a day
     summary: Help with your taxes and personal information.
     keywords:
@@ -106,13 +111,13 @@ plans:
       - employment
     highlights:
       - Preparing and filing your taxes
-      - Help asking companies to remove your personal information
-      - Optional credit monitoring
+      - "{shared:personal_plan.included.data_removal}"
+      - "{shared:personal_plan.included.credit_monitoring}"
     features: []
 litigation:
   title: Tell us what's happened.
   body: If you want to sue someone or someone is suing you, start with a free consultation. Tell us what happened and what you hope to change.
-  cta: Request a free consultation
+  cta: "{shared:litigation.cta}"
   note: We'll listen and explain whether we can help. If we can, we'll agree on the work and cost with you before we start.
   keywords:
     - litigation
@@ -143,7 +148,7 @@ categories:
   - value: urgent
     label: Disputes & housing
 catalog:
-  title: Need help with one thing?
+  title: "{shared:services.catalog_heading}"
   note: Choose the help you need. We'll explain what it includes and what it costs.
   category_label: Service category
   fee_label: Legal fee
