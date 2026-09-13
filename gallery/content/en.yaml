@@ -42,6 +42,29 @@ find:
       query: dispute
   help: Would you rather talk?
   help_cta: Email us
+practices_heading: Choose the help that fits.
+practices:
+  - icon: handshake
+    heading: "{shared:fractional_gc.eyebrow}"
+    body: >-
+      Ongoing legal help for your business: contracts, hiring, company records,
+      and paperwork.
+    href: /fractional-gc
+  - icon: technology
+    heading: "{shared:personal_plan.eyebrow}"
+    body: >-
+      Help with taxes and personal information, including optional credit
+      monitoring.
+    href: /personal-plan
+  - icon: gavel
+    heading: Individual services
+    body: >-
+      Ask about a single form, filing, contract review, or other legal service.
+    href: /services
+  - icon: libra-scales
+    heading: Disputes
+    body: Tell us what happened and what you need in a free consultation.
+    href: /litigation
 subscriptions:
   title: "{shared:services.subscriptions_heading}"
   intro: Choose a plan for your business or for yourself.

@@ -62,6 +62,13 @@ export interface SubscriptionPlan {
   features: string[]
 }
 
+export interface PracticeLink {
+  icon: 'handshake' | 'technology' | 'gavel' | 'libra-scales'
+  heading: string
+  body: string
+  href: string
+}
+
 export interface EnCopy {
   brand: string
   email: string
@@ -74,6 +81,8 @@ export interface EnCopy {
   categories: { value: SkuCategory | 'all'; label: string }[]
   skus: Sku[]
   plans: SubscriptionPlan[]
+  practices_heading: string
+  practices: PracticeLink[]
   subscriptions: {
     title: string
     intro: string

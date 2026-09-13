@@ -45,4 +45,10 @@ describe('the public pages render the pinned catalog', () => {
     renderAt('/neon')
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(shared('home.need_prompt'))
   })
+
+  it('publishes the four home practice doors with decorative glyphs', () => {
+    renderAt('/neon')
+    expect(document.querySelectorAll('.neon-site__practice-card')).toHaveLength(4)
+    expect(document.querySelectorAll('.neon-site__practice-card .nav-card__icon[aria-hidden="true"]')).toHaveLength(4)
+  })
 })

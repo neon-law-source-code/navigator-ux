@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { Icon } from './Icon'
+import type { ReactElement, ReactNode } from 'react'
+import { Icon, type IconName } from './Icon'
 import { initialsFor } from '../lib/initials'
 
 /*
@@ -20,6 +20,8 @@ import { initialsFor } from '../lib/initials'
 /* ------------------------------------------------------------------- Card -- */
 
 export interface CardProps {
+  /** A decorative local glyph above the card content. Hidden from assistive technology. */
+  icon?: IconName | ReactElement
   /** Header band. Omit for a card that is only a body. */
   header?: ReactNode
   /** Footer band, below a divider. */
@@ -38,6 +40,7 @@ export interface CardProps {
 
 /** The design system's shared surface. */
 export function Card({
+  icon,
   header,
   footer,
   highlighted,
@@ -52,6 +55,11 @@ export function Card({
 
   return (
     <section className={classes} id={id}>
+      {icon ? (
+        <div className="nav-card__icon" aria-hidden="true">
+          {typeof icon === 'string' ? <Icon name={icon} /> : icon}
+        </div>
+      ) : null}
       {header ? <div className="nav-card__header">{header}</div> : null}
       <div className={centered ? 'nav-card__body nav-card__body--center' : 'nav-card__body'}>
         {children}

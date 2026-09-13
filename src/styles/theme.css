@@ -290,6 +290,12 @@ textarea {
   font-weight: 700;
 }
 
+.nav-card__icon {
+  padding: var(--nav-space-4) var(--nav-space-4) 0;
+  color: var(--nav-color-primary);
+  font-size: 1.5rem;
+}
+
 .nav-card__body {
   padding: 1rem;
 }
@@ -3236,6 +3242,20 @@ dialog.confirm-delete:not([open]) {
   justify-items: center;
   gap: var(--nav-space-4);
   text-align: center;
+}
+
+.nav-hero__picture {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--nav-radius);
+}
+
+.nav-hero__image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
 }
 
 .nav-hero--start {

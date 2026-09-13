@@ -68,6 +68,22 @@ describe('Card', () => {
     expect(container.querySelector('.nav-card__body')).toHaveTextContent('Body')
   })
 
+  it('keeps the no-icon card markup byte-identical to the plain surface', () => {
+    const { container } = render(<Card>Body</Card>)
+    expect(container.innerHTML).toBe('<section class="nav-card"><div class="nav-card__body">Body</div></section>')
+  })
+
+  it('renders an icon as decoration while the content keeps its accessible name', () => {
+    render(
+      <Card icon="handshake">
+        <h2>Business plan</h2>
+      </Card>,
+    )
+    expect(document.querySelector('.nav-card__icon')).toHaveAttribute('aria-hidden', 'true')
+    expect(document.querySelector('.nav-card__icon svg')).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.getByRole('heading', { name: 'Business plan' })).toBeInTheDocument()
+  })
+
   it('renders header and footer bands when given them', () => {
     const { container } = render(
       <Card header="Head" footer="Foot" id="c1" className="extra">

@@ -77,6 +77,26 @@ export interface HeroProps {
   level?: 1 | 2
   /** For `aria-labelledby` on the region the hero introduces. */
   id?: string
+  /** A responsive image above the text. Omit it to keep the text-only hero. */
+  image?: HeroImage
+}
+
+export interface HeroImageSource {
+  /** The MIME type the browser should negotiate. */
+  type: string
+  /** Width-keyed candidates, such as `/hero.avif 1200w`. */
+  srcSet: string
+}
+
+export interface HeroImage {
+  /** Sources are rendered in negotiation order, usually AVIF then JPEG. */
+  sources: readonly HeroImageSource[]
+  /** The fallback URL for browsers that do not support the source formats. */
+  src: string
+  /** A useful description of the image; the image is not decorative. */
+  alt: string
+  /** The rendered image's width hint. */
+  sizes: string
 }
 
 /**
@@ -88,10 +108,18 @@ export interface HeroProps {
  * was drawn to be read at. There is no third heading style; a hero that wants
  * to be smaller wants to be a `PageHeader`.
  */
-export function Hero({ eyebrow, title, lede, actions, align = 'center', level = 1, id }: HeroProps) {
+export function Hero({ eyebrow, title, lede, actions, align = 'center', level = 1, id, image }: HeroProps) {
   const Heading = level === 1 ? 'h1' : 'h2'
   return (
     <div className={align === 'start' ? 'nav-hero nav-hero--start' : 'nav-hero'}>
+      {image ? (
+        <picture className="nav-hero__picture">
+          {image.sources.map((source) => (
+            <source key={`${source.type}:${source.srcSet}`} type={source.type} srcSet={source.srcSet} sizes={image.sizes} />
+          ))}
+          <img className="nav-hero__image" src={image.src} alt={image.alt} sizes={image.sizes} />
+        </picture>
+      ) : null}
       {eyebrow ? <p className="nav-hero__eyebrow">{eyebrow}</p> : null}
       <Heading className="nav-hero__title" id={id}>
         {title}
