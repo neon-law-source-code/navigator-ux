@@ -1,6 +1,6 @@
 import { useId } from 'react'
 
-import { NavButton } from '../src/index'
+import { Hero, NavButton, type HeroImage } from '../src/index'
 import { en } from './content/load'
 import { neonFindHref, readBrandId } from './routes'
 
@@ -9,10 +9,12 @@ export function FindNeed({
   headingLevel = 1,
   query,
   onQueryChange,
+  heroImage,
 }: {
   headingLevel?: 1 | 2
   query?: string
   onQueryChange?: (value: string) => void
+  heroImage?: HeroImage
 }) {
   const promptId = useId()
   const Heading = headingLevel === 1 ? 'h1' : 'h2'
@@ -21,8 +23,14 @@ export function FindNeed({
 
   return (
     <section className="neon-site__find">
-      <Heading id={promptId}>{copy.prompt}</Heading>
-      <p className="neon-site__find-lede">{copy.lede}</p>
+      {heroImage ? (
+        <Hero id={promptId} level={headingLevel} image={heroImage} title={copy.prompt} lede={copy.lede} />
+      ) : (
+        <>
+          <Heading id={promptId}>{copy.prompt}</Heading>
+          <p className="neon-site__find-lede">{copy.lede}</p>
+        </>
+      )}
       <form className="neon-site__find-form" role="search" method="get" action={neonFindHref('')}>
         <input type="hidden" name="brand" value={readBrandId()} />
         <input

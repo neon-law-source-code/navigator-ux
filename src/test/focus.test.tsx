@@ -80,6 +80,32 @@ describe('Hero', () => {
     expect(container.querySelector('.nav-hero__eyebrow')).toBeNull()
     expect(container.querySelector('.nav-hero__lede')).toBeNull()
     expect(container.querySelector('.nav-hero__actions')).toBeNull()
+    expect(container.querySelector('picture')).toBeNull()
+  })
+
+  it('renders every responsive source and its accessible fallback image', () => {
+    const { container } = render(
+      <Hero
+        title="A clear next step"
+        image={{
+          sources: [
+            { type: 'image/avif', srcSet: '/hero.avif 1200w' },
+            { type: 'image/jpeg', srcSet: '/hero.jpg 1200w' },
+          ],
+          src: '/hero.jpg',
+          alt: 'A city skyline at dusk.',
+          sizes: '100vw',
+        }}
+      />,
+    )
+    const picture = container.querySelector('picture')
+    expect(picture).not.toBeNull()
+    expect(picture?.querySelectorAll('source')).toHaveLength(2)
+    expect(picture?.querySelector('source[type="image/avif"]')).toHaveAttribute('srcset', '/hero.avif 1200w')
+    expect(picture?.querySelector('source[type="image/jpeg"]')).toHaveAttribute('srcset', '/hero.jpg 1200w')
+    expect(picture?.querySelector('img')).toHaveAttribute('src', '/hero.jpg')
+    expect(picture?.querySelector('img')).toHaveAttribute('alt', 'A city skyline at dusk.')
+    expect(picture?.querySelector('img')).toHaveAttribute('sizes', '100vw')
   })
 })
 

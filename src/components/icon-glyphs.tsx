@@ -20,6 +20,9 @@ import type { ReactNode } from 'react'
 /** Every glyph this library ships, for a gallery or a test to iterate. */
 export const ICON_NAMES = [
   'libra-scales',
+  'handshake',
+  'gavel',
+  'technology',
   'star-fill',
   'shield-fill-check',
   'pencil-square',
@@ -55,6 +58,21 @@ const LIBRA_SCALES: ReactNode = (
 
 export const GLYPHS: Record<IconName, ReactNode> = {
   'libra-scales': LIBRA_SCALES,
+  handshake: (
+    <path d="M1 5.5h3.25l1.5-1.25a3.5 3.5 0 0 1 4.5 0l1.5 1.25H15v5.25l-1.75 1.75a1.5 1.5 0 0 1-2.12 0L9.5 10.88l-1.63 1.62a1.5 1.5 0 0 1-2.12 0L4 10.75 2.25 9H1zM4 6.5H2v2.09l2 2 1.75 1.66a.5.5 0 0 0 .7 0l1.7-1.7-1.4-1.4a.5.5 0 0 1 .7-.7l2.4 2.4 1.63 1.62a.5.5 0 0 0 .7 0L14 9.84V6.5h-2.5l-1.1-.92a2.5 2.5 0 0 0-3.2 0z" />
+  ),
+  gavel: (
+    <>
+      <path d="m10.7 9.2 2.1 2.1-5.65 5.65a1.5 1.5 0 0 1-2.12-2.12zM12 2.5l1.5-1.5 5.5 5.5-1.5 1.5zM10.5 4l2.5-2.5 5.5 5.5-2.5 2.5z" />
+      <path d="m8.5 7.5 4 4M6.5 15.5 2 20h12l-2-2" />
+    </>
+  ),
+  technology: (
+    <>
+      <path d="m5.5 4-4 4 4 4M10.5 4l4 4-4 4M8.5 2l-1 12" />
+      <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" strokeWidth="1" />
+    </>
+  ),
   'star-fill': (
     <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
   ),

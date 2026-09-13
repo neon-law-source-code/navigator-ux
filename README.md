@@ -77,6 +77,10 @@ export function App() {
 That stylesheet carries the fonts, the tokens, and every component rule. Nothing else is required and
 nothing is fetched at runtime.
 
+`Hero` also accepts an optional responsive `image` with `sources`, fallback `src`, `alt`, and `sizes`;
+when omitted, it remains the text-only hero. `Card` accepts an optional local `icon` name or glyph
+element, and hides that decoration from assistive technology.
+
 `ThemeProvider` is **optional** and sets no styling — see *Color scheme* below. An app served behind
 the Navigator gateway also wraps in `SessionProvider`; a static bundle omits it.
 

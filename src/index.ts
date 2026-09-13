@@ -223,6 +223,8 @@ export {
   type Choice,
   type ChoiceGroupProps,
   type HeroProps,
+  type HeroImage,
+  type HeroImageSource,
   type StageProps,
   type StageWidth,
   type Step,

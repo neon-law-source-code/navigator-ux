@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 
 import {
   Accordion, ActionList, Badge, NavButton, ButtonRow, Callout, Card, Empty,
-  FormCard, Hero, NavLinkButton, PricingCard, PricingGrid,
+  FormCard, Hero, NavLinkButton, PricingCard, PricingGrid, type HeroImage,
   PublicShell, SelectField, SiteFooter, SiteHeader, TextField, TextareaField,
 } from '../src/index'
 import './gallery.css'
@@ -13,6 +13,16 @@ import {
   type SubscriptionPlan,
 } from './content/load'
 import { neonHref, pageHref, readGalleryLocation } from './routes'
+
+const HOME_HERO_IMAGE: HeroImage = {
+  sources: [
+    { type: 'image/avif', srcSet: `${import.meta.env.BASE_URL}images/neon-hero.avif 1600w` },
+    { type: 'image/jpeg', srcSet: `${import.meta.env.BASE_URL}images/neon-hero.jpg 1600w` },
+  ],
+  src: `${import.meta.env.BASE_URL}images/neon-hero.jpg`,
+  alt: 'An invented city skyline at twilight across a calm river.',
+  sizes: '100vw',
+}
 
 function emailHref(subject: string) {
   return `mailto:${en.email}?subject=${encodeURIComponent(subject)}`
@@ -164,12 +174,25 @@ function HomePage() {
   const doc = pages.home
   return (
     <>
-      <div className="neon-site__opening"><FindNeed /></div>
+      <div className="neon-site__opening"><FindNeed heroImage={HOME_HERO_IMAGE} /></div>
       <section className="neon-site__mission" aria-labelledby="mission-title">
         <h2 id="mission-title">{doc.matter.title}</h2>
         <div>
           <p className="neon-site__north-star">{doc.matter.lede.trim()}</p>
           <Blocks body={doc.body} />
+        </div>
+      </section>
+      <section className="neon-site__practices" aria-labelledby="practices-title">
+        <div className="neon-site__section-head">
+          <h2 id="practices-title">{en.practices_heading}</h2>
+        </div>
+        <div className="neon-site__practice-grid">
+          {en.practices.map((practice) => (
+            <Card key={practice.heading} icon={practice.icon} className="neon-site__practice-card">
+              <h3><a href={neonHref(practice.href.replace(/^\//, ''))}>{practice.heading}</a></h3>
+              <p>{practice.body}</p>
+            </Card>
+          ))}
         </div>
       </section>
       <Subscriptions />
