@@ -12,6 +12,7 @@ import {
   BarChart,
   ButtonGroup,
   Calendar,
+  CalendarPicker,
   Carousel,
   CarouselItem,
   ChartLegend,
@@ -105,6 +106,7 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
   const [month, setMonth] = useState('2026-08')
   const [day, setDay] = useState('2026-08-14')
   const [hearing, setHearing] = useState('2026-09-12')
+  const [deposition, setDeposition] = useState('2026-08-21')
   const [nodes, setNodes] = useState(GRAPH_NODES)
 
   return (
@@ -246,7 +248,8 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
           <>
             <code>DatePicker</code> is <code>&lt;input type=&quot;date&quot;&gt;</code> — localized,
             autofillable, and free. <code>Calendar</code> is for the case that input cannot serve:
-            when the month itself is the information.
+            when the month itself is the information. <code>CalendarPicker</code> is that grid in a
+            popover, for picking a date against what the other days already carry.
           </>
         }
       >
@@ -258,6 +261,20 @@ export function ShadcnWaveTwo({ Section }: { Section: ComponentType<SectionProps
             onValueChange={setHearing}
             min="2026-01-01"
             help="Nevada, Eighth Judicial District"
+          />
+          <CalendarPicker
+            label="Deposition date"
+            name="deposition"
+            value={deposition}
+            onValueChange={setDeposition}
+            defaultMonth="2026-08"
+            min="2026-08-03"
+            days={[
+              { date: '2026-08-14', note: 'Reply due' },
+              { date: '2026-08-21', note: 'Hearing' },
+              { date: '2026-08-29', disabled: true },
+            ]}
+            help="Arrow keys move day to day; the grid holds one tab stop."
           />
           <Calendar
             month={month}

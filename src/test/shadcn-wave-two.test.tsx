@@ -9,6 +9,7 @@ import {
   BarChart,
   ButtonGroup,
   Calendar,
+  CalendarPicker,
   Carousel,
   CarouselItem,
   ChartLegend,
@@ -36,11 +37,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  dateHeading,
   monthHeading,
+  monthOf,
   monthShape,
   parseMonth,
   seriesColor,
+  shiftDate,
   shiftMonth,
+  weekdayIndex,
 } from '../index'
 import { numericCountryId } from '../lib/iso-3166'
 
@@ -399,6 +404,33 @@ describe('month arithmetic', () => {
   it('reads a month as a heading', () => {
     expect(monthHeading('2026-08')).toBe('August 2026')
   })
+
+  it('shifts a date across month and year boundaries', () => {
+    expect(shiftDate('2026-08-31', 1)).toBe('2026-09-01')
+    expect(shiftDate('2026-01-01', -1)).toBe('2025-12-31')
+    // 2024 was a leap year; 2026 is not.
+    expect(shiftDate('2024-02-28', 1)).toBe('2024-02-29')
+    expect(shiftDate('2026-02-28', 1)).toBe('2026-03-01')
+  })
+
+  it('reads a date as a heading and a month', () => {
+    expect(dateHeading('2026-08-14')).toBe('August 14, 2026')
+    expect(monthOf('2026-08-14')).toBe('2026-08')
+  })
+
+  it('counts the week from Monday', () => {
+    // August 14, 2026 is a Friday, so it is the fifth column.
+    expect(weekdayIndex('2026-08-14')).toBe(4)
+    expect(weekdayIndex('2026-08-16')).toBe(6)
+    expect(weekdayIndex('2026-08-17')).toBe(0)
+  })
+
+  it('hands a malformed date back rather than laundering it into 1970', () => {
+    // `parseMonth` substitutes the epoch; a date deliberately does not.
+    expect(shiftDate('nonsense', 1)).toBe('nonsense')
+    expect(dateHeading('nonsense')).toBe('nonsense')
+    expect(weekdayIndex('nonsense')).toBe(0)
+  })
 })
 
 describe('Calendar', () => {
@@ -419,7 +451,7 @@ describe('Calendar', () => {
     expect(screen.getByText('August 2026')).toBeInTheDocument()
     expect(screen.getByText('Reply due')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: /^3$/ }))
+    await user.click(screen.getByRole('button', { name: 'August 3, 2026' }))
     expect(onSelect).toHaveBeenCalledWith('2026-08-03')
   })
 
@@ -436,6 +468,149 @@ describe('Calendar', () => {
     expect(onMonthChange).toHaveBeenCalledWith('2026-09')
     await user.click(screen.getByRole('button', { name: 'Previous month' }))
     expect(onMonthChange).toHaveBeenLastCalledWith('2026-07')
+  })
+})
+
+describe('Calendar keyboard grid', () => {
+  it('holds one tab stop and moves it with the arrows', async () => {
+    const user = userEvent.setup()
+    render(<Calendar month="2026-08" selected="2026-08-14" onSelect={vi.fn()} onMonthChange={vi.fn()} />)
+
+    // The selection holds the tab stop; every other day is out of the tab order.
+    const selected = screen.getByRole('button', { name: 'August 14, 2026' })
+    expect(selected).not.toHaveAttribute('tabindex', '-1')
+    expect(screen.getByRole('button', { name: 'August 15, 2026' })).toHaveAttribute('tabindex', '-1')
+
+    selected.focus()
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('button', { name: 'August 15, 2026' })).toHaveFocus()
+    await user.keyboard('{ArrowDown}')
+    expect(screen.getByRole('button', { name: 'August 22, 2026' })).toHaveFocus()
+  })
+
+  it('steps over a day that cannot be chosen rather than stopping on it', async () => {
+    const user = userEvent.setup()
+    render(
+      <Calendar
+        month="2026-08"
+        selected="2026-08-14"
+        onSelect={vi.fn()}
+        days={[{ date: '2026-08-15', disabled: true }, { date: '2026-08-16', disabled: true }]}
+      />,
+    )
+    screen.getByRole('button', { name: 'August 14, 2026' }).focus()
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('button', { name: 'August 17, 2026' })).toHaveFocus()
+  })
+
+  it('asks for the next month when an arrow leaves this one', async () => {
+    const user = userEvent.setup()
+    const onMonthChange = vi.fn()
+    render(<Calendar month="2026-08" selected="2026-08-31" onSelect={vi.fn()} onMonthChange={onMonthChange} />)
+    screen.getByRole('button', { name: 'August 31, 2026' }).focus()
+    await user.keyboard('{ArrowRight}')
+    expect(onMonthChange).toHaveBeenCalledWith('2026-09')
+  })
+
+  it('moves to the ends of the week, not the month, on Home and End', async () => {
+    const user = userEvent.setup()
+    const onMonthChange = vi.fn()
+    render(<Calendar month="2026-08" selected="2026-08-14" onSelect={vi.fn()} onMonthChange={onMonthChange} />)
+    // August 14, 2026 is a Friday, in the week of the 10th through the 16th.
+    screen.getByRole('button', { name: 'August 14, 2026' }).focus()
+    await user.keyboard('{Home}')
+    expect(screen.getByRole('button', { name: 'August 10, 2026' })).toHaveFocus()
+    await user.keyboard('{End}')
+    expect(screen.getByRole('button', { name: 'August 16, 2026' })).toHaveFocus()
+  })
+
+  it('follows a week that runs into the next month', async () => {
+    const user = userEvent.setup()
+    const onMonthChange = vi.fn()
+    render(<Calendar month="2026-08" selected="2026-08-31" onSelect={vi.fn()} onMonthChange={onMonthChange} />)
+    // August 31 is a Monday; its week ends on September 6.
+    screen.getByRole('button', { name: 'August 31, 2026' }).focus()
+    await user.keyboard('{End}')
+    expect(onMonthChange).toHaveBeenCalledWith('2026-09')
+  })
+
+  it('pages by month and clamps a day number the next month does not have', async () => {
+    const user = userEvent.setup()
+    const onMonthChange = vi.fn()
+    render(<Calendar month="2026-08" selected="2026-08-31" onSelect={vi.fn()} onMonthChange={onMonthChange} />)
+    screen.getByRole('button', { name: 'August 31, 2026' }).focus()
+    // September has 30 days, so the 31st has nowhere to land.
+    await user.keyboard('{PageDown}')
+    expect(onMonthChange).toHaveBeenCalledWith('2026-09')
+  })
+
+  it('renders bounds as unchoosable days', () => {
+    render(<Calendar month="2026-08" onSelect={vi.fn()} min="2026-08-10" max="2026-08-20" />)
+    expect(screen.getByRole('button', { name: 'August 9, 2026' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'August 10, 2026' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'August 21, 2026' })).toBeDisabled()
+  })
+})
+
+describe('CalendarPicker', () => {
+  it('opens a grid, posts the chosen date, and closes onto the trigger', async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    const { container } = render(
+      <CalendarPicker
+        label="Hearing date"
+        name="hearing"
+        value="2026-08-14"
+        defaultMonth="2026-08"
+        onValueChange={onValueChange}
+        days={[{ date: '2026-08-18', note: 'Reply due' }]}
+      />,
+    )
+
+    // The trigger reads the field name and then the value, which a <label for>
+    // does not give a button on its own.
+    const trigger = screen.getByRole('button', { name: 'Hearing date August 14, 2026' })
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    expect(container.querySelector('input[name="hearing"]')).toHaveValue('2026-08-14')
+
+    await user.click(trigger)
+    expect(screen.getByText('Reply due')).toBeInTheDocument()
+
+    // The note stays in the name rather than being replaced by the date.
+    await user.click(screen.getByRole('button', { name: 'August 18, 2026 Reply due' }))
+    expect(onValueChange).toHaveBeenCalledWith('2026-08-18')
+    expect(screen.queryByText('Reply due')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+  })
+
+  it('shows a placeholder and posts an empty value until a date is chosen', () => {
+    const { container } = render(
+      <CalendarPicker label="Hearing date" name="hearing" placeholder="Not yet set" />,
+    )
+    expect(screen.getByRole('button', { name: 'Hearing date Not yet set' })).toBeInTheDocument()
+    expect(container.querySelector('input[name="hearing"]')).toHaveValue('')
+  })
+
+  it('closes on Escape without choosing', async () => {
+    const user = userEvent.setup()
+    const onValueChange = vi.fn()
+    render(
+      <CalendarPicker label="Hearing date" name="hearing" defaultMonth="2026-08" onValueChange={onValueChange} />,
+    )
+    const trigger = screen.getByRole('button', { name: /Hearing date/ })
+    await user.click(trigger)
+    expect(screen.getByText('August 2026')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByText('August 2026')).not.toBeInTheDocument()
+    expect(onValueChange).not.toHaveBeenCalled()
+    expect(trigger).toHaveFocus()
+  })
+
+  it('reports an error to the trigger', () => {
+    render(<CalendarPicker label="Hearing date" name="hearing" error="Pick a weekday" />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Pick a weekday')
+    expect(screen.getByRole('button', { name: /Hearing date/ })).toHaveAttribute('aria-invalid', 'true')
   })
 })
 

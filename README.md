@@ -184,6 +184,7 @@ The shadcn-derived set:
 | Tabs | `LinkTabs`, `Tabs` |
 | Charts | `BarChart`, `LineChart`, `AreaChart`, `PieChart`, `WorldMap`, `ChartLegend` |
 | Controls | `Switch`, `ToggleGroup`, `Combobox` |
+| Fields | `DatePicker`, `CalendarPicker`, `Calendar`, `Slider`, `InputOTP` |
 | Overlays | `Dialog`, `Sheet`, `Popover`, `DropdownMenu`, `Tooltip` |
 | Notifications | `Toaster`, `useToasts` |
 | Focus | `Stage`, `Hero`, `ChoiceGroup`, `Stepper`, `StepList` |
@@ -200,6 +201,7 @@ minimalism for its own sake; each primitive brings something a JS reimplementati
 | `Combobox` | `<input list>` + `<datalist>` | Popover + Command + a virtualized list, ~300 lines and three packages, that stops working when JS fails |
 | `AspectRatio` | CSS `aspect-ratio` | The padding-top percentage trick in a Radix wrapper |
 | `LinkTabs` | anchors + `?tab=` | Client state only — Radix Tabs cannot be bookmarked, refreshed, or opened in a new tab |
+| `DatePicker` | `<input type="date">` | `react-day-picker` + `date-fns`, ~60 KB to collect a date the platform already collects — localized to the reader, autofillable, and bounded by `min`/`max` the browser enforces |
 
 `Popover`, `DropdownMenu`, and `Tooltip` are the exception: no platform primitive covers them, so they
 share one `useDismissible` hook rather than three hand-rolled copies. Esc closes, an outside click
