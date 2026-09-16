@@ -160,6 +160,11 @@ export interface FieldProps {
  * because a missing description reads as no description rather than as a bug.
  * The render prop hands the control its id and the joined describedby, so the
  * wiring is done once.
+ *
+ * The label carries an id as well as its `for`. A `<label>` names an `<input>`
+ * on its own, but a composite control built from a button takes its name from
+ * its own content instead — so `CalendarPicker` points `aria-labelledby` at
+ * `${id}-label` to get the field's name back in front of the value.
  */
 export function Field({ label, children, help, error, required }: FieldProps) {
   const id = useId()
@@ -169,7 +174,7 @@ export function Field({ label, children, help, error, required }: FieldProps) {
 
   return (
     <div className={error ? 'nav-field nav-field--invalid' : 'nav-field'}>
-      <label className="nav-label" htmlFor={id}>
+      <label className="nav-label" htmlFor={id} id={`${id}-label`}>
         {label}
         {required ? (
           <span className="nav-required" aria-hidden="true">

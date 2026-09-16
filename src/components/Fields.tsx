@@ -1,27 +1,33 @@
 import {
   useCallback,
+  useEffect,
   useId,
   useMemo,
   useRef,
+  useState,
   type ClipboardEvent,
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
 
-import { monthHeading, monthShape, shiftMonth } from '../lib/month'
+import { dateHeading, monthHeading, monthOf, monthShape, shiftDate, shiftMonth, weekdayIndex } from '../lib/month'
+import { useDismissible } from '../lib/use-dismissible'
 import { Field } from './Layouts'
 
 /*
- * Slider, InputOTP, Calendar, and DatePicker — the controls shadcn builds on
- * Radix and react-day-picker, built here on the platform instead.
+ * Slider, InputOTP, and the three date controls — what shadcn builds on Radix
+ * and react-day-picker, built here on the platform instead.
  *
- * The date pair is where that choice pays most. `react-day-picker` plus
+ * The dates are where that choice pays most. `react-day-picker` plus
  * `date-fns` is upwards of 60 KB to collect a date that `<input type="date">`
  * already collects, with a native picker that is localized, keyboard-driven,
  * and understood by every autofill implementation. The month grid below exists
  * for the case that input genuinely cannot serve — showing which days are
  * available, or marking deadlines across a matter — and not as a replacement
  * for it.
+ *
+ * `CalendarPicker` is a third and is the one to reach for last; what it trades
+ * away to be a popover instead of an input is on the component itself.
  */
 
 /* ----------------------------------------------------------------- Slider -- */
@@ -267,9 +273,25 @@ export interface CalendarProps {
   onSelect?: (date: string) => void
   onMonthChange?: (month: string) => void
   label?: string
+  /** Earliest selectable date, ISO `YYYY-MM-DD`. Earlier days render disabled. */
+  min?: string
+  /** Latest selectable date, ISO `YYYY-MM-DD`. Later days render disabled. */
+  max?: string
+  /** Focus the day that holds the tab stop once the grid mounts. */
+  autoFocus?: boolean
 }
 
 const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+
+/* How far each arrow moves, in days. A week is the vertical step because the
+   grid is seven wide — that is what makes Down land under the cursor rather
+   than one day along. */
+const ARROW_STEP: Record<string, number | undefined> = {
+  ArrowLeft: -1,
+  ArrowRight: 1,
+  ArrowUp: -7,
+  ArrowDown: 7,
+}
 
 /* A module-level constant so the default prop keeps referential equality —
    an inline `[]` is a new array every render and re-runs every memo below. */
@@ -294,10 +316,106 @@ export function Calendar({
   onSelect,
   onMonthChange,
   label = 'Calendar',
+  min,
+  max,
+  autoFocus = false,
 }: CalendarProps) {
   const { days: dayCount, offset } = useMemo(() => monthShape(month), [month])
   const byDate = useMemo(() => new Map(days.map((day) => [day.date, day])), [days])
   const heading = useMemo(() => monthHeading(month), [month])
+  const gridRef = useRef<HTMLDivElement>(null)
+
+  /* The roving tab stop. One day in the grid is tabbable and the arrows move
+     between the rest — the alternative is thirty-one tab stops between the
+     month heading and whatever follows the calendar. */
+  const [focused, setFocused] = useState<string | null>(null)
+  /* Focus only follows the roving stop when a key moved it. Without this the
+     grid would steal focus on any re-render, including the parent's. */
+  const wantsFocus = useRef(autoFocus)
+
+  const isDisabled = useCallback(
+    (date: string) =>
+      Boolean(byDate.get(date)?.disabled) ||
+      (min !== undefined && date < min) ||
+      (max !== undefined && date > max),
+    [byDate, min, max],
+  )
+
+  const firstDate = `${month}-01`
+  /* The stop is whichever of these is in view: where the arrows left it, the
+     selection, or the first of the month. */
+  const tabStop =
+    focused && monthOf(focused) === month
+      ? focused
+      : selected && monthOf(selected) === month
+        ? selected
+        : firstDate
+
+  useEffect(() => {
+    if (!wantsFocus.current || !onSelect) return
+    const day = gridRef.current?.querySelector<HTMLButtonElement>(`[data-date="${tabStop}"]`)
+    if (!day || day.disabled) return
+    wantsFocus.current = false
+    day.focus()
+  }, [tabStop, onSelect])
+
+  /* Arrow keys land wherever the arithmetic puts them, including on a day that
+     is disabled or in a neighboring month. Keep stepping the same direction
+     rather than stopping on a day that cannot take focus — a run of booked
+     days should be passed over, not be a wall. The bound is two months, which
+     is further than any real run of them and terminates on an empty calendar. */
+  const step = useCallback(
+    (from: string, by: number) => {
+      let next = shiftDate(from, by)
+      for (let attempt = 0; attempt < 62 && isDisabled(next); attempt += 1) {
+        next = shiftDate(next, by > 0 ? 1 : -1)
+      }
+      return isDisabled(next) ? null : next
+    },
+    [isDisabled],
+  )
+
+  const moveTo = useCallback(
+    (date: string | null) => {
+      if (!date) return
+      wantsFocus.current = true
+      setFocused(date)
+      if (monthOf(date) !== month) onMonthChange?.(monthOf(date))
+    },
+    [month, onMonthChange],
+  )
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onSelect) return
+    const by = ARROW_STEP[event.key]
+    if (by !== undefined) {
+      event.preventDefault()
+      moveTo(step(tabStop, by))
+      return
+    }
+    if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault()
+      /* Home and End work on the week, not the month — the row under the
+         cursor is what they read as "the line", the same way they do in text.
+         A week that runs into the next month goes there, which is why this
+         lands through `moveTo` rather than clamping to the grid. */
+      const index = weekdayIndex(tabStop)
+      const edge = shiftDate(tabStop, event.key === 'Home' ? -index : 6 - index)
+      moveTo(isDisabled(edge) ? step(edge, event.key === 'Home' ? 1 : -1) : edge)
+      return
+    }
+    if (event.key === 'PageUp' || event.key === 'PageDown') {
+      event.preventDefault()
+      /* A month step keeps the day number where it can — the 31st of a month
+         whose neighbor is shorter clamps to that month's last day, which is
+         what `shiftMonth` on the date's own month gives once re-joined. */
+      const target = shiftMonth(month, event.key === 'PageUp' ? -1 : 1)
+      const { days: targetDays } = monthShape(target)
+      const dayNumber = Math.min(Number(tabStop.slice(-2)), targetDays)
+      const candidate = `${target}-${String(dayNumber).padStart(2, '0')}`
+      moveTo(isDisabled(candidate) ? step(candidate, event.key === 'PageUp' ? -1 : 1) : candidate)
+    }
+  }
 
   return (
     <div className="nav-calendar" role="group" aria-label={label}>
@@ -324,7 +442,7 @@ export function Calendar({
           <span aria-hidden="true">&#8250;</span>
         </button>
       </div>
-      <div className="nav-calendar__grid">
+      <div className="nav-calendar__grid" ref={gridRef} onKeyDown={onKeyDown}>
         {WEEKDAYS.map((weekday) => (
           <span className="nav-calendar__weekday" key={weekday}>
             {weekday}
@@ -342,17 +460,174 @@ export function Calendar({
             <button
               key={date}
               type="button"
+              data-date={date}
               className={isSelected ? 'nav-calendar__day nav-calendar__day--selected' : 'nav-calendar__day'}
-              disabled={entry?.disabled || !onSelect}
+              disabled={isDisabled(date) || !onSelect}
+              tabIndex={onSelect && date !== tabStop ? -1 : undefined}
               aria-pressed={onSelect ? isSelected : undefined}
               onClick={() => onSelect?.(date)}
             >
-              <span className="nav-calendar__number">{dayNumber}</span>
-              {entry?.note ? <span className="nav-calendar__note">{entry.note}</span> : null}
+              {/* The visible glyph is a bare number, which is not a date to
+                  anyone listening rather than looking: the weekday headers and
+                  the month above it are what supply the rest, and neither is
+                  announced with the cell. The full date is spoken instead, and
+                  a note after it — so it stays in the name rather than being
+                  swallowed by an `aria-label`. */}
+              <span className="nav-visually-hidden">{dateHeading(date)}</span>
+              <span className="nav-calendar__number" aria-hidden="true">
+                {dayNumber}
+              </span>
+              {entry?.note ? (
+                <>
+                  {/* A real text node, so the note does not run into the date
+                      in the accessible name — the number between them is hidden
+                      and the element boundary alone contributes nothing. */}
+                  {' '}
+                  <span className="nav-calendar__note">{entry.note}</span>
+                </>
+              ) : null}
             </button>
           )
         })}
       </div>
     </div>
+  )
+}
+
+/* --------------------------------------------------------- CalendarPicker -- */
+
+export interface CalendarPickerProps {
+  label: ReactNode
+  /** The name the value posts under. */
+  name: string
+  /** ISO `YYYY-MM-DD`. */
+  value?: string
+  onValueChange?: (value: string) => void
+  /** As `Calendar` takes them. */
+  days?: CalendarDay[]
+  min?: string
+  max?: string
+  /** Shown on the trigger before anything is chosen. */
+  placeholder?: string
+  /** The month opened when there is no value. Defaults to the current month. */
+  defaultMonth?: string
+  help?: ReactNode
+  error?: ReactNode
+  required?: boolean
+}
+
+/**
+ * A date chosen from a month grid in a popover.
+ *
+ * This is the shape shadcn calls a date picker, and it is the third choice of
+ * three rather than the first. `DatePicker` is the default and is better at
+ * almost everything: the native picker is localized to the reader rather than
+ * to the app, it autofills, and its `min`/`max` are enforced by the platform on
+ * a form posted with JavaScript off. The value here rides in a hidden input,
+ * and a hidden input is not constraint-validated — `required` on one is a
+ * promise the browser will not keep, so a form using this has to check the
+ * value itself.
+ *
+ * What it buys in exchange is the grid: a day can carry a `note`, so a reader
+ * picking a hearing date sees which days are already spoken for while they
+ * pick. That is the whole reason to take the trade, and if the days in question
+ * are interchangeable, take `DatePicker` instead.
+ *
+ * The popover dismisses through `useDismissible`, like the other non-modal
+ * surfaces. Choosing a day closes it as well — the grid is the only thing in
+ * there, so staying open would leave a panel over the page with nothing left to
+ * do in it.
+ */
+export function CalendarPicker({
+  label,
+  name,
+  value,
+  onValueChange,
+  days,
+  min,
+  max,
+  placeholder = 'Choose a date',
+  defaultMonth,
+  help,
+  error,
+  required,
+}: CalendarPickerProps) {
+  const [open, setOpen] = useState(false)
+  /* The month is the picker's own state rather than the caller's: which month
+     is in view is a property of the open panel and means nothing once it is
+     closed. It opens on the value's month, so reopening returns to where the
+     reader left off rather than to today. */
+  const [month, setMonth] = useState(
+    () => defaultMonth ?? (value ? monthOf(value) : monthOf(new Date().toISOString().slice(0, 10))),
+  )
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const panelId = useId()
+
+  const close = useCallback(() => setOpen(false), [])
+  useDismissible({ open, onClose: close, triggerRef, contentRef })
+
+  const toggle = () => {
+    setOpen((current) => {
+      if (!current && value) setMonth(monthOf(value))
+      return !current
+    })
+  }
+
+  const select = (date: string) => {
+    onValueChange?.(date)
+    setOpen(false)
+    triggerRef.current?.focus()
+  }
+
+  return (
+    <Field label={label} help={help} error={error} required={required}>
+      {(id, describedBy) => (
+        <div className="nav-calendar-picker">
+          {/* The name is the field's label followed by the value: a button
+              takes its name from its own content, so a `<label for>` alone
+              would leave the trigger announced as a bare date with no clue
+              which field it belongs to. The value span is referenced by its own
+              id rather than the button's — pointing `aria-labelledby` back at
+              the element carrying it is a self-reference, and what that
+              contributes is not agreed on between implementations. */}
+          <button
+            ref={triggerRef}
+            type="button"
+            id={id}
+            className="nav-calendar-picker__trigger"
+            aria-labelledby={`${id}-label ${id}-value`}
+            aria-describedby={describedBy}
+            aria-invalid={Boolean(error) || undefined}
+            aria-expanded={open}
+            aria-controls={open ? panelId : undefined}
+            onClick={toggle}
+          >
+            <span id={`${id}-value`} className={value ? undefined : 'nav-calendar-picker__placeholder'}>
+              {value ? dateHeading(value) : placeholder}
+            </span>
+          </button>
+          {/* The posted value. Hidden rather than a disabled date input so a
+              form reads one field, and so the trigger stays the only thing in
+              the tab order. */}
+          <input type="hidden" name={name} value={value ?? ''} />
+          {open ? (
+            <div className="nav-calendar-picker__panel" ref={contentRef} id={panelId}>
+              <Calendar
+                month={month}
+                days={days}
+                selected={value}
+                onSelect={select}
+                onMonthChange={setMonth}
+                min={min}
+                max={max}
+                label="Choose a date"
+                autoFocus
+              />
+            </div>
+          ) : null}
+        </div>
+      )}
+    </Field>
   )
 }

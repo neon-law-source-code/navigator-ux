@@ -233,10 +233,12 @@ export {
 } from './components/Focus'
 export {
   Calendar,
+  CalendarPicker,
   DatePicker,
   InputOTP,
   Slider,
   type CalendarDay,
+  type CalendarPickerProps,
   type CalendarProps,
   type DatePickerProps,
   type InputOTPProps,
@@ -274,7 +276,7 @@ export { PdfViewer, type PdfViewerProps } from './components/PdfViewer'
 
 export { useDismissible, type DismissibleOptions } from './lib/use-dismissible'
 export { SERIES_COUNT, seriesColor } from './lib/chart-series'
-export { monthHeading, monthShape, parseMonth, shiftMonth } from './lib/month'
+export { dateHeading, monthHeading, monthOf, monthShape, parseMonth, shiftDate, shiftMonth, weekdayIndex } from './lib/month'
 
 /* ------------------------------ Matter surfaces, on the new token layer -- */
 
