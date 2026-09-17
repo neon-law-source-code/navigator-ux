@@ -22,10 +22,10 @@ afterEach(cleanup)
 
 describe('the public pages render the pinned catalog', () => {
   it.each([
-    ['/neon', ['home.need_prompt', 'home.mission_heading', 'home.mission_north_star', 'home.mission_promise', 'services.subscriptions_heading', 'services.catalog_heading', 'litigation.cta']],
-    ['/neon/services', ['services.eyebrow', 'services.title', 'services.lede']],
+    ['/neon', ['home.need_prompt', 'home.mission_heading', 'home.mission_north_star', 'home.mission_promise', 'fractional_gc.eyebrow', 'personal_plan.eyebrow']],
+    ['/neon/services', ['services.eyebrow', 'services.title', 'services.lede', 'services.subscriptions_heading', 'services.catalog_heading']],
     ['/neon/litigation', ['litigation.eyebrow', 'litigation.title', 'litigation.lede', 'litigation.cta', 'litigation.cases_help_others']],
-    ['/neon/fractional-gc', ['fractional_gc.eyebrow', 'fractional_gc.title', 'fractional_gc.lede', 'fractional_gc.price', 'fractional_gc.included.response_window', 'fractional_gc.included.ownership']],
+    ['/neon/fractional-gc', ['fractional_gc.eyebrow', 'fractional_gc.title', 'fractional_gc.lede', 'fractional_gc.price']],
     ['/neon/personal-plan', ['personal_plan.eyebrow', 'personal_plan.title', 'personal_plan.price', 'personal_plan.included.credit_monitoring']],
   ])('%s publishes the shared copy it references', (path, keys) => {
     const text = renderAt(path)

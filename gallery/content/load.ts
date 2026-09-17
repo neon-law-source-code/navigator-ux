@@ -35,6 +35,12 @@ export interface PageDoc {
   body: string
 }
 
+export type SkuPackage = {
+  members: string[]
+  plan?: string
+  planPrice?: string
+}
+
 export type Sku = {
   id: string
   item: string
@@ -47,6 +53,7 @@ export type Sku = {
   includes: string[]
   stateFee: boolean
   related?: string[]
+  package?: SkuPackage
 } & ({ flatFee: 'form' | 'trademark'; amount?: never } | { flatFee?: never; amount: string })
 
 export interface SubscriptionPlan {
@@ -113,6 +120,9 @@ export interface EnCopy {
     clear: string
     related_header: string
     related_note: string
+    package_badge: string
+    package_members_label: string
+    plan_price_label: string
   }
   process: { title: string; steps: { id: string; title: string; detail: string }[] }
   faq: { id: string; trigger: string; body: string }[]

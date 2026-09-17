@@ -195,12 +195,6 @@ function HomePage() {
           ))}
         </div>
       </section>
-      <Subscriptions />
-      <LitigationOffer />
-      <section className="neon-site__browse">
-        <div><h2>{en.catalog.title}</h2><p>{en.catalog.note}</p></div>
-        <NavLinkButton size="lg" href={neonHref('services')}>{pages.services.matter.eyebrow}</NavLinkButton>
-      </section>
     </>
   )
 }
@@ -218,14 +212,24 @@ function matchesService(sku: Sku, needle: string) {
 }
 
 function ServiceFee({ sku }: { sku: Sku }) {
-  const label = sku.membersOnly ? en.catalog.member_fee_label
-    : sku.flatFee === 'form' ? en.catalog.form_fee_label : en.catalog.fee_label
   return (
-    <p className="neon-site__service-fee">
-      <span className="neon-site__eyebrow">{label}</span>
-      <strong>{sku.flatFee ? en.catalog.flat_fee : sku.amount}</strong> <span>{sku.period}</span>
-      {sku.flatFee === 'form' ? <span className="neon-site__fee-note">{en.catalog.form_fee_note}</span> : null}
-    </p>
+    <div className="neon-site__service-fee">
+      <p>
+        <span className="neon-site__eyebrow">{en.catalog.fee_label}</span>
+        <strong>{sku.flatFee ? en.catalog.flat_fee : sku.amount}</strong> <span>{sku.period}</span>
+        {en.catalog.form_fee_note ? <span className="neon-site__fee-note">{en.catalog.form_fee_note}</span> : null}
+      </p>
+      {sku.package ? (
+        <div className="neon-site__package">
+          {sku.package.planPrice ? (
+            <p>{en.catalog.plan_price_label} {sku.package.plan} <strong>{sku.package.planPrice}</strong> plan price</p>
+          ) : null}
+          <Badge>{en.catalog.package_badge}</Badge>
+          <p>{en.catalog.package_members_label}</p>
+          <ul>{sku.package.members.map((member) => <li key={member}>{member}</li>)}</ul>
+        </div>
+      ) : null}
+    </div>
   )
 }
 
@@ -237,11 +241,10 @@ function ServiceList({ items }: { items: Sku[] }) {
           <div>
             <h3><a href={neonHref('checkout', sku.id)}>{sku.name}</a></h3>
             <p>{sku.blurb}</p>
-            {sku.membersOnly ? <Badge>{en.catalog.members}</Badge> : null}
           </div>
           <ServiceFee sku={sku} />
           <NavLinkButton size="lg" href={neonHref('checkout', sku.id)}>
-            {sku.membersOnly ? en.catalog.choose_plan : en.catalog.start}
+            {en.catalog.start}
           </NavLinkButton>
         </li>
       ))}
@@ -268,8 +271,12 @@ function ServicesPage({ initialQuery }: { initialQuery: string }) {
   return (
     <>
       <PageHero doc={pages.services} />
-      {!needle ? <><Subscriptions showHeading={false} /><LitigationOffer /></> : null}
-      <section className="neon-site__section" aria-label={en.catalog.title}>
+      {!needle ? <><Subscriptions /><LitigationOffer /></> : null}
+      <section className="neon-site__section" aria-labelledby="catalog-title">
+        <div className="neon-site__section-head">
+          <h2 id="catalog-title">{en.catalog.title}</h2>
+          <p>{en.catalog.note}</p>
+        </div>
         <FindNeed headingLevel={2} query={query} onQueryChange={changeQuery} />
         <nav className="neon-site__categories" aria-label={en.catalog.category_label}>
           {en.categories.map((entry) => (
@@ -308,10 +315,12 @@ function ServicesPage({ initialQuery }: { initialQuery: string }) {
 
 function PlanPage({ plan, skuId }: { plan: SubscriptionPlan; skuId: string | null }) {
   const service = en.skus.find((sku) => sku.id === skuId)
-  const subject = `${plan.name} membership${service ? ` — ${service.name}` : ''}`
+  const subject = `${plan.name}${service ? ` — ${service.name}` : ''}`
+  const doc = pages[plan.id]
   return (
     <>
-      <PageHero doc={pages[plan.id]} />
+      <PageHero doc={doc} />
+      <Blocks body={doc.body} />
       {service ? <p>{en.subscriptions.interest}: <strong>{service.name}</strong></p> : null}
       <div className="neon-site__plan-detail">
         <PricingCard
@@ -319,7 +328,7 @@ function PlanPage({ plan, skuId }: { plan: SubscriptionPlan; skuId: string | nul
           summary={plan.summary} features={[...plan.highlights, ...plan.features]}
           cta={{ label: en.subscriptions.join, href: emailHref(subject) }}
         />
-        <div className="neon-site__stack"><PlanTerms />{service?.membersOnly ? <ServiceFee sku={service} /> : null}</div>
+        <div className="neon-site__stack">{service ? <ServiceFee sku={service} /> : null}</div>
       </div>
     </>
   )
@@ -340,8 +349,6 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
           <ServiceFee sku={sku} />
           <ul>{sku.includes.map((line) => <li key={line}>{line}</li>)}</ul>
           {sku.stateFee ? <p><Badge>{copy.state_fee_badge}</Badge></p> : null}
-          <PlanTerms />
-          {!sku.membersOnly ? <NavLinkButton size="lg" href={`${neonHref('services')}#plans`}>{en.subscriptions.cta}</NavLinkButton> : null}
           {related.length ? (
             <div className="neon-site__related">
               <h2>{en.catalog.related_header}</h2>
@@ -351,25 +358,14 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
           ) : null}
         </div>
       </Card>
-      {sku.membersOnly ? (
-        <section className="neon-site__section" aria-labelledby="membership-title">
-          <div className="neon-site__section-head">
-            <h2 id="membership-title">{en.subscriptions.member_title}</h2>
-            <p>{en.subscriptions.member_intro}</p>
-          </div>
-          <PlanCards service={sku} />
-          <a href={emailHref(`Subscriber request — ${sku.name}`)}>{en.subscriptions.member_cta}</a>
-        </section>
-      ) : (
-        <FormCard title={copy.form_title} intro={copy.form_intro} onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
-          <input type="hidden" name="sku" value={sku.id} />
-          <TextField label={copy.name} name="name" required />
-          <TextField label={copy.email} name="email" type="email" required />
-          <SelectField label={copy.jurisdiction} name="jurisdiction" placeholder={copy.jurisdiction_placeholder} options={copy.jurisdictions} required />
-          <TextareaField label={copy.notes} name="notes" rows={3} help={copy.notes_help} />
-          <NavButton size="lg" variant="primary" type="submit">{copy.continue}</NavButton>
-        </FormCard>
-      )}
+      <FormCard title={copy.form_title} intro={copy.form_intro} onSubmit={(event) => { event.preventDefault(); setSent(true) }}>
+        <input type="hidden" name="sku" value={sku.id} />
+        <TextField label={copy.name} name="name" required />
+        <TextField label={copy.email} name="email" type="email" required />
+        <SelectField label={copy.jurisdiction} name="jurisdiction" placeholder={copy.jurisdiction_placeholder} options={copy.jurisdictions} required />
+        <TextareaField label={copy.notes} name="notes" rows={3} help={copy.notes_help} />
+        <NavButton size="lg" variant="primary" type="submit">{copy.continue}</NavButton>
+      </FormCard>
       <NavLinkButton size="lg" href={neonHref('services')}>{copy.back}</NavLinkButton>
     </>
   )
