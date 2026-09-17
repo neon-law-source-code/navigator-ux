@@ -83,11 +83,14 @@ describe('Neon Law public-site journeys', () => {
 
   it('shows the same form price on the service list and detail page', () => {
     cy.visit('/neon/services')
-    cy.get('.neon-site__services > li').filter(':contains("Start a company")').within(() => {
-      cy.get('.neon-site__service-fee').should('contain', '$100')
-        .and('contain', 'per form')
-      cy.contains('a', 'Get started').click()
-    })
+    // Packages list "Start a company" as a member, so match the service heading.
+    cy.contains('.neon-site__services > li > div > h3', 'Start a company')
+      .closest('li')
+      .within(() => {
+        cy.get('.neon-site__service-fee').should('contain', '$100')
+          .and('contain', 'per form')
+        cy.contains('a', 'Get started').click()
+      })
     cy.get('.neon-site__service-fee').should('contain', '$100')
       .and('contain', 'A la carte price')
     cy.contains('Government fees cost extra')
@@ -96,8 +99,9 @@ describe('Neon Law public-site journeys', () => {
 
   it('explains form fees and preserves individual service inquiries without a business upsell', () => {
     cy.task<EnCopy>('neonEn').then((en) => {
-      cy.visit('/neon/checkout?sku=will')
+      cy.visit('/neon/services')
       cy.contains(en.subscriptions.forms)
+      cy.visit('/neon/checkout?sku=will')
       cy.contains('Add Fractional GC').should('not.exist')
       cy.get('input[name=plan]').should('not.exist')
       cy.get('input[name=name]').type(FILER.name)
