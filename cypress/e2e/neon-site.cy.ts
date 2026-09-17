@@ -89,10 +89,10 @@ describe('Neon Law public-site journeys', () => {
       .within(() => {
         cy.get('.neon-site__service-fee').should('contain', '$100')
           .and('contain', 'per form')
-        cy.contains('a', 'Get started').click()
+        cy.contains('a', 'Start').click()
       })
     cy.get('.neon-site__service-fee').should('contain', '$100')
-      .and('contain', 'A la carte price')
+      .and('contain', 'Price without a plan')
     cy.contains('Government fees cost extra')
     cy.contains('h2', 'Legal notice').should('not.exist')
   })
