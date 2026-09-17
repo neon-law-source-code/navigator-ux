@@ -21,15 +21,15 @@ nav:
   - id: services
     label: "{shared:services.eyebrow}"
   - id: fractional-gc
-    label: For your business
+    label: "{shared:fractional_gc.eyebrow}"
   - id: personal-plan
-    label: For you
+    label: "{shared:personal_plan.eyebrow}"
   - id: litigation
     label: Disputes
 find:
   prompt: "{shared:home.need_prompt}"
-  lede: Tell us what you need help with. It's okay if you're not sure where to start.
-  placeholder: A contract, my business, a will, a dispute…
+  lede: Tell us whether you need help with a contract, your business, your family, or a dispute. If you are not sure where to start, contact us and we will help you find the next step.
+  placeholder: A contract, my business, a will, a dispute
   submit: Find help
   examples:
     - label: My business
@@ -47,8 +47,8 @@ practices:
   - icon: handshake
     heading: "{shared:fractional_gc.eyebrow}"
     body: >-
-      Ongoing legal help for your business: contracts, hiring, company records,
-      and paperwork.
+      Contract-library access at {shared:fractional_gc.price} a day, then a la
+      carte Notations for the documents you need.
     href: /fractional-gc
   - icon: technology
     heading: "{shared:personal_plan.eyebrow}"
@@ -67,11 +67,18 @@ practices:
     href: /litigation
 subscriptions:
   title: "{shared:services.subscriptions_heading}"
-  intro: Choose a plan for your business or for yourself.
-  forms: Forms are free with a subscription, or $50 each without one. Work outside your plan costs extra. Government fees are separate.
-  reviews: You need a plan for custom contract reviews and trademarks. These services cost extra.
+  intro: Choose a plan for ongoing help with your business or personal legal needs. Individual services are also available when you need help with one thing.
+  forms: >-
+    Business-plan access is {shared:fractional_gc.price} a day, and Personal-plan
+    access is {shared:personal_plan.price} a day. Each plan has its own minimum
+    retainer. Notation packages show an a la carte price and a lower plan price.
+    Every plan price shown is at least half off the a la carte price. Government
+    fees are separate.
+  reviews: >-
+    Each Notation has an agreed scope and price before work begins. Plan access
+    and its daily charge are separate from the package price.
   cta: See the plan
-  join: Ask about joining
+  join: Ask about access
   member_cta: Already have a plan? Email us to get started
   member_title: Choose a plan to get started.
   member_intro: This service requires a plan. The service fee is separate from your plan's price.
@@ -84,8 +91,11 @@ plans:
       src: https://www.neonlaw.com/assets/img/ten-dollar-bill/ten-dollar-bill.jpg
       alt: Hamilton on a ten-dollar bill
     amount: "{shared:fractional_gc.price}"
-    period: per year · about $10 a day
-    summary: Help with the legal side of running your business.
+    period: a day
+    summary: >-
+      {shared:fractional_gc.price}, or a Ulysses S. Grant, a day for
+      contract-library access and a counsel relationship tied to work we agree
+      to handle.
     keywords:
       - business
       - company
@@ -104,13 +114,14 @@ plans:
       - gc
       - general counsel
     highlights:
-      - "{shared:fractional_gc.included.records}"
-      - "{shared:fractional_gc.included.hiring_forms}"
-      - "{shared:fractional_gc.included.response_window}"
+      - Contract-library access
+      - Name Neon Law as your counsel in work we agree to handle
+      - $10,000 minimum retainer to start
     features:
-      - "{shared:fractional_gc.included.ownership}"
-      - "{shared:fractional_gc.included.privacy_forms}"
-      - "{shared:fractional_gc.included.tax_and_state}"
+      - We ask you to add funds 60 days before daily credits run out
+      - Send an unchanged template for signature at $5
+      - Notations for prepared or revised documents start at $100
+      - One agreed scope and price for each Notation
   - id: personal-plan
     audience: For you
     name: "{shared:personal_plan.eyebrow}"
@@ -118,8 +129,10 @@ plans:
       src: https://www.neonlaw.com/assets/img/one-dollar-bill/one-dollar-bill.jpg
       alt: Washington on a one-dollar bill
     amount: "{shared:personal_plan.price}"
-    period: per year · about $1 a day
-    summary: Help with your taxes and personal information.
+    period: a day
+    summary: >-
+      {shared:personal_plan.price}, or an Abraham Lincoln, a day for help with
+      taxes and personal information.
     keywords:
       - personal
       - family
@@ -133,15 +146,18 @@ plans:
       - contract
       - employment
     highlights:
-      - Preparing and filing your taxes
+      - Help with federal and state tax filings
       - "{shared:personal_plan.included.data_removal}"
       - "{shared:personal_plan.included.credit_monitoring}"
-    features: []
+    features:
+      - $2,000 minimum retainer to start
+      - Access to Notations starting at $50
+      - We ask you to add funds 60 days before daily credits run out
 litigation:
-  title: Tell us what's happened.
+  title: Tell us what happened.
   body: If you want to sue someone or someone is suing you, start with a free consultation. Tell us what happened and what you hope to change.
   cta: "{shared:litigation.cta}"
-  note: We'll listen and explain whether we can help. If we can, we'll agree on the work and cost with you before we start.
+  note: We will listen and explain whether we can help. If we can, we will agree on the work and cost with you before we start.
   keywords:
     - litigation
     - dispute
@@ -172,21 +188,27 @@ categories:
     label: Disputes & housing
 catalog:
   title: "{shared:services.catalog_heading}"
-  note: Choose the help you need. We'll explain what it includes and what it costs.
+  note: >-
+    Choose a package a la carte, or see the lower price available with the named
+    plan. Every plan price shown is at least half off the a la carte price. We
+    will explain the scope and any government fees before work starts.
   category_label: Service category
-  fee_label: Legal fee
-  form_fee_label: Form fee
-  flat_fee: $50
-  form_fee_note: Free with a plan. Legal work costs extra.
-  member_fee_label: Service fee with a plan
+  fee_label: A la carte price
+  form_fee_label: A la carte price
+  flat_fee: $100
+  form_fee_note: ""
+  member_fee_label: A la carte price
   members: Plan required
   start: Get started
   choose_plan: Choose a plan
-  empty: We couldn't find a match.
-  empty_help: Tell us what you need. We'll let you know whether we can help.
+  empty: We could not find a match.
+  empty_help: Tell us what you need and we will let you know whether we can help.
   clear: Show all services
   related_header: Other ways we can help
-  related_note: We'll help you choose what you need before you pay.
+  related_note: We will help you choose what you need before you pay.
+  package_badge: Notation package
+  package_members_label: Package includes
+  plan_price_label: With
 skus:
   - id: llc-file
     item: "1101"
@@ -211,12 +233,19 @@ skus:
       - File
   - id: llc-launch
     item: "1102"
-    name: Company setup package
+    name: Business formation paperwork
     blurb: Set up your limited liability company and get the ownership agreement and tax ID a bank will usually ask for.
-    flatFee: form
-    period: per form
+    amount: $100
+    period: per package
     category: company
     stateFee: true
+    package:
+      plan: "{shared:fractional_gc.eyebrow}"
+      planPrice: "$25"
+      members:
+        - Start a company
+        - An agreement between the owners
+        - A federal tax ID for your business
     includes:
       - Set up your limited liability company
       - An agreement between the owners
@@ -285,12 +314,11 @@ skus:
     keywords:
       - service of process
   - id: trademark
-    membersOnly: true
     item: "1301"
     name: Apply for a trademark
     blurb: We check for similar names or logos and file your application for one group of goods or services.
     flatFee: trademark
-    period: + government filing fee
+    period: + government filing fees
     category: identity
     stateFee: true
     includes:
@@ -322,8 +350,8 @@ skus:
     item: "1401"
     name: Make a will
     blurb: Tell us who you want to leave things to. A lawyer prepares and reviews your will.
-    flatFee: form
-    period: per form
+    amount: $3,000
+    period: starting fee
     category: estate
     stateFee: false
     includes:
@@ -338,12 +366,19 @@ skus:
       - estate
   - id: estate-package
     item: "1402"
-    name: Plan for your family
+    name: Estate plan paperwork
     blurb: Make a will and choose who can handle your money and healthcare decisions if you can't.
-    flatFee: form
-    period: per form
+    amount: $5,000
+    period: per package
     category: estate
     stateFee: false
+    package:
+      plan: "{shared:personal_plan.eyebrow}"
+      planPrice: "$2,000"
+      members:
+        - Make a will
+        - A document naming someone to handle your finances
+        - Your wishes for medical care and who can make decisions for you
     includes:
       - A will
       - A document naming someone to handle your finances
@@ -358,8 +393,8 @@ skus:
     item: "1403"
     name: Set up a living trust
     blurb: Create a trust you can change during your lifetime, plus a will and the paperwork to put one Nevada property into the trust.
-    flatFee: form
-    period: per form
+    amount: $3,000
+    period: starting fee
     category: estate
     stateFee: false
     includes:
@@ -374,10 +409,9 @@ skus:
       - deed
       - estate
   - id: nda
-    membersOnly: true
     item: "1501"
     name: Review a confidentiality agreement
-    blurb: We'll read your contract, suggest changes, and explain them. Covers one agreement where both sides promise to keep information private.
+    blurb: We will read your contract, suggest changes, and explain them. Covers one agreement where both sides promise to keep information private.
     amount: $100
     period: per contract
     category: contracts
@@ -395,10 +429,9 @@ skus:
       - confidentiality
       - redline
   - id: consulting
-    membersOnly: true
     item: "1502"
     name: Review a freelance or consulting contract
-    blurb: We'll read your contract and suggest changes to protect your interests.
+    blurb: We will read your contract and suggest changes to protect your interests.
     amount: $250
     period: per contract
     category: contracts
@@ -415,10 +448,9 @@ skus:
       - independent-contractor
       - redline
   - id: employment
-    membersOnly: true
     item: "1503"
     name: Review a job offer or employment contract
-    blurb: We'll check your offer, including any company shares you're offered and limits on where you can work next.
+    blurb: We will check your offer, including any company shares you are offered and limits on where you can work next.
     amount: $350
     period: per contract
     category: contracts
@@ -436,7 +468,6 @@ skus:
       - stock options
       - non-compete
   - id: msa
-    membersOnly: true
     item: "1504"
     name: Review a business services contract
     blurb: We review the main contract for ongoing work between your business and a customer or supplier.
@@ -471,13 +502,13 @@ skus:
   - id: send-template
     item: "1506"
     name: Send a contract to be signed
-    blurb: Send one of our contracts for someone to sign online, and see when they've signed.
+    blurb: Send an unchanged contract template for someone to sign online, and see when they have signed.
     amount: $5
-    period: per send, plus any form fee
+    period: per send
     category: contracts
     stateFee: false
     includes:
-      - Send the contract to be signed online
+      - Send the unchanged contract template for signature online
       - See whether it has been signed
     related:
       - nda
@@ -514,32 +545,29 @@ skus:
       - summary eviction
       - answer
 process:
-  title: How we help.
+  title: How it works
   steps:
     - id: need
-      title: Tell us what you need
-      detail: Choose a plan or a service. If you have a dispute, start with a free consultation.
+      title: Create an account
+      detail: Set up your account so everything about your matter lives in one place.
     - id: scope
-      title: Know what happens next
-      detail: We'll explain what we can do and what it costs before you decide.
+      title: Answer some questions
+      detail: A short questionnaire, scoped to what your filing actually needs.
     - id: work
-      title: Get help from your lawyer
-      detail: We'll ask for the information we need, do the agreed work, and keep you updated.
+      title: Upload your documentation
+      detail: Add the documents your matter calls for; we tell you which ones.
+    - id: review
+      title: We complete the work we agree on
+      detail: A licensed attorney reviews the work and we keep you informed.
 faq:
-  - id: plan-required
-    trigger: Do I need a subscription?
-    body: You need a plan for custom contract reviews and trademarks. You can ask for other services without one. The first consultation about a dispute is free.
-  - id: fees
-    trigger: What costs extra?
-    body: Work that your plan doesn't include costs extra. We'll tell you the price before we start. Government fees are separate.
-  - id: timing
-    trigger: What happens when I contact you?
-    body: We'll listen, check whether we can help, and explain the next step. Please tell us if you have a deadline.
+  - id: not-sure
+    trigger: Tell us what you need.
+    body: If you are not sure which service fits, email us. We will help you choose your next step.
 checkout:
   eyebrow: Your next step
   sent: This is a preview. Your message has not been sent and you have not been charged.
   form_title: How can we reach you?
-  form_intro: We'll explain what we can do and the total cost before you decide.
+  form_intro: We will explain what we can do and the total cost before you decide.
   name: Your name
   email: Email address
   jurisdiction: Where do you need legal help?

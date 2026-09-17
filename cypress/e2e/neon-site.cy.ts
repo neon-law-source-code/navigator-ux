@@ -37,16 +37,15 @@ describe('Neon Law public-site journeys', () => {
     })
   })
 
-  it('starts at the legal need, then introduces the mission and subscriptions', () => {
+  it('starts at the legal need, then introduces the mission and practice doors', () => {
     cy.visit('/')
     cy.contains('h1', 'What is your legal need?')
     cy.contains('h2', 'Everyone deserves to be seen.')
     cy.contains('Our north star is improving access to justice.')
     cy.get('main h1').should('have.length', 1)
-    cy.get('#plans').within(() => {
+    cy.get('.neon-site__practices').within(() => {
       cy.contains('h3', 'Business plan')
       cy.contains('h3', 'Personal plan')
-      cy.get('img').should('not.exist')
     })
     cy.get('input[name=q]').type('contract{enter}')
     cy.location('pathname').should('eq', '/neon/services')
@@ -65,49 +64,44 @@ describe('Neon Law public-site journeys', () => {
       .should('have.attr', 'href', 'mailto:contact@neonlaw.com?subject=Free%20consultation%20about%20a%20dispute')
   })
 
-  it('requires a plan for custom contract reviews and trademarks, including direct links', () => {
+  it('lets a visitor inquire about a contract review without a plan wall', () => {
     cy.task<EnCopy>('neonEn').then((en) => {
-      const subscriberServices = ['nda', 'consulting', 'employment', 'msa', 'trademark']
-      for (const id of subscriberServices) {
-        const sku = en.skus.find((item) => item.id === id)!
-        cy.visit(`/neon/checkout?sku=${sku.id}`)
-        cy.contains('h1', sku.name)
-        cy.contains(en.subscriptions.member_title)
-        cy.get('form').should('not.exist')
-        cy.get('.pricing-grid img').should('not.exist')
-        cy.get('a[href^="mailto:"]').filter('[href*="Subscriber%20request"]')
-          .should('have.attr', 'href').and('include', encodeURIComponent(sku.name))
-        if (id === 'trademark') {
-          cy.get('.neon-site__service-fee').should('contain', '$50')
-            .and('contain', 'government filing fee')
-        }
-        cy.get('a[href*="/neon/fractional-gc"]').filter(`[href*="sku=${sku.id}"]`).click()
-        cy.location('search').should('include', `sku=${sku.id}`)
-        cy.get('.pricing-card img').should('have.length', 1)
-          .and('have.attr', 'alt', en.plans[0].image.alt)
-        cy.contains('a', en.subscriptions.join).should('have.attr', 'href')
-          .and('include', encodeURIComponent(sku.name))
-      }
+      cy.visit('/neon/checkout?sku=nda')
+      cy.contains('h1', 'Review a confidentiality agreement')
+      cy.get('form').should('exist')
+      cy.get('.neon-site__service-fee').should('contain', '$100').and('contain', 'per contract')
+      cy.contains('Add Fractional GC').should('not.exist')
+      cy.visit('/neon/checkout?sku=trademark')
+      cy.get('.neon-site__service-fee').should('contain', '$100')
+        .and('contain', 'government filing fees')
+      cy.visit('/neon/fractional-gc?sku=trademark')
+      cy.location('search').should('include', 'sku=trademark')
+      cy.get('.pricing-card img').should('have.length', 1)
+        .and('have.attr', 'alt', en.plans[0].image.alt)
     })
   })
 
   it('shows the same form price on the service list and detail page', () => {
     cy.visit('/neon/services')
-    cy.get('.neon-site__services > li').filter(':contains("Start a company")').within(() => {
-      cy.get('.neon-site__service-fee').should('contain', '$50')
-        .and('contain', 'per form').and('contain', 'Free with a plan. Legal work costs extra.')
-      cy.contains('a', 'Get started').click()
-    })
-    cy.get('.neon-site__service-fee').should('contain', '$50')
-      .and('contain', 'Form fee').and('contain', 'Legal work costs extra.')
+    // Packages list "Start a company" as a member, so match the service heading.
+    cy.contains('.neon-site__services > li > div > h3', 'Start a company')
+      .closest('li')
+      .within(() => {
+        cy.get('.neon-site__service-fee').should('contain', '$100')
+          .and('contain', 'per form')
+        cy.contains('a', 'Get started').click()
+      })
+    cy.get('.neon-site__service-fee').should('contain', '$100')
+      .and('contain', 'A la carte price')
     cy.contains('Government fees cost extra')
     cy.contains('h2', 'Legal notice').should('not.exist')
   })
 
   it('explains form fees and preserves individual service inquiries without a business upsell', () => {
     cy.task<EnCopy>('neonEn').then((en) => {
-      cy.visit('/neon/checkout?sku=will')
+      cy.visit('/neon/services')
       cy.contains(en.subscriptions.forms)
+      cy.visit('/neon/checkout?sku=will')
       cy.contains('Add Fractional GC').should('not.exist')
       cy.get('input[name=plan]').should('not.exist')
       cy.get('input[name=name]').type(FILER.name)
@@ -127,7 +121,7 @@ describe('Neon Law public-site journeys', () => {
     cy.get('input[name=q]').type('NDA')
     cy.get('.neon-site__services').contains('Review a confidentiality agreement')
     cy.get('input[name=q]').clear().type('zzzzzz')
-    cy.contains("We couldn't find a match.")
+    cy.contains('We could not find a match.')
     cy.get('.nav-empty-state').contains('a', 'Email us')
     cy.contains('button', 'Show all services').click()
     cy.get('input[name=q]').should('have.value', '')
