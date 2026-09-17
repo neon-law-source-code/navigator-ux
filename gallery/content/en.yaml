@@ -193,13 +193,16 @@ catalog:
     plan. Every plan price shown is at least half off the a la carte price. We
     will explain the scope and any government fees before work starts.
   category_label: Service category
-  fee_label: A la carte price
-  form_fee_label: A la carte price
+  fee_label: Price without a plan
+  form_fee_label: Price without a plan
   flat_fee: $100
   form_fee_note: ""
-  member_fee_label: A la carte price
+  member_fee_label: Price without a plan
   members: Plan required
-  start: Get started
+  start: Start
+  start_microcopy: Sign in to answer a short questionnaire. A lawyer reviews it, and nothing is filed or charged until you sign an engagement agreement.
+  plan_fee_note: No form fee on the Business plan. Government fees still apply.
+  state_fee_badge: Government fees cost extra
   choose_plan: Choose a plan
   empty: We could not find a match.
   empty_help: Tell us what you need and we will let you know whether we can help.
@@ -263,7 +266,7 @@ skus:
   - id: nonprofit
     item: "1103"
     name: Start a nonprofit
-    blurb: Set up your nonprofit and apply for federal tax exemption. Government fees are separate.
+    blurb: We prepare the papers to set up your nonprofit and file its application for federal tax exemption. The IRS decides whether to grant it.
     flatFee: form
     period: per form
     category: company
@@ -582,5 +585,4 @@ checkout:
   continue: Try this form
   back: Back to plans & services
   sku_header: What this service covers
-  state_fee_badge: Government fees cost extra
 fallback_sku: llc-launch

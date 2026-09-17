@@ -114,6 +114,9 @@ export interface EnCopy {
     member_fee_label: string
     members: string
     start: string
+    start_microcopy: string
+    plan_fee_note: string
+    state_fee_badge: string
     choose_plan: string
     empty: string
     empty_help: string
@@ -141,7 +144,6 @@ export interface EnCopy {
     continue: string
     back: string
     sku_header: string
-    state_fee_badge: string
   }
   fallback_sku: string
   find: {
@@ -163,7 +165,7 @@ export interface EnCopy {
  * keeps every consumer below reading plain strings.
  */
 function splitNotation(raw: string): PageDoc {
-  const match = resolveShared(raw).match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+  const match = resolveShared(raw).match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match?.[1]) throw new Error('neon content: missing YAML front matter')
   return { matter: parse(match[1]) as PageMatter, body: (match[2] ?? '').trim() }
 }

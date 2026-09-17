@@ -211,7 +211,7 @@ function matchesService(sku: Sku, needle: string) {
   return matches(needle, `${sku.item} ${sku.name} ${sku.blurb} ${category} ${audience} ${(sku.keywords ?? []).join(' ')}`)
 }
 
-function ServiceFee({ sku }: { sku: Sku }) {
+function ServiceFee({ sku, planNote }: { sku: Sku; planNote?: boolean }) {
   return (
     <div className="neon-site__service-fee">
       <p>
@@ -219,6 +219,7 @@ function ServiceFee({ sku }: { sku: Sku }) {
         <strong>{sku.flatFee ? en.catalog.flat_fee : sku.amount}</strong> <span>{sku.period}</span>
         {en.catalog.form_fee_note ? <span className="neon-site__fee-note">{en.catalog.form_fee_note}</span> : null}
       </p>
+      {planNote ? <p className="neon-site__service-plan-note">{en.catalog.plan_fee_note}</p> : null}
       {sku.package ? (
         <div className="neon-site__package">
           {sku.package.planPrice ? (
@@ -230,6 +231,63 @@ function ServiceFee({ sku }: { sku: Sku }) {
         </div>
       ) : null}
     </div>
+  )
+}
+
+type ServiceReading = 'waived' | 'same-fee'
+
+const REVIEW_SERVICE_IDS = ['llc-file', 'nonprofit', 'annual-report'] as const
+
+function ServiceCard({ sku, reading }: { sku: Sku; reading: ServiceReading }) {
+  const checkoutHref = neonHref('checkout', sku.id)
+  return (
+    <Card
+      className="neon-site__service-card"
+      header={<h3><a href={checkoutHref}>{sku.name}</a></h3>}
+      footer={
+        <div className="neon-site__service-action">
+          <NavLinkButton size="lg" variant="primary" href={checkoutHref}>{en.catalog.start}</NavLinkButton>
+          <p className="neon-site__muted">{en.catalog.start_microcopy}</p>
+        </div>
+      }
+    >
+      <ServiceFee sku={sku} planNote={reading === 'waived'} />
+      <p><Badge>{en.catalog.state_fee_badge}</Badge></p>
+      <p>{sku.blurb}</p>
+    </Card>
+  )
+}
+
+function ServiceReviewAid() {
+  return (
+    <section className="neon-site__section neon-site__service-review" aria-labelledby="service-review-title">
+      <Callout>
+        <strong>Review aid — not public copy.</strong> Compare the two service-card readings before choosing the final positioning.
+      </Callout>
+      <div className="neon-site__section-head">
+        <h2 id="service-review-title">Service-card positioning</h2>
+      </div>
+      <div className="neon-site__review-readings">
+        <section className="neon-site__review-reading" aria-labelledby="reading-a-title">
+          <div className="neon-site__section-head">
+            <span className="neon-site__eyebrow">Primary rendering</span>
+            <h3 id="reading-a-title">Reading A — form fee waived on the plan</h3>
+          </div>
+          <div className="neon-site__service-grid">
+            {REVIEW_SERVICE_IDS.map((id) => <ServiceCard key={id} sku={skuById(id)} reading="waived" />)}
+          </div>
+        </section>
+        <section className="neon-site__review-reading" aria-labelledby="reading-b-title">
+          <div className="neon-site__section-head">
+            <span className="neon-site__eyebrow">Alternate rendering</span>
+            <h3 id="reading-b-title">Reading B — same fee for everyone</h3>
+          </div>
+          <div className="neon-site__service-grid">
+            {REVIEW_SERVICE_IDS.map((id) => <ServiceCard key={id} sku={skuById(id)} reading="same-fee" />)}
+          </div>
+        </section>
+      </div>
+    </section>
   )
 }
 
@@ -271,7 +329,7 @@ function ServicesPage({ initialQuery }: { initialQuery: string }) {
   return (
     <>
       <PageHero doc={pages.services} />
-      {!needle ? <><Subscriptions /><LitigationOffer /></> : null}
+      {!needle ? <><Subscriptions /><ServiceReviewAid /><LitigationOffer /></> : null}
       <section className="neon-site__section" aria-labelledby="catalog-title">
         <div className="neon-site__section-head">
           <h2 id="catalog-title">{en.catalog.title}</h2>
@@ -348,7 +406,7 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
         <div className="neon-site__stack">
           <ServiceFee sku={sku} />
           <ul>{sku.includes.map((line) => <li key={line}>{line}</li>)}</ul>
-          {sku.stateFee ? <p><Badge>{copy.state_fee_badge}</Badge></p> : null}
+          {sku.stateFee ? <p><Badge>{en.catalog.state_fee_badge}</Badge></p> : null}
           {related.length ? (
             <div className="neon-site__related">
               <h2>{en.catalog.related_header}</h2>
