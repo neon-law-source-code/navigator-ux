@@ -15,22 +15,26 @@ office:
 footer_cta: Email us
 legal:
   - Neon Law is the name used by Shook Law PLLC in Nevada.
-  - © 2026 Shook Law PLLC.
+  - © 2026 Shook Law PLLC. NEON LAW® is a registered trademark of Shook Law PLLC, U.S. Reg. No. 6,325,650.
+  - Attorney advertisement. Nothing here is legal advice without a signed retainer for an active project. Past results do not guarantee future outcomes.
 specimen: This is a preview. No message is sent and no payment is taken here.
+# The live header labels the doors, not the pages behind them: "Business",
+# not "Business plan". The plan eyebrows stay shared; these four are the
+# header's own words.
 nav:
-  - id: services
-    label: "{shared:services.eyebrow}"
   - id: fractional-gc
-    label: "{shared:fractional_gc.eyebrow}"
+    label: Business
   - id: personal-plan
-    label: "{shared:personal_plan.eyebrow}"
+    label: Personal
+  - id: services
+    label: Services
   - id: litigation
     label: Disputes
 find:
   prompt: "{shared:home.need_prompt}"
   lede: Tell us whether you need help with a contract, your business, your family, or a dispute. If you are not sure where to start, contact us and we will help you find the next step.
   placeholder: A contract, my business, a will, a dispute
-  submit: Find help
+  submit: Search
   examples:
     - label: My business
       query: business
@@ -79,9 +83,6 @@ subscriptions:
     and its daily charge are separate from the package price.
   cta: See the plan
   join: Ask about access
-  member_cta: Already have a plan? Email us to get started
-  member_title: Choose a plan to get started.
-  member_intro: This service requires a plan. The service fee is separate from your plan's price.
   interest: What you need help with
 plans:
   - id: fractional-gc
@@ -194,13 +195,10 @@ catalog:
     will explain the scope and any government fees before work starts.
   category_label: Service category
   fee_label: A la carte price
-  form_fee_label: A la carte price
-  flat_fee: $100
-  form_fee_note: ""
-  member_fee_label: A la carte price
-  members: Plan required
+  state_fee: Government fees cost extra
+  showing_all: Showing all {count} services.
+  showing: Showing {count} of {total} services.
   start: Get started
-  choose_plan: Choose a plan
   empty: We could not find a match.
   empty_help: Tell us what you need and we will let you know whether we can help.
   clear: Show all services
@@ -209,12 +207,13 @@ catalog:
   package_badge: Notation package
   package_members_label: Package includes
   plan_price_label: With
+  plan_price_note: plan price
 skus:
   - id: llc-file
     item: "1101"
     name: Start a company
     blurb: We help you set up a limited liability company, also called an LLC. A lawyer checks your papers before we file them with the state.
-    flatFee: form
+    amount: $100
     period: per form
     category: company
     stateFee: true
@@ -264,7 +263,7 @@ skus:
     item: "1103"
     name: Start a nonprofit
     blurb: Set up your nonprofit and apply for federal tax exemption. Government fees are separate.
-    flatFee: form
+    amount: $100
     period: per form
     category: company
     stateFee: true
@@ -283,7 +282,7 @@ skus:
     item: "1201"
     name: Renew your Nevada business paperwork
     blurb: We file your company's yearly report and renew its state business license.
-    flatFee: form
+    amount: $100
     period: per form
     category: compliance
     stateFee: true
@@ -317,7 +316,7 @@ skus:
     item: "1301"
     name: Apply for a trademark
     blurb: We check for similar names or logos and file your application for one group of goods or services.
-    flatFee: trademark
+    amount: $100
     period: + government filing fees
     category: identity
     stateFee: true
@@ -334,7 +333,7 @@ skus:
     item: "1302"
     name: Change your legal name
     blurb: We prepare your request, arrange the required public notice, and attend the hearing. For name changes that no one is challenging.
-    flatFee: form
+    amount: $100
     period: per form, plus court and publication costs
     category: identity
     stateFee: true
@@ -488,7 +487,7 @@ skus:
     item: "1505"
     name: Get a legal form
     blurb: Get the form you need. Any work by a lawyer is priced separately.
-    flatFee: form
+    amount: $100
     period: per form
     category: contracts
     stateFee: false
@@ -546,6 +545,9 @@ skus:
       - answer
 process:
   title: How it works
+  intro: >-
+    Tell us what you need. We will explain the service, its cost, and what we
+    need from you before work begins.
   steps:
     - id: need
       title: Create an account
@@ -579,8 +581,14 @@ checkout:
       label: Another state
   notes: What would you like help with?
   notes_help: A few words are enough. Tell us about any deadline. Please leave out private documents, passwords, and bank details.
+  # The live form takes a mobile number only to text about the inquiry, so the
+  # opt-in and its disclosure travel with the field. Navigator authors both
+  # sentences because its own lead forms publish them word for word.
+  phone: Mobile phone
+  phone_help: "{shared:lead.phone_helper}"
+  sms_opt_in: You may text me about this inquiry
+  consent: "{shared:lead.consent}"
   continue: Try this form
   back: Back to plans & services
   sku_header: What this service covers
-  state_fee_badge: Government fees cost extra
 fallback_sku: llc-launch

@@ -995,6 +995,10 @@
   margin: 0;
 }
 
+.neon-site__count {
+  color: var(--nav-color-text-muted);
+}
+
 .neon-site__fee-note {
   display: block;
   margin-top: var(--nav-space-3);

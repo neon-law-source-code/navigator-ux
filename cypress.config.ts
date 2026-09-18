@@ -44,8 +44,16 @@ export default defineConfig({
     defaultCommandTimeout: 8000,
     setupNodeEvents(on) {
       on('task', {
+        /*
+         * `{site_name}` is the second slot the browser fills, after the shared
+         * references: Navigator authors its lead-form sentences once and its
+         * renderer names the site. Filling it here too is what keeps a spec
+         * asserting the sentence a reader is shown rather than the template.
+         */
         neonEn() {
-          return parse(resolveShared(readFileSync(resolve(root, 'gallery/content/en.yaml'), 'utf8')))
+          const resolved = resolveShared(readFileSync(resolve(root, 'gallery/content/en.yaml'), 'utf8'))
+          const { brand } = parse(resolved) as { brand: string }
+          return parse(resolved.replaceAll('{site_name}', brand))
         },
         neonPage(name: string) {
           return pageDoc(name)

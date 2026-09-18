@@ -107,6 +107,8 @@ describe('Neon Law public-site journeys', () => {
       cy.get('input[name=name]').type(FILER.name)
       cy.get('input[name=email]').type(FILER.email)
       cy.get('select[name=jurisdiction]').select('nv')
+      cy.contains(en.checkout.consent).should('contain', en.brand).and('not.contain', '{site_name}')
+      cy.get('input[name=sms]').check().should('be.checked')
       cy.contains('button', en.checkout.continue).click()
       cy.contains(en.checkout.sent)
       cy.get('kbd').should('not.exist')
@@ -126,6 +128,45 @@ describe('Neon Law public-site journeys', () => {
     cy.contains('button', 'Show all services').click()
     cy.get('input[name=q]').should('have.value', '')
     cy.get('.neon-site__services').contains('Make a will')
+  })
+
+  /*
+   * The header, the count, and the notices a reader prices against — the parts
+   * of the live pages that are this repository's own words rather than the
+   * pinned catalog's, and so the parts that drift without a re-export.
+   */
+  it('publishes the header, the result count, and the footer notices the live site does', () => {
+    cy.task<EnCopy>('neonEn').then((en) => {
+      cy.visit('/neon/services')
+      cy.get('.site-header').within(() => {
+        for (const label of ['Business', 'Personal', 'Services', 'Disputes']) cy.contains('a', label)
+        cy.contains('a', 'Business plan').should('not.exist')
+      })
+      cy.contains(`Showing all ${en.skus.length} services.`)
+      cy.contains('button', 'Wills & family plans').click()
+      cy.contains(`Showing all ${en.skus.length} services.`).should('not.exist')
+      cy.contains(`of ${en.skus.length} services.`)
+      cy.contains('h2', 'How it works')
+      cy.contains(en.process.intro)
+      cy.get('.site-footer__legal').should('contain', 'U.S. Reg. No. 6,325,650')
+        .and('contain', 'Attorney advertisement')
+    })
+  })
+
+  it('names each service category and its government fees on the list', () => {
+    cy.visit('/neon/services')
+    cy.contains('.neon-site__services > li > div > h3', 'Start a company')
+      .closest('li')
+      .within(() => {
+        cy.get('.neon-site__eyebrow').should('contain', 'Start a business')
+        cy.get('.neon-site__fee-note').should('contain', 'Government fees cost extra')
+      })
+    cy.contains('.neon-site__services > li > div > h3', 'Review a confidentiality agreement')
+      .closest('li')
+      .within(() => {
+        cy.get('.neon-site__eyebrow').should('contain', 'Contracts & forms')
+        cy.get('.neon-site__fee-note').should('not.exist')
+      })
   })
 
   it('preserves branded searches and legacy service links', () => {

@@ -41,20 +41,26 @@ export type SkuPackage = {
   planPrice?: string
 }
 
-export type Sku = {
+/*
+ * Every service carries its own a la carte price. The union that used to sit
+ * here let a SKU omit `amount` and print one shared flat fee instead; the live
+ * catalogue quotes eighteen different prices, so the indirection only hid
+ * which of them a page was showing.
+ */
+export interface Sku {
   id: string
   item: string
-  membersOnly?: boolean
   keywords?: string[]
   name: string
   blurb: string
+  amount: string
   period: string
   category: SkuCategory
   includes: string[]
   stateFee: boolean
   related?: string[]
   package?: SkuPackage
-} & ({ flatFee: 'form' | 'trademark'; amount?: never } | { flatFee?: never; amount: string })
+}
 
 export interface SubscriptionPlan {
   id: 'fractional-gc' | 'personal-plan'
@@ -97,9 +103,6 @@ export interface EnCopy {
     reviews: string
     cta: string
     join: string
-    member_cta: string
-    member_title: string
-    member_intro: string
     interest: string
   }
   litigation: { title: string; body: string; cta: string; note: string; keywords: string[] }
@@ -108,13 +111,10 @@ export interface EnCopy {
     note: string
     category_label: string
     fee_label: string
-    form_fee_label: string
-    flat_fee: string
-    form_fee_note: string
-    member_fee_label: string
-    members: string
+    state_fee: string
+    showing_all: string
+    showing: string
     start: string
-    choose_plan: string
     empty: string
     empty_help: string
     clear: string
@@ -123,8 +123,9 @@ export interface EnCopy {
     package_badge: string
     package_members_label: string
     plan_price_label: string
+    plan_price_note: string
   }
-  process: { title: string; steps: { id: string; title: string; detail: string }[] }
+  process: { title: string; intro: string; steps: { id: string; title: string; detail: string }[] }
   faq: { id: string; trigger: string; body: string }[]
   checkout: {
     eyebrow: string
@@ -138,10 +139,13 @@ export interface EnCopy {
     jurisdictions: { value: string; label: string }[]
     notes: string
     notes_help: string
+    phone: string
+    phone_help: string
+    sms_opt_in: string
+    consent: string
     continue: string
     back: string
     sku_header: string
-    state_fee_badge: string
   }
   fallback_sku: string
   find: {
@@ -168,7 +172,20 @@ function splitNotation(raw: string): PageDoc {
   return { matter: parse(match[1]) as PageMatter, body: (match[2] ?? '').trim() }
 }
 
-export const en = parse(resolveShared(enRaw)) as EnCopy
+/*
+ * Navigator's lead-form sentences carry a `{site_name}` slot its own renderer
+ * fills with whichever site it is serving. There is one site here, so fill it
+ * once at load and let every reader keep reading a plain string. The brand is
+ * itself authored in this file, which is why the resolved text is read for it
+ * before the slot is filled.
+ */
+function loadEn(): EnCopy {
+  const resolved = resolveShared(enRaw)
+  const { brand } = parse(resolved) as EnCopy
+  return parse(resolved.replaceAll('{site_name}', brand)) as EnCopy
+}
+
+export const en = loadEn()
 
 export const pages: Record<Exclude<NeonPageId, 'checkout'>, PageDoc> = {
   home: splitNotation(homeMd),
