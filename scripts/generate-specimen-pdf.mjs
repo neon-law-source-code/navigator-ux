@@ -4,7 +4,7 @@
  * matches the caption on the page that embeds it. The pleading exists so
  * `PdfViewer` has real selectable text to render.
  *
- * The file is never committed — CLAUDE.md bans binaries outright, and `.pdf`
+ * The file is never committed — AGENTS.md bans binaries outright, and `.pdf`
  * is blocked in `.gitignore` with no exception. This script is the "generate
  * it from source" side of that rule: it writes into `gallery/public/`, which
  * Vite serves as a same-origin static asset in `pnpm gallery` and copies

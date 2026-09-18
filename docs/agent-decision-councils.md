@@ -109,7 +109,7 @@ End with the product or copy action, or the user's go/no-go on a real strategic 
 
 - Cite real files, routes, screens, symbols, or copy. This repository is public: nothing in a commit, a comment, a
   gallery specimen, or a test fixture may be a client's name, a matter's facts, or anything else that is not ours to
-  publish. The gallery's specimen data is invented for that reason. See [CLAUDE.md](../CLAUDE.md).
+  publish. The gallery's specimen data is invented for that reason. See [AGENTS.md](../AGENTS.md).
 - Councils shape the firm's *product judgment*. They do not speak for an actual person, and they do not give legal
   advice.
 - Telemetry, issues, and public docs log identifiers and counts, never client names, answers, email addresses, document

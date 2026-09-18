@@ -97,7 +97,7 @@ check above uses — so a hotfix bump gets it automatically; nothing about the r
 
 The tag is created by `release-tag` under the `github-actions[bot]` identity, not signed. The manual flow this
 replaced used `git tag -s`; CI has no GPG key to sign with; and this repository deliberately holds no secrets to
-provision one (see the "Publishing" section of `CLAUDE.md`). What the automation buys instead is a stronger
+provision one (see the "Publishing" section of `AGENTS.md`). What the automation buys instead is a stronger
 guarantee than a signature gives: the tag cannot exist without matching the manifest of the commit it names, because
 `release-version` derives it from that manifest rather than checking two independently-supplied values against each
 other.

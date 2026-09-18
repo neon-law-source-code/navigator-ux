@@ -19,7 +19,7 @@ you named is a comparison the firm did not ask to publish.
 Draw people, companies, addresses, and emails from [`fixtures/fake.mjs`](../../../fixtures/fake.mjs)
 with a **key** (`fakePerson('neon-site/filer')`). Assert against the generator
 (`FILER.name`), never against the string it happened to draw. Force mail onto
-`example.com`. The why is in `CLAUDE.md`; do not restate it here.
+`example.com`. The why is in `AGENTS.md`; do not restate it here.
 
 Quotes, matter facts, and docket numbers are invented. They are not taken from a
 live file, a news story, or another firm's site.

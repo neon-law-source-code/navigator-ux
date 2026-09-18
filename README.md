@@ -407,7 +407,7 @@ Issues and pull requests are welcome. Two things worth knowing before you open o
   no separate agreement to sign.
 
 The conventions that are not obvious from the code — and the reasons behind them — are in
-[CLAUDE.md](./CLAUDE.md). It is written for coding agents and is just as useful to people.
+[AGENTS.md](./AGENTS.md). It is written for coding agents and is just as useful to people.
 
 ## License
 

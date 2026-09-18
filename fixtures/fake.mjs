@@ -1,6 +1,6 @@
 /*
  * Every name, address, and sentence of specimen data in this repository comes
- * from here. CLAUDE.md carries the rule and what generating a name does not
+ * from here. AGENTS.md carries the rule and what generating a name does not
  * buy; this file is the mechanism.
  *
  * It lives outside `src/` because coverage counts `src/**`, and a generator

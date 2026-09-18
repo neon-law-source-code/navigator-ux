@@ -25,6 +25,36 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      // These six subscribe to something outside React and seed state from it
+      // on mount — a media query, a fetched session, a pdf.js document, a
+      // force simulation. That is the one case `set-state-in-effect` says an
+      // effect is for, but the rule cannot see the subscription and flags the
+      // synchronous seed anyway. Scoped to the files where the pattern is
+      // deliberate and commented, so it still fires on new code.
+      "files": [
+        "src/theme/ThemeProvider.tsx",
+        "src/session/SessionProvider.tsx",
+        "src/components/AuthorityDialog.tsx",
+        "src/components/HarvardOutline.tsx",
+        "src/components/PdfViewer.tsx",
+        "src/components/GraphView.tsx"
+      ],
+      "rules": {
+        "react/set-state-in-effect": "off"
+      }
+    },
+    {
+      // `d3-force` mutates its node and edge objects in place on every tick,
+      // so the laid-out coordinates only exist on the objects the refs hold;
+      // the frame counter is what turns a tick into a render. Reading them
+      // during render is how React gets to own every element here, which is
+      // the arrangement described in AGENTS.md.
+      "files": ["src/components/GraphView.tsx"],
+      "rules": {
+        "react/refs": "off"
+      }
     }
   ],
   "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/coverage/**", ".claude/**"]
