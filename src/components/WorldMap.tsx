@@ -118,7 +118,7 @@ export function WorldMap({
   onSelect,
 }: WorldMapProps) {
   const titleId = useId()
-  const countries = useMemo(countryFeatures, [])
+  const countries = useMemo(() => countryFeatures(), [])
 
   const { path, sphere, opacityOf, ticks } = useMemo(() => {
     const projection = geoNaturalEarth1().fitExtent(

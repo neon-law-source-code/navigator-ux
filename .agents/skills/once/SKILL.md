@@ -6,7 +6,7 @@ description: De-duplication pass after creating or changing components, styles, 
 # Once
 
 Run this after you have built something and before you open the PR. It removes what agentic tooling
-adds: the same explanation in the component comment, the CSS comment, the README, `CLAUDE.md`, and
+adds: the same explanation in the component comment, the CSS comment, the README, `AGENTS.md`, and
 the gallery note.
 
 ## Where each kind of fact lives
@@ -17,13 +17,13 @@ the gallery note.
 | What the CSS does that the markup cannot show | The rule's comment in `theme.css` | Nothing |
 | That a component exists, and what it is for | One row, and at most one sentence, in the README | Nothing |
 | How it looks | The gallery, with a one-sentence note | Nothing |
-| A decision the code cannot show, or a trap | `CLAUDE.md` | A pointer to it |
+| A decision the code cannot show, or a trap | `AGENTS.md` | A pointer to it |
 | A license or notice fact | `LICENSE`, `NOTICE`, or `THIRD-PARTY-NOTICES.md` | A link |
 
 ## The pass
 
 1. `git diff main --stat`, then list every prose block the branch added: doc comments, CSS comments,
-   README paragraphs, `CLAUDE.md` paragraphs, gallery notes, test comments.
+   README paragraphs, `AGENTS.md` paragraphs, gallery notes, test comments.
 2. For each fact in those blocks, name its home from the table. Delete every other copy; leave at
    most a pointer.
 3. Read each surviving block once more and cut it to what a stranger needs in order to act. A

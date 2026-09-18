@@ -186,7 +186,7 @@ export {
  * -- Table through Menubar are platform-built like the set above. Charts,   --
  * -- GraphView, and PdfViewer are the exceptions: d3 and pdf.js are real    --
  * -- dependencies, externalized in the build so a consumer resolves one     --
- * -- copy. See the note in CLAUDE.md for what changed and why.              -- */
+ * -- copy. See the note in AGENTS.md for what changed and why.              -- */
 
 export {
   Table,

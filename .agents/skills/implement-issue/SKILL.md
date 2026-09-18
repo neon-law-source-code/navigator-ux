@@ -16,7 +16,7 @@ skill, so the handoff step below is the whole of that flow here.
 
 ## Start current
 
-Confirm `pwd -P` is a non-primary worktree entry (`git worktree list --porcelain`) before editing — CLAUDE.md
+Confirm `pwd -P` is a non-primary worktree entry (`git worktree list --porcelain`) before editing — AGENTS.md
 requires every change to start in its own worktree, since the repository is a single flattened package with no
 `--filter` boundary to isolate work otherwise. Preserve unrelated changes already in the tree. Fetch and rebase on
 the shipped baseline:
@@ -32,7 +32,7 @@ combining unrelated changes into one PR.
 
 ## Ground the issue
 
-Read [`CLAUDE.md`](../../../CLAUDE.md) end to end before touching anything — it is the single source of truth for
+Read [`AGENTS.md`](../../../AGENTS.md) end to end before touching anything — it is the single source of truth for
 this repository's conventions, and it is short enough that skimming it costs more than reading it. Read
 [`README.md`](../../../README.md) for the public-facing contract each component keeps, and the narrowest file under
 [`docs/`](../../../docs) the issue touches.
@@ -68,7 +68,7 @@ Reach exactly one verdict from the evidence:
 
 Do not post a separate triage comment before implementing — the grounding above is the first phase of this same
 session, and its result directly controls whether implementation begins. Do not infer a missing design or licensing
-decision CLAUDE.md does not already settle; ask instead.
+decision AGENTS.md does not already settle; ask instead.
 
 ## Implement
 
@@ -79,7 +79,7 @@ ones:
   publishes, unless the issue is asking for a new component.
 - Reuse the established specimen identity — the invented supply-agreement breach whose parties are drawn in
   `fixtures/matter.mjs` — rather than writing new parties, and never write a name into a fixture by hand. See
-  CLAUDE.md's note on generated specimen data and `gallery/outline-specimen.tsx`.
+  AGENTS.md's note on generated specimen data and `gallery/outline-specimen.tsx`.
 - A binary asset (a PDF, an image) is never committed. If the change needs one, generate it from source with a
   script under `scripts/`, write it to a gitignored path, and wire the script as a `pre<script>` hook in
   `package.json` so `pnpm gallery` and the relevant `build:*` script regenerate it — see the pattern of
