@@ -72,6 +72,23 @@ cargo run -p cli --example export-marketing-catalog -- \
 
 The exporter refuses a branch name: a branch is not a pin.
 
+## Where the pin and the live site disagree
+
+Reviewed against neonlaw.com on 2026-09-18, at pin `9e559f8`. Two sentences do
+not line up, and neither is this repository's to fix — editing the artifact
+fails `pnpm check:catalog` by design.
+
+- `services.title` is `Find the help you need.`, and the live `/services` heading
+  reads `One-time services` — the same words as `services.eyebrow`, which the
+  gallery already publishes. Whichever is intended, it changes in Navigator.
+- The live home page still describes Business-plan access as `$10 a day`, while
+  its own `/business` page and `fractional_gc.price` both say `$50`. The gallery
+  reads the pinned price, so it publishes `$50` and the live home page is the
+  one that is stale.
+
+Everything else — the plan prices and inclusions, the a la carte fees, the
+Notation packages, the service blurbs and their inclusions — matches.
+
 ## The integrity check
 
 `pnpm check:catalog` recomputes the SHA-256 the exporter recorded, over the **canonical payload** —

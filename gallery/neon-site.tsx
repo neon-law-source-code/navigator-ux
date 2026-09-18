@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react'
 
 import {
-  Accordion, ActionList, Badge, NavButton, ButtonRow, Callout, Card, Empty,
-  FormCard, Hero, NavLinkButton, PricingCard, PricingGrid, type HeroImage,
+  Accordion, ActionList, Badge, NavButton, ButtonRow, Callout, Card, CheckboxField,
+  Empty, FormCard, Hero, NavLinkButton, PricingCard, PricingGrid, type HeroImage,
   PublicShell, SelectField, SiteFooter, SiteHeader, TextField, TextareaField,
 } from '../src/index'
 import './gallery.css'
@@ -205,10 +205,13 @@ function matches(needle: string, text: string) {
   return terms.every((term) => text.toLowerCase().includes(term))
 }
 
+function categoryLabel(sku: Sku) {
+  return en.categories.find((entry) => entry.value === sku.category)?.label ?? ''
+}
+
 function matchesService(sku: Sku, needle: string) {
-  const category = en.categories.find((entry) => entry.value === sku.category)?.label ?? ''
   const audience = sku.category === 'estate' ? 'personal family legacy' : ''
-  return matches(needle, `${sku.item} ${sku.name} ${sku.blurb} ${category} ${audience} ${(sku.keywords ?? []).join(' ')}`)
+  return matches(needle, `${sku.item} ${sku.name} ${sku.blurb} ${categoryLabel(sku)} ${audience} ${(sku.keywords ?? []).join(' ')}`)
 }
 
 function ServiceFee({ sku }: { sku: Sku }) {
@@ -216,13 +219,16 @@ function ServiceFee({ sku }: { sku: Sku }) {
     <div className="neon-site__service-fee">
       <p>
         <span className="neon-site__eyebrow">{en.catalog.fee_label}</span>
-        <strong>{sku.flatFee ? en.catalog.flat_fee : sku.amount}</strong> <span>{sku.period}</span>
-        {en.catalog.form_fee_note ? <span className="neon-site__fee-note">{en.catalog.form_fee_note}</span> : null}
+        <strong>{sku.amount}</strong> <span>{sku.period}</span>
+        {sku.stateFee ? <span className="neon-site__fee-note">{en.catalog.state_fee}</span> : null}
       </p>
       {sku.package ? (
         <div className="neon-site__package">
           {sku.package.planPrice ? (
-            <p>{en.catalog.plan_price_label} {sku.package.plan} <strong>{sku.package.planPrice}</strong> plan price</p>
+            <p>
+              {en.catalog.plan_price_label} {sku.package.plan} <strong>{sku.package.planPrice}</strong>{' '}
+              {en.catalog.plan_price_note}
+            </p>
           ) : null}
           <Badge>{en.catalog.package_badge}</Badge>
           <p>{en.catalog.package_members_label}</p>
@@ -239,6 +245,7 @@ function ServiceList({ items }: { items: Sku[] }) {
       {items.map((sku) => (
         <li key={sku.id}>
           <div>
+            <span className="neon-site__eyebrow">{categoryLabel(sku)}</span>
             <h3><a href={neonHref('checkout', sku.id)}>{sku.name}</a></h3>
             <p>{sku.blurb}</p>
           </div>
@@ -250,6 +257,13 @@ function ServiceList({ items }: { items: Sku[] }) {
       ))}
     </ul>
   )
+}
+
+/** "Showing all 18 services." until something narrows the list. */
+function serviceCount(shown: number) {
+  const total = en.skus.length
+  const template = shown === total ? en.catalog.showing_all : en.catalog.showing
+  return template.replace('{count}', String(shown)).replace('{total}', String(total))
 }
 
 function ServicesPage({ initialQuery }: { initialQuery: string }) {
@@ -292,6 +306,7 @@ function ServicesPage({ initialQuery }: { initialQuery: string }) {
         {plans.length ? <PlanCards plans={plans} /> : null}
         {litigation ? <LitigationOffer /> : null}
         <div aria-live="polite" aria-atomic="true">
+          {items.length ? <p className="neon-site__count">{serviceCount(items.length)}</p> : null}
           {noResults ? (
             <Empty
               title={en.catalog.empty} description={en.catalog.empty_help}
@@ -305,7 +320,10 @@ function ServicesPage({ initialQuery }: { initialQuery: string }) {
         {items.length ? <ServiceList items={items} /> : null}
       </section>
       <section className="neon-site__section" aria-labelledby="process-title">
-        <h2 id="process-title">{en.process.title}</h2>
+        <div className="neon-site__section-head">
+          <h2 id="process-title">{en.process.title}</h2>
+          <p>{en.process.intro}</p>
+        </div>
         <ActionList items={en.process.steps} />
       </section>
       <Accordion exclusive items={en.faq.map((item) => ({ id: item.id, trigger: item.trigger, children: <p>{item.body}</p> }))} />
@@ -348,7 +366,6 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
         <div className="neon-site__stack">
           <ServiceFee sku={sku} />
           <ul>{sku.includes.map((line) => <li key={line}>{line}</li>)}</ul>
-          {sku.stateFee ? <p><Badge>{copy.state_fee_badge}</Badge></p> : null}
           {related.length ? (
             <div className="neon-site__related">
               <h2>{en.catalog.related_header}</h2>
@@ -362,8 +379,11 @@ function CheckoutPage({ skuId }: { skuId: string | null }) {
         <input type="hidden" name="sku" value={sku.id} />
         <TextField label={copy.name} name="name" required />
         <TextField label={copy.email} name="email" type="email" required />
+        <TextField label={copy.phone} name="phone" type="tel" help={copy.phone_help} />
+        <CheckboxField label={copy.sms_opt_in} name="sms" />
         <SelectField label={copy.jurisdiction} name="jurisdiction" placeholder={copy.jurisdiction_placeholder} options={copy.jurisdictions} required />
         <TextareaField label={copy.notes} name="notes" rows={3} help={copy.notes_help} />
+        <p className="neon-site__muted">{copy.consent}</p>
         <NavButton size="lg" variant="primary" type="submit">{copy.continue}</NavButton>
       </FormCard>
       <NavLinkButton size="lg" href={neonHref('services')}>{copy.back}</NavLinkButton>
