@@ -82,6 +82,7 @@ jobs:
       # command meaning the same thing in both places is worth one wasted
       # ordering constraint.
       - run: pnpm build
+      - run: pnpm check:packed-consumer
       - run: pnpm typecheck
 
       # Nothing in the built bundle may reach off-origin — no CDN, no remote
