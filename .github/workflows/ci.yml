@@ -89,6 +89,11 @@ jobs:
       # to follow the build.
       - run: pnpm check:bundle
 
+      # The public API must work from the packed tarball, not only from the
+      # source tree: schema declarations, valid calls, and rejected calls all
+      # get checked in a temporary consumer with skipLibCheck disabled.
+      - run: pnpm check:api:consumer
+
       # Fails the build below 90% statements, lines, functions, or branches.
       # Thresholds live in vite.config.ts.
       - run: pnpm test:coverage
