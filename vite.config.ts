@@ -21,11 +21,13 @@ const STYLESHEET = 'navigator-ux.css'
 
 export default defineConfig({
   // `rollupTypes` bundles the public API into one index.d.ts, which is what
-  // `types` points at, but it leaves the per-file declarations beside it — and
-  // src/test is under `include`, so a published tarball carried a .d.ts for
-  // every test file. They are unreachable and describe nothing a consumer can
-  // import; excluding them keeps the suite out of the package.
-  plugins: [react(), dts({ include: ['src'], exclude: ['src/test'], rollupTypes: true })],
+  // `types` points at, but it leaves the per-file declarations beside it. Copy
+  // source declarations too: the rolled-up entry and client declaration both
+  // import the generated OpenAPI schema as `./api/schema`.
+  plugins: [
+    react(),
+    dts({ include: ['src'], exclude: ['src/test'], copyDtsFiles: true, rollupTypes: true }),
+  ],
   build: {
     lib: {
       entry: resolve(here, 'src/index.ts'),
