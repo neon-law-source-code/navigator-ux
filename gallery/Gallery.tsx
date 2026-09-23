@@ -12,6 +12,7 @@ import './gallery.css'
 import {
   Alert,
   Breadcrumb,
+  BrandEditorPanel,
   Card,
   CheckboxField,
   CiteTheRecord,
@@ -503,13 +504,14 @@ export function Gallery() {
 
         <Section
           title="Authenticated chrome"
-          note="The same bar renders the client, staff, and admin forms — it takes its destinations and never learns what a role is."
+          note="The same bar renders the client, staff, and admin forms — it takes its destinations and never learns what a role is. The mark beside the wordmark is the resolved brand's own logo; the wordmark itself stays Navigator."
         >
           <div className="gallery__frame">
             <NavigatorShell
               header={
                 <NavigatorNavbar
                   brand="Navigator"
+                  logo={<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="currentColor" /></svg>}
                   destinations={[
                     { label: 'Matters', href: '#matters', current: true },
                     { label: 'People', href: '#people' },
@@ -521,6 +523,10 @@ export function Gallery() {
               footer={
                 <NavigatorFooter
                   legal="© 2026 Shook Law PLLC"
+                  brands={[
+                    { label: 'Daybridge Divorce Law', current: true },
+                    { label: 'Neon Law', href: '#neon-law' },
+                  ]}
                   links={[{ label: 'Support', href: '#support' }]}
                   release="v0.5.0"
                 />
@@ -531,6 +537,15 @@ export function Gallery() {
                 <p>The authenticated frame, framed as a specimen.</p>
               </Card>
             </NavigatorShell>
+          </div>
+        </Section>
+
+        <Section
+          title="Brand editor"
+          note="A gallery/dev-tool composition (ENG-594) for authoring a layer-2 brand override, not a runtime portal surface — see docs/brand-theming.md. Synthetic state only; nothing here calls an API."
+        >
+          <div className="gallery__frame">
+            <BrandEditorPanel />
           </div>
         </Section>
 
