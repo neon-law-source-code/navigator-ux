@@ -99,11 +99,13 @@ export {
   NavigatorNavbar,
   NavigatorShell,
   PageHeader,
+  POWERED_BY_NEON_LAW_NAVIGATOR,
   PublicShell,
   SiteFooter,
   SiteHeader,
   type ChromeLink,
   type FooterOffice,
+  type NavigatorFooterBrand,
   type NavigatorFooterProps,
   type NavigatorNavbarProps,
   type PageHeaderProps,
@@ -111,6 +113,20 @@ export {
   type SiteFooterProps,
   type SiteHeaderProps,
 } from './components/Chrome'
+export {
+  BrandColorField,
+  BrandEditorPanel,
+  BrandFontUploadField,
+  BrandLogoUploadField,
+  evaluateBrandPrimaryColor,
+  FONT_LICENCES,
+  type BrandColorEvaluation,
+  type BrandColorFieldProps,
+  type BrandEditorPanelProps,
+  type BrandFontUploadFieldProps,
+  type BrandLicence,
+  type BrandLogoUploadFieldProps,
+} from './components/BrandEditor'
 export { Prose, Runs, type ProseProps, type Run, type RunStyle, type RunsProps } from './components/Prose'
 
 /* -- The shadcn-derived set. A superset of the Dioxus surface: none of these --

@@ -137,6 +137,10 @@ Three rules make this work, and `gallery/brand-example-tokens.css` is a complete
 `pnpm check:tokens` fails on any literal color outside layer 1 — including a *named* one, which is
 why `FeedAccent` is `'brand' | 'link' | 'danger'` and not `'blue' | 'red'`.
 
+Given a resolved Firm brand row rather than a colour you picked by hand, see
+[docs/brand-theming.md](./docs/brand-theming.md) for the exact field-by-field mapping onto this layer —
+including the one field (`accent_color`) the current token contract has no target for.
+
 ## Color and contrast
 
 Every pairing the palette defines carries a measured WCAG ratio, and `pnpm check:contrast` recomputes
@@ -172,6 +176,7 @@ The public surface:
 | Data | `DataTable`, `Pagination`, `RowActions`, `ConfirmDelete` |
 | Forms | `FormCard`, `TextField`, `SelectField`, `TextareaField`, `CheckboxField`, `RadioGroup`, `PeopleList` |
 | Chrome | `PublicShell`, `SiteHeader`, `SiteFooter`, `NavigatorShell`, `NavigatorNavbar`, `NavigatorFooter`, `PageHeader` |
+| Brand editing | `BrandColorField`, `BrandFontUploadField`, `BrandLogoUploadField`, `BrandEditorPanel` — a gallery/dev-tool composition, not a runtime portal surface; see [docs/brand-theming.md](./docs/brand-theming.md) |
 | Navigation | `Breadcrumb`, `ExternalLink`, `NavButton`, `NavLinkButton`, `NavBadge` |
 | Prose | `Prose`, `Runs` |
 | Icons | `Icon`, `ICON_NAMES` |

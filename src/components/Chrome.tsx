@@ -266,6 +266,12 @@ export function PublicShell({ header, footer, children, showcase }: ShellFramePr
 export interface NavigatorNavbarProps {
   brand: ReactNode
   brandHref?: string
+  /**
+   * A brand mark before the wordmark — a Project's resolved-brand logo, say.
+   * `brand` itself is unaffected: a portal's title stays fixed even when the
+   * mark next to it changes from matter to matter.
+   */
+  logo?: ReactNode
   /** Role-appropriate destinations — client, staff, or admin. */
   destinations?: readonly ChromeLink[]
   /** The sign-out control. A form, because it ends a session. */
@@ -280,10 +286,17 @@ export interface NavigatorNavbarProps {
  * the client, staff, and admin forms and this component never learns what a
  * role is. Deciding who sees what is an authorization question, and a component
  * that answered it would be answering it in the browser.
+ *
+ * `logo` mirrors `SiteHeader`'s own leading mark: an optional node rendered
+ * before the wordmark, sized by whatever the caller passes. A Project portal
+ * wires it to its resolved brand's logo asset while `brand` keeps reading
+ * "Navigator" — the mark identifies whose matter this is, the wordmark
+ * identifies the product.
  */
 export function NavigatorNavbar({
   brand,
   brandHref = '/',
+  logo,
   destinations = NO_LINKS,
   signOut,
   'aria-label': ariaLabel = 'Primary',
@@ -292,6 +305,7 @@ export function NavigatorNavbar({
     <div className="navigator-chrome__header">
       <nav className="navigator-navbar" aria-label={ariaLabel}>
         <a className="navigator-navbar__brand" href={brandHref}>
+          {logo ? <span className="navigator-navbar__logo">{logo}</span> : null}
           {brand}
         </a>
         {destinations.length > 0 ? (
@@ -328,17 +342,81 @@ export function NavigatorNavbar({
   )
 }
 
+/** One brand the resolved Firm wears, for the footer's identity row. */
+export interface NavigatorFooterBrand {
+  label: ReactNode
+  /** Omitted for a brand with no dedicated host to link to yet. */
+  href?: string
+  /** The brand's own mark, sized by whatever the caller passes. */
+  logo?: ReactNode
+  /** The brand this portal (or this request) is currently wearing. */
+  current?: boolean
+}
+
+const NO_BRANDS: readonly NavigatorFooterBrand[] = Object.freeze([])
+
+/**
+ * The fixed platform attribution line.
+ *
+ * Not a prop, and never overridden by a caller: `legal` is the host's own
+ * line, this is the library's. A brand's identity is data (its name, its
+ * logo, the Firm it links to); the fact that Navigator renders it is not.
+ */
+export const POWERED_BY_NEON_LAW_NAVIGATOR = 'Powered by Neon Law Navigator'
+
 export interface NavigatorFooterProps {
   legal?: ReactNode
+  /**
+   * Every brand the resolved Firm wears, current one first — the same shape
+   * `webapp::firm_footer::FirmFooterModel` gives Navigator's own `/app`
+   * chrome. Identity only (name, link, logo): a brand's *color* stays the
+   * separate token-layer mechanism this library documents, never a prop here.
+   */
+  brands?: readonly NavigatorFooterBrand[]
   links?: readonly ChromeLink[]
   /** The running deploy — a release tag or commit. */
   release?: ReactNode
 }
 
-export function NavigatorFooter({ legal, links = NO_LINKS, release }: NavigatorFooterProps) {
+export function NavigatorFooter({
+  legal,
+  brands = NO_BRANDS,
+  links = NO_LINKS,
+  release,
+}: NavigatorFooterProps) {
   return (
     <footer className="navigator-footer">
-      {legal ? <p className="navigator-footer__legal">{legal}</p> : null}
+      {legal || brands.length > 0 ? (
+        <div className="navigator-footer__identity">
+          {legal ? <p className="navigator-footer__legal">{legal}</p> : null}
+          {brands.length > 0 ? (
+            <ul className="navigator-footer__brands">
+              {brands.map((brand, index) => (
+                <li
+                  key={typeof brand.label === 'string' ? brand.label : index}
+                  className="navigator-footer__brand"
+                >
+                  {brand.logo ? (
+                    <span className="navigator-footer__brand-logo">{brand.logo}</span>
+                  ) : null}
+                  {brand.href && !brand.current ? (
+                    <a
+                      className="navigator-footer__brand-link"
+                      href={brand.href}
+                      aria-current={brand.current ? 'page' : undefined}
+                    >
+                      {brand.label}
+                    </a>
+                  ) : (
+                    <span aria-current={brand.current ? 'page' : undefined}>{brand.label}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
+      <p className="navigator-footer__powered-by">{POWERED_BY_NEON_LAW_NAVIGATOR}</p>
       {links.length > 0 ? (
         <nav className="navigator-footer__links" aria-label="Footer">
           {links.map((link, index) => (

@@ -162,10 +162,17 @@ textarea {
 }
 
 .navigator-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: var(--nav-color-text) !important;
   font-size: 1.125rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.navigator-navbar__logo {
+  display: block;
 }
 
 .navigator-navbar__destinations {
@@ -206,7 +213,7 @@ textarea {
 
 .navigator-footer {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
   gap: 1rem;
   align-items: center;
   width: min(100%, 72rem);
@@ -218,9 +225,37 @@ textarea {
   font-size: 0.875rem;
 }
 
+.navigator-footer__identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+}
+
 .navigator-footer__legal,
-.navigator-footer__release {
+.navigator-footer__release,
+.navigator-footer__powered-by {
   margin: 0;
+}
+
+.navigator-footer__brands {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navigator-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.navigator-footer__brand-logo {
+  display: block;
 }
 
 .navigator-footer__links {
@@ -3849,4 +3884,20 @@ button.nav-steps__step:focus-visible {
   .nav-chat__composer .nav-btn {
     width: 100%;
   }
+}
+
+/* Brand editor (ENG-594): the primary-colour swatch and the stacked upload
+ * pair. The swatch's own fill is a runtime value, not a token — it previews
+ * whatever hex the caller is currently evaluating. */
+.brand-editor__swatch {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--nav-radius-sm);
+  border: 1px solid var(--nav-color-border);
+}
+
+.brand-editor__upload {
+  display: grid;
+  gap: var(--nav-space-3);
 }

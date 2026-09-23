@@ -210,10 +210,22 @@ describe('NavigatorNavbar', () => {
     expect(container.querySelector('.navigator-navbar__destinations')).toBeNull()
     expect(container.querySelector('form')).toBeNull()
   })
+
+  it('renders a brand logo before the fixed wordmark', () => {
+    render(<NavigatorNavbar brand="Navigator" logo={<svg data-testid="mark" />} />)
+    expect(screen.getByTestId('mark')).toBeInTheDocument()
+    // The mark changes per matter; the product name does not.
+    expect(screen.getByRole('link', { name: 'Navigator' })).toBeInTheDocument()
+  })
+
+  it('renders with no logo at all', () => {
+    const { container } = render(<NavigatorNavbar brand="Navigator" />)
+    expect(container.querySelector('.navigator-navbar__logo')).toBeNull()
+  })
 })
 
 describe('NavigatorFooter', () => {
-  it('renders its three optional parts', () => {
+  it('renders its three optional parts alongside the fixed attribution', () => {
     render(
       <NavigatorFooter
         legal="© 2026 Neon Law LLP"
@@ -224,11 +236,48 @@ describe('NavigatorFooter', () => {
     expect(screen.getByText('© 2026 Neon Law LLP')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Support' })).toBeInTheDocument()
     expect(screen.getByText('v0.5.0')).toBeInTheDocument()
+    expect(screen.getByText('Powered by Neon Law Navigator')).toBeInTheDocument()
   })
 
-  it('renders empty when given nothing', () => {
+  it('renders only the fixed attribution when given nothing', () => {
     const { container } = render(<NavigatorFooter />)
-    expect(container.querySelector('.navigator-footer')?.children).toHaveLength(0)
+    expect(container.querySelector('.navigator-footer')?.children).toHaveLength(1)
+    expect(screen.getByText('Powered by Neon Law Navigator')).toBeInTheDocument()
+  })
+
+  it('renders every brand the resolved Firm wears, current one unlinked', () => {
+    render(
+      <NavigatorFooter
+        legal="© 2026 Shook Law PLLC"
+        brands={[
+          { label: 'Daybridge Divorce Law', current: true, logo: <svg data-testid="current-mark" /> },
+          { label: 'Neon Law', href: 'https://www.neonlaw.com' },
+        ]}
+      />,
+    )
+    expect(screen.getByTestId('current-mark')).toBeInTheDocument()
+    expect(screen.getByText('Daybridge Divorce Law')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Daybridge Divorce Law' })).toBeNull()
+    expect(screen.getByRole('link', { name: 'Neon Law' })).toHaveAttribute(
+      'href',
+      'https://www.neonlaw.com',
+    )
+  })
+
+  it('renders at 1, 2, and 3 brands without dropping any label', () => {
+    const brands = [{ label: 'One' }, { label: 'Two' }, { label: 'Three' }]
+    for (let count = 1; count <= brands.length; count += 1) {
+      const { unmount } = render(<NavigatorFooter brands={brands.slice(0, count)} />)
+      for (const brand of brands.slice(0, count)) {
+        expect(screen.getByText(brand.label)).toBeInTheDocument()
+      }
+      unmount()
+    }
+  })
+
+  it('renders no identity block when given neither legal nor brands', () => {
+    const { container } = render(<NavigatorFooter release="v0.5.0" />)
+    expect(container.querySelector('.navigator-footer__identity')).toBeNull()
   })
 })
 
