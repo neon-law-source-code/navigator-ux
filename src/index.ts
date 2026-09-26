@@ -282,6 +282,7 @@ export {
   type PieChartProps,
 } from './components/Charts'
 export { WorldMap, type MapValue, type WorldMapProps } from './components/WorldMap'
+export { LocationMap, type LocationMapFeature, type LocationMapProps } from './components/LocationMap'
 export {
   GraphView,
   type GraphEdge,

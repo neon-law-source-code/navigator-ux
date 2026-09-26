@@ -2995,6 +2995,85 @@ dialog.confirm-delete:not([open]) {
   font-size: 0.75rem;
 }
 
+.nav-location-map {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--nav-color-border);
+  border-radius: var(--nav-radius-md);
+  background: var(--nav-color-surface-subtle);
+}
+
+.nav-location-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.nav-location-map__background {
+  fill: var(--nav-color-surface-subtle);
+}
+
+.nav-location-map__feature {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-location-map__feature--road {
+  fill: none;
+  stroke: var(--nav-color-border-strong);
+  stroke-width: 2;
+}
+
+.nav-location-map__feature--water {
+  fill: var(--nav-color-accent-subtle);
+  stroke: var(--nav-color-accent);
+  stroke-width: 1;
+}
+
+.nav-location-map__feature--vegetation {
+  fill: var(--nav-color-success-subtle);
+  stroke: var(--nav-color-success);
+  stroke-width: 1;
+}
+
+.nav-location-map__feature--building {
+  fill: var(--nav-color-surface-raised);
+  stroke: var(--nav-color-border-strong);
+  stroke-width: 1;
+}
+
+.nav-location-map__feature--other {
+  fill: var(--nav-color-surface-raised);
+  stroke: var(--nav-color-border);
+  stroke-width: 1;
+}
+
+.nav-location-map__marker {
+  fill: var(--nav-color-accent);
+  stroke: var(--nav-color-surface);
+  stroke-width: 2;
+}
+
+.nav-location-map__attribution {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.375rem 1rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--nav-color-text-muted);
+  font-size: 0.75rem;
+}
+
+.nav-location-map__attribution a {
+  color: inherit;
+}
+
+.nav-location-map__invalid {
+  margin: 0;
+  padding: 1.25rem;
+  color: var(--nav-color-text-muted);
+}
+
 .nav-chart-legend {
   display: flex;
   flex-wrap: wrap;
