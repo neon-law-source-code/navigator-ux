@@ -187,7 +187,7 @@ The shadcn-derived set:
 | --- | --- |
 | Disclosure | `Accordion`, `Collapsible` |
 | Tabs | `LinkTabs`, `Tabs` |
-| Charts | `BarChart`, `LineChart`, `AreaChart`, `PieChart`, `WorldMap`, `ChartLegend` |
+| Charts | `BarChart`, `LineChart`, `AreaChart`, `PieChart`, `WorldMap`, `LocationMap`, `ChartLegend` |
 | Controls | `Switch`, `ToggleGroup`, `Combobox` |
 | Fields | `DatePicker`, `CalendarPicker`, `Calendar`, `Slider`, `InputOTP` |
 | Overlays | `Dialog`, `Sheet`, `Popover`, `DropdownMenu`, `Tooltip` |

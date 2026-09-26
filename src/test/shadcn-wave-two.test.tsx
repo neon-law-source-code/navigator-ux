@@ -23,6 +23,7 @@ import {
   Item,
   Kbd,
   LineChart,
+  LocationMap,
   PieChart,
   WorldMap,
   Menubar,
@@ -867,6 +868,59 @@ describe('WorldMap', () => {
       name: 'United States of America',
       value: 40,
     })
+  })
+})
+
+describe('LocationMap', () => {
+  const FEATURES = [
+    {
+      id: 'road-1',
+      kind: 'road' as const,
+      geometry: {
+        type: 'LineString' as const,
+        coordinates: [
+          [-73.99, 40.72],
+          [-73.98, 40.73],
+        ],
+      },
+    },
+  ]
+
+  it('renders supplied geometry locally and attributes OpenStreetMap', () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+    const { container } = render(
+      <LocationMap
+        features={FEATURES}
+        center={{ latitude: 40.725, longitude: -73.985 }}
+        label="Matter location"
+      />,
+    )
+
+    expect(screen.getByRole('img', { name: 'Matter location' })).toBeInTheDocument()
+    expect(container.querySelector('[data-feature-kind="road"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-location-marker]')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'OpenStreetMap contributors' })).toHaveAttribute(
+      'href',
+      'https://www.openstreetmap.org/copyright',
+    )
+    expect(screen.getByRole('link', { name: 'Open this area in OpenStreetMap' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('mlat=40.725'),
+    )
+    expect(container.querySelector('img')).not.toBeInTheDocument()
+    expect(fetchSpy).not.toHaveBeenCalled()
+    fetchSpy.mockRestore()
+  })
+
+  it('does not project invalid coordinates', () => {
+    render(
+      <LocationMap
+        features={[]}
+        center={{ latitude: 91, longitude: -73 }}
+        label="Matter location"
+      />,
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('Map location is unavailable.')
   })
 })
 
